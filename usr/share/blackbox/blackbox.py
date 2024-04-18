@@ -490,7 +490,7 @@ class Main(Gtk.Window):
 
                         message_dialog = MessageDialog(
                             "Warning",
-                            "Sofirem cannot proceed pacman lockfile found",
+                            "BlackBox cannot proceed pacman lockfile found",
                             "Pacman cannot lock the db, a lockfile is found inside %s"
                             % fn.pacman_lockfile,
                             "Pacman is running: %s" % proc,
