@@ -521,7 +521,7 @@ class Main(Gtk.Window):
                                 "Error",
                                 "Pacman repository error: package '%s' was not found"
                                 % package.name,
-                                "Sofirem cannot process the request",
+                                "BlackBox cannot process the request",
                                 "Are the correct pacman mirrorlists configured ?",
                                 "error",
                                 False,
@@ -696,7 +696,7 @@ class Main(Gtk.Window):
         proc = fn.get_pacman_process()
         message_dialog = MessageDialog(
             "Warning",
-            "Sofirem cannot proceed pacman lockfile found",
+            "BlackBox cannot proceed pacman lockfile found",
             "Pacman cannot lock the db, a lockfile is found inside %s"
             % fn.pacman_lockfile,
             "Process running = %s" % proc,
