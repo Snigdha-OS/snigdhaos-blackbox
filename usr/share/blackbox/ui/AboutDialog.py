@@ -30,7 +30,7 @@ class AboutDialog(Gtk.Dialog):
         app_authors.append(("Erik Dubois", None))
 
         pixbuf = GdkPixbuf.Pixbuf().new_from_file_at_size(
-            os.path.join(base_dir, "images/sofirem.png"), 100, 100
+            os.path.join(base_dir, "images/blackbox.png"), 100, 100
         )
         app_image = Gtk.Image().new_from_pixbuf(pixbuf)
 
