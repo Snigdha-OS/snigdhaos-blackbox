@@ -31,10 +31,10 @@ class ProgressDialog(Gtk.Dialog):
             self.connect("delete-event", package_progress_dialog_on_close, self, action)
 
             if action == "install":
-                self.set_title("Sofirem - installing package %s" % package.name)
+                self.set_title("BlackBox - installing package %s" % package.name)
 
             elif action == "uninstall":
-                self.set_title("Sofirem - removing package %s" % package.name)
+                self.set_title("BlackBox - removing package %s" % package.name)
 
             self.btn_package_progress_close = Gtk.Button(label="OK")
             self.btn_package_progress_close.connect(
@@ -51,7 +51,7 @@ class ProgressDialog(Gtk.Dialog):
             self.set_modal(True)
             self.set_border_width(10)
             self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-            self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+            self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
 
             lbl_pacman_action_title = Gtk.Label(xalign=0, yalign=0)
             lbl_pacman_action_title.set_text("Running command:")
