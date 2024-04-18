@@ -24,12 +24,12 @@ class PacmanLogWindow(Gtk.Window):
 
         self.set_titlebar(headerbar)
 
-        self.set_title("Sofirem - Pacman log file viewer")
+        self.set_title("BlackBox - Pacman log file viewer")
         self.set_default_size(800, 600)
         self.set_resizable(True)
         self.set_border_width(10)
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-        self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+        self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
         self.connect("delete-event", self.on_close)
 
         btn_pacmanlog_ok = Gtk.Button(label="OK")
