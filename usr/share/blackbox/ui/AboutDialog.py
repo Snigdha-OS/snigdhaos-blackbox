@@ -23,7 +23,7 @@ class AboutDialog(Gtk.Dialog):
         app_version = "pkgversion-pkgrelease"
         app_discord = "https://discord.gg/stBhS4taje"
         app_website = "https://arcolinux.info"
-        app_github = "https://github.com/arcolinux/sofirem-dev"
+        app_github = "https://github.com/Snigdha-OS/blackbox"
         app_authors = []
         app_authors.append(("Cameron Percival", None))
         app_authors.append(("Fennec", None))
@@ -36,7 +36,7 @@ class AboutDialog(Gtk.Dialog):
 
         self.set_resizable(False)
         self.set_size_request(560, 350)
-        self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+        self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
         self.set_border_width(10)
 
         headerbar = Gtk.HeaderBar()
@@ -85,7 +85,7 @@ class AboutDialog(Gtk.Dialog):
         ivbox_about.pack_start(lbl_secondary_message, True, True, 0)
         ivbox_about.pack_start(lbl_secondary_description, True, True, 0)
 
-        stack.add_titled(ivbox_about, "About Sofirem", "About")
+        stack.add_titled(ivbox_about, "About BlackBox", "About")
 
         grid_support = Gtk.Grid()
 
