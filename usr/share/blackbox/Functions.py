@@ -1885,16 +1885,11 @@ def add_snigdhaos_repos():
 
                 # check for existing Snigdha OS entries
                 if len(lines) > 0:
-                    snigdhaos_test_repo_found = False
                     snigdhaos_core_found = False
-                    snigdhaos_3rd_party_repo_found = False
-                    snigdhaos_xlrepo_found = False
+                    snigdhaos_extra_found = False
 
                     for line in lines:
                         if "#" in line.strip():
-                            if snigdhaos_test_repo[0].replace("#", "") in line.strip():
-                                snigdhaos_test_repo_found = True
-
                             if snigdhaos_core[0].replace("#", "") in line.strip():
                                 snigdhaos_core_found = True
                                 index = lines.index(line)
@@ -1912,57 +1907,28 @@ def add_snigdhaos_repos():
                                 del lines[index]
                                 lines.insert(index, snigdhaos_core[2])
 
-                            if snigdhaos_3rd_party_repo[0].replace("#", "") in line.strip():
-                                snigdhaos_3rd_party_repo_found = True
+                            if snigdhaos_extra[0].replace("#", "") in line.strip():
+                                snigdhaos_extra_found = True
                                 index = lines.index(line)
 
                                 del lines[index]
-                                lines.insert(index, snigdhaos_3rd_party_repo[0])
+                                lines.insert(index, snigdhaos_extra[0])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, snigdhaos_3rd_party_repo[1])
+                                lines.insert(index, snigdhaos_extra[1])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, snigdhaos_3rd_party_repo[2])
-
-                            if snigdhaos_xlrepo[0].replace("#", "") in line.strip():
-                                snigdhaos_xlrepo_found = True
-                                index = lines.index(line)
-
-                                del lines[index]
-                                lines.insert(index, snigdhaos_xlrepo[0])
-
-                                index += 1
-
-                                del lines[index]
-                                lines.insert(index, snigdhaos_xlrepo[1])
-
-                                index += 1
-
-                                del lines[index]
-                                lines.insert(index, snigdhaos_xlrepo[2])
-
-                        if line.strip() == snigdhaos_test_repo[0]:
-                            snigdhaos_test_repo_found = True
+                                lines.insert(index, snigdhaos_extra[2])
 
                         if line.strip() == snigdhaos_core[0]:
                             snigdhaos_core_found = True
 
-                        if line.strip() == snigdhaos_3rd_party_repo[0]:
-                            snigdhaos_3rd_party_repo_found = True
-
-                        if line.strip() == snigdhaos_xlrepo[0]:
-                            snigdhaos_xlrepo_found = True
-
-                    if snigdhaos_test_repo_found is False:
-                        lines.append("\n")
-
-                        for snigdhaos_test_repo_line in snigdhaos_test_repo:
-                            lines.append(snigdhaos_test_repo_line)
+                        if line.strip() == snigdhaos_extra[0]:
+                            snigdhaos_extra_found = True
 
                     if snigdhaos_core_found is False:
                         lines.append("\n")
@@ -1970,17 +1936,11 @@ def add_snigdhaos_repos():
                         for snigdhaos_core_line in snigdhaos_core:
                             lines.append(snigdhaos_core_line)
 
-                    if snigdhaos_3rd_party_repo_found is False:
+                    if snigdhaos_extra_found is False:
                         lines.append("\n")
 
-                        for snigdhaos_3rd_party_repo_line in snigdhaos_3rd_party_repo:
-                            lines.append(snigdhaos_3rd_party_repo_line)
-
-                    if snigdhaos_xlrepo_found is False:
-                        lines.append("\n")
-
-                        for snigdhaos_xlrepo_line in snigdhaos_xlrepo:
-                            lines.append(snigdhaos_xlrepo_line)
+                        for snigdhaos_extra_line in snigdhaos_extra:
+                            lines.append(snigdhaos_extra_line)
 
                     logger.info("[Add Snigdha OS repos] Writing to %s" % pacman_conf)
 
@@ -2026,34 +1986,8 @@ def remove_snigdhaos_repos():
                     index = 0
 
                     for line in lines:
-                        if snigdhaos_test_repo[0] == line.strip().replace(" ", ""):
-                            index = lines.index(line)
-
-                            if index > 0:
-                                if distr != "snigdhaos":
-                                    del lines[index]
-                                    del lines[index]
-                                    del lines[index]
-
-                        # make sure the snigdhaos testing repo is disabled, if absolutely required update the pacman conf file manually and enable them
-
-                        if "%s" % snigdhaos_test_repo[0].replace("#", "") == line.strip():
-                            index = lines.index(
-                                "%s\n" % snigdhaos_test_repo[0].replace("#", "")
-                            )
-                            if distr != "snigdhaos":
-                                del lines[index]
-                                del lines[index]
-                                del lines[index]
-                            else:
-                                # comment out the testing repo
-
-                                lines[index] = "%s\n" % snigdhaos_test_repo[0]
-                                lines[index + 1] = "%s\n" % snigdhaos_test_repo[1]
-                                lines[index + 2] = "%s\n" % snigdhaos_test_repo[2]
-
-                        if "%s\n" % snigdhaos_repo[0] == line:
-                            index = lines.index("%s\n" % snigdhaos_repo[0])
+                        if "%s\n" % snigdhaos_core[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_core[0])
 
                             if index > 0:
                                 if distr != "snigdhaos":
@@ -2061,12 +1995,12 @@ def remove_snigdhaos_repos():
                                     del lines[index]
                                     del lines[index]
                                 else:
-                                    lines[index] = "#%s\n" % snigdhaos_repo[0]
-                                    lines[index + 1] = "#%s\n" % snigdhaos_repo[1]
-                                    lines[index + 2] = "#%s\n" % snigdhaos_repo[2]
+                                    lines[index] = "#%s\n" % snigdhaos_core[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_core[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_core[2]
                         elif (
                             "#" in line.strip()
-                            and snigdhaos_repo[0] == line.replace("#", "").strip()
+                            and snigdhaos_core[0] == line.replace("#", "").strip()
                             and distr != "snigdhaos"
                         ):
                             # check if already commented
@@ -2076,8 +2010,8 @@ def remove_snigdhaos_repos():
                             del lines[index]
                             del lines[index]
 
-                        if "%s\n" % snigdhaos_3rd_party_repo[0] == line:
-                            index = lines.index("%s\n" % snigdhaos_3rd_party_repo[0])
+                        if "%s\n" % snigdhaos_extra[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_extra[0])
 
                             if index > 0:
                                 if distr != "snigdhaos":
@@ -2085,36 +2019,12 @@ def remove_snigdhaos_repos():
                                     del lines[index]
                                     del lines[index]
                                 else:
-                                    lines[index] = "#%s\n" % snigdhaos_3rd_party_repo[0]
-                                    lines[index + 1] = "#%s\n" % snigdhaos_3rd_party_repo[1]
-                                    lines[index + 2] = "#%s\n" % snigdhaos_3rd_party_repo[2]
+                                    lines[index] = "#%s\n" % snigdhaos_extra[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_extra[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_extra[2]
                         elif (
                             "#" in line.strip()
-                            and snigdhaos_3rd_party_repo[0] == line.replace("#", "").strip()
-                            and distr != "snigdhaos"
-                        ):
-                            # check if already commented
-
-                            index = lines.index(line)
-                            del lines[index]
-                            del lines[index]
-                            del lines[index]
-
-                        if "%s\n" % snigdhaos_xlrepo[0] == line:
-                            index = lines.index("%s\n" % snigdhaos_xlrepo[0])
-
-                            if index > 0:
-                                if distr != "snigdhaos":
-                                    del lines[index]
-                                    del lines[index]
-                                    del lines[index]
-                                else:
-                                    lines[index] = "#%s\n" % snigdhaos_xlrepo[0]
-                                    lines[index + 1] = "#%s\n" % snigdhaos_xlrepo[1]
-                                    lines[index + 2] = "#%s\n" % snigdhaos_xlrepo[2]
-                        elif (
-                            "#" in line.strip()
-                            and snigdhaos_xlrepo[0] == line.replace("#", "").strip()
+                            and snigdhaos_extra[0] == line.replace("#", "").strip()
                             and distr != "snigdhaos"
                         ):
                             # check if already commented
@@ -2170,36 +2080,28 @@ def remove_snigdhaos_repos():
 def verify_snigdhaos_pacman_conf():
     try:
         lines = None
-        snigdhaos_repo_setup = False
-        snigdhaos_3rd_party_repo_setup = False
-        snigdhaos_xlrepo_setup = False
+        snigdhaos_core_setup = False
+        snigdhaos_extra_setup = False
         with open(pacman_conf, "r") as r:
             lines = r.readlines()
 
         if lines is not None:
             for line in lines:
-                if snigdhaos_repo[0] in line.strip():
+                if snigdhaos_core[0] in line.strip():
                     if "#" not in line.strip():
-                        snigdhaos_repo_setup = True
+                        snigdhaos_core_setup = True
                     else:
                         return False
 
-                if snigdhaos_3rd_party_repo[0] in line.strip():
+                if snigdhaos_extra[0] in line.strip():
                     if "#" not in line.strip():
-                        snigdhaos_3rd_party_repo_setup = True
-                    else:
-                        return False
-
-                if snigdhaos_xlrepo[0] in line.strip():
-                    if "#" not in line.strip():
-                        snigdhaos_xlrepo_setup = True
+                        snigdhaos_extra_setup = True
                     else:
                         return False
 
             if (
-                snigdhaos_repo_setup is True
-                and snigdhaos_3rd_party_repo_setup is True
-                and snigdhaos_xlrepo_setup is True
+                snigdhaos_core_setup is True
+                and snigdhaos_extra_setup is True
             ):
                 return True
             else:
