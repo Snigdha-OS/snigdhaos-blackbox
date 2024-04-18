@@ -124,9 +124,9 @@ class Main(Gtk.Window):
                 running = fn.check_if_process_running("blackbox")
                 if running is True:
                     fn.logger.error(
-                        "Sofirem lock file found in %s" % fn.sofirem_lockfile
+                        "BlackBox lock file found in %s" % fn.blackbox_lockfile
                     )
-                    fn.logger.error("Is there another Sofirem instance running ?")
+                    fn.logger.error("Is there another BlackBox instance running ?")
 
                     sys.exit(1)
 
@@ -143,7 +143,7 @@ class Main(Gtk.Window):
                 if fn.check_pacman_lockfile():
                     message_dialog = MessageDialog(
                         "Error",
-                        "Sofirem cannot proceed pacman lockfile found",
+                        "BlackBox cannot proceed pacman lockfile found",
                         "Pacman cannot lock the db, a lockfile is found inside %s"
                         % fn.pacman_lockfile,
                         "Is there another Pacman process running ?",
@@ -166,7 +166,7 @@ class Main(Gtk.Window):
                     "---------------------------------------------------------------------------"
                 )
 
-                # start making sure sofirem starts next time with dark or light theme
+                # start making sure blackbox starts next time with dark or light theme
                 if os.path.isdir(fn.home + "/.config/gtk-3.0"):
                     try:
                         if not os.path.islink("/root/.config/gtk-3.0"):
@@ -431,20 +431,20 @@ class Main(Gtk.Window):
     # =====================================================
 
     def on_close(self, widget, data):
-        # to preserve settings, save current options to conf file inside $HOME/.config/sofirem/sofirem.yaml
+        # to preserve settings, save current options to conf file inside $HOME/.config/blackbox/blackbox.yaml
 
         settings = Settings(self.display_versions, self.display_package_progress)
         settings.write_config_file()
 
-        # make a final installed packages file inside /var/log/sofirem/
+        # make a final installed packages file inside /var/log/blackbox/
         # this allows a before/after comparison
         # fn.on_close_create_packages_file()
 
-        if os.path.exists(fn.sofirem_lockfile):
-            os.unlink(fn.sofirem_lockfile)
+        if os.path.exists(fn.blackbox_lockfile):
+            os.unlink(fn.blackbox_lockfile)
 
-        if os.path.exists(fn.sofirem_pidfile):
-            os.unlink(fn.sofirem_pidfile)
+        if os.path.exists(fn.blackbox_pidfile):
+            os.unlink(fn.blackbox_pidfile)
 
         # see the comment in fn.terminate_pacman()
         fn.terminate_pacman()
@@ -453,7 +453,7 @@ class Main(Gtk.Window):
         print(
             "---------------------------------------------------------------------------"
         )
-        print("Thanks for using Sofirem")
+        print("Thanks for using BlackBox")
         print("Report issues to make it even better")
         print(
             "---------------------------------------------------------------------------"
