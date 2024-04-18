@@ -1,4 +1,4 @@
-# This class is to encapsulate package metadata, taken from the yaml files stored inside the sofirem github repository
+# This class is to encapsulate package metadata, taken from the yaml files stored inside the blackbox github repository
 
 
 class Package(object):
