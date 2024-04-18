@@ -46,7 +46,7 @@ class PackagesImportDialog(Gtk.Dialog):
 
         self.set_titlebar(headerbar)
 
-        self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+        self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
 
         hbox_title = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         lbl_packages_title = Gtk.Label(xalign=0)
@@ -205,7 +205,7 @@ class PackagesImportDialog(Gtk.Dialog):
         self.pkg_import_queue.put(event)
 
         # debug install, overrride packages_list
-        # self.packages_list = ["cheese", "firefox", "sofirem-dev-git", "sofirem-git"]
+        # self.packages_list = ["cheese", "firefox", "blackbox-dev-git", "blackbox-git"]
 
         # starts 2 threads one to install the packages, and another to check install status
 
