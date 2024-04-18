@@ -284,8 +284,8 @@ def sync_file_db():
 def start_subprocess(self, cmd, progress_dialog, action, pkg, widget):
     try:
         self.switch_package_version.set_sensitive(False)
-        self.switch_arco_keyring.set_sensitive(False)
-        self.switch_arco_mirrorlist.set_sensitive(False)
+        self.switch_snigdhaos_keyring.set_sensitive(False)
+        self.switch_snigdhaos_mirrorlist.set_sensitive(False)
 
         widget.set_sensitive(False)
 
@@ -385,8 +385,8 @@ def start_subprocess(self, cmd, progress_dialog, action, pkg, widget):
         if progress_dialog is not None:
             progress_dialog.btn_package_progress_close.set_sensitive(True)
         self.switch_package_version.set_sensitive(True)
-        self.switch_arco_keyring.set_sensitive(True)
-        self.switch_arco_mirrorlist.set_sensitive(True)
+        self.switch_snigdhaos_keyring.set_sensitive(True)
+        self.switch_snigdhaos_mirrorlist.set_sensitive(True)
 
     except SystemError as s:
         logger.error("SystemError in %s start_subprocess(): %s" % (action, s))
@@ -394,16 +394,16 @@ def start_subprocess(self, cmd, progress_dialog, action, pkg, widget):
         if progress_dialog is not None:
             progress_dialog.btn_package_progress_close.set_sensitive(True)
         self.switch_package_version.set_sensitive(True)
-        self.switch_arco_keyring.set_sensitive(True)
-        self.switch_arco_mirrorlist.set_sensitive(True)
+        self.switch_snigdhaos_keyring.set_sensitive(True)
+        self.switch_snigdhaos_mirrorlist.set_sensitive(True)
 
 
 # refresh ui components, once the process completes
 # show notification dialog to user if errors are encountered during package install/uninstall
 def refresh_ui(self, action, switch, pkg, progress_dialog, process_stdout_lst):
     self.switch_package_version.set_sensitive(True)
-    self.switch_arco_keyring.set_sensitive(True)
-    self.switch_arco_mirrorlist.set_sensitive(True)
+    self.switch_snigdhaos_keyring.set_sensitive(True)
+    self.switch_snigdhaos_mirrorlist.set_sensitive(True)
 
     logger.debug("Checking if package %s is installed" % pkg.name)
     installed = check_package_installed(pkg.name)
