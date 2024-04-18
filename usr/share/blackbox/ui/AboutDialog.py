@@ -15,7 +15,7 @@ class AboutDialog(Gtk.Dialog):
     def __init__(self):
         Gtk.Dialog.__init__(self)
 
-        app_name = "Sofirem"
+        app_name = "BlackBox"
         app_title = "About Sofirem"
         app_main_description = "%s - %s" % (app_name, "Software Installer Remover")
         app_secondary_message = "Install or remove software from your ArcoLinux system"
