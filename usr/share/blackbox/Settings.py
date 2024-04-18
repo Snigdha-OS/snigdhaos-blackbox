@@ -5,8 +5,8 @@ import Functions as fn
 from string import Template
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
-# a default configuration file if one doesn't exist is copied over from /usr/share/sofirem/defaults to $HOME/.config
-default_file = "%s/defaults/sofirem.yaml" % base_dir
+# a default configuration file if one doesn't exist is copied over from /usr/share/blackbox/defaults to $HOME/.config
+default_file = "%s/defaults/blackbox.yaml" % base_dir
 
 
 class Settings(object):
