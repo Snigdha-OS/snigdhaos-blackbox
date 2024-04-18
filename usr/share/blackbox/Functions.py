@@ -1395,10 +1395,6 @@ def cache(package, path_dir_cache):
             exceptions = [
                 "florence",
                 "mintstick-bin",
-                "arcolinux-conky-collection-plasma-git",
-                "arcolinux-desktop-trasher-git",
-                "arcolinux-pamac-all",
-                "arcolinux-sddm-simplicity-git",
                 "ttf-hack",
                 "ttf-roboto-mono",
                 "aisleriot",
@@ -1407,7 +1403,6 @@ def cache(package, path_dir_cache):
                 "linux-rt-headers",
                 "linux-rt-lts",
                 "linux-rt-lts-headers",
-                "arcolinux-sddm-simplicity-git",
                 "kodi-x11",
                 "kodi-addons",
                 "sardi-icons",
@@ -1748,7 +1743,7 @@ def remove_snigdhaos_keyring():
 
             else:
                 if len(output) == 0:
-                    output.append("Error: removal of ArcoLinux keyring failed")
+                    output.append("Error: removal of Snigdha OS keyring failed")
 
                 logger.error(" ".join(output))
 
@@ -1770,7 +1765,7 @@ def remove_snigdhaos_keyring():
         return result_err
 
 
-def install_arco_mirrorlist():
+def install_snigdhaos_mirrorlist():
     try:
         mirrorlist = base_dir + "/packages/snigdhaos-mirrorlist/"
         file = os.listdir(mirrorlist)
@@ -1801,7 +1796,7 @@ def install_arco_mirrorlist():
 
             else:
                 if len(output) == 0:
-                    output.append("Error: install of ArcoLinux mirrorlist failed")
+                    output.append("Error: install of Snigdha OS mirrorlist failed")
 
                 logger.error(" ".join(output))
 
@@ -1812,7 +1807,7 @@ def install_arco_mirrorlist():
 
                 return result_err
     except Exception as e:
-        logger.error("Exception in install_arco_mirrorlist(): %s" % e)
+        logger.error("Exception in install_snigdhaos_mirrorlist(): %s" % e)
 
         result_err = {}
 
@@ -1822,7 +1817,7 @@ def install_arco_mirrorlist():
         return result_err
 
 
-def remove_arco_mirrorlist():
+def remove_snigdhaos_mirrorlist():
     try:
         cmd_str = ["pacman", "-Rdd", "snigdhaos-mirrorlist-git", "--noconfirm"]
         logger.debug("%s" % " ".join(cmd_str))
@@ -1845,7 +1840,7 @@ def remove_arco_mirrorlist():
 
             else:
                 if len(output) == 0:
-                    output.append("Error: removal of ArcoLinux mirrorlist failed")
+                    output.append("Error: removal of Snigdha OS mirrorlist failed")
 
                 logger.error(" ".join(output))
 
@@ -1857,7 +1852,7 @@ def remove_arco_mirrorlist():
                 return result_err
 
     except Exception as e:
-        logger.error("Exception in remove_arco_mirrorlist(): %s" % e)
+        logger.error("Exception in remove_snigdhaos_mirrorlist(): %s" % e)
 
         result_err = {}
 
@@ -1867,12 +1862,12 @@ def remove_arco_mirrorlist():
         return result_err
 
 
-def add_arco_repos():
-    logger.info("Adding ArcoLinux repos on %s" % distr)
+def add_snigdhaos_repos():
+    logger.info("Adding Snigdha OS repos on %s" % distr)
     try:
-        # first check if arco repos are already inside pacman conf file
+        # first check if snigdhaos repos are already inside pacman conf file
 
-        if verify_arco_pacman_conf() is False:
+        if verify_snigdhaos_pacman_conf() is False:
             # take backup of existing pacman.conf file
 
             if os.path.exists(pacman_conf):
@@ -1887,106 +1882,106 @@ def add_arco_repos():
                 with open(pacman_conf, "r", encoding="utf-8") as r:
                     lines = r.readlines()
 
-                # check for existing ArcoLinux entries
+                # check for existing Snigdha OS entries
                 if len(lines) > 0:
-                    arco_test_repo_found = False
-                    arco_repo_found = False
-                    arco_3rd_party_repo_found = False
-                    arco_xlrepo_found = False
+                    snigdhaos_test_repo_found = False
+                    snigdhaos_repo_found = False
+                    snigdhaos_3rd_party_repo_found = False
+                    snigdhaos_xlrepo_found = False
 
                     for line in lines:
                         if "#" in line.strip():
-                            if arco_test_repo[0].replace("#", "") in line.strip():
-                                arco_test_repo_found = True
+                            if snigdhaos_test_repo[0].replace("#", "") in line.strip():
+                                snigdhaos_test_repo_found = True
 
-                            if arco_repo[0].replace("#", "") in line.strip():
-                                arco_repo_found = True
+                            if snigdhaos_repo[0].replace("#", "") in line.strip():
+                                snigdhaos_repo_found = True
                                 index = lines.index(line)
 
                                 del lines[index]
-                                lines.insert(index, arco_repo[0])
+                                lines.insert(index, snigdhaos_repo[0])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, arco_repo[1])
+                                lines.insert(index, snigdhaos_repo[1])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, arco_repo[2])
+                                lines.insert(index, snigdhaos_repo[2])
 
-                            if arco_3rd_party_repo[0].replace("#", "") in line.strip():
-                                arco_3rd_party_repo_found = True
+                            if snigdhaos_3rd_party_repo[0].replace("#", "") in line.strip():
+                                snigdhaos_3rd_party_repo_found = True
                                 index = lines.index(line)
 
                                 del lines[index]
-                                lines.insert(index, arco_3rd_party_repo[0])
+                                lines.insert(index, snigdhaos_3rd_party_repo[0])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, arco_3rd_party_repo[1])
+                                lines.insert(index, snigdhaos_3rd_party_repo[1])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, arco_3rd_party_repo[2])
+                                lines.insert(index, snigdhaos_3rd_party_repo[2])
 
-                            if arco_xlrepo[0].replace("#", "") in line.strip():
-                                arco_xlrepo_found = True
+                            if snigdhaos_xlrepo[0].replace("#", "") in line.strip():
+                                snigdhaos_xlrepo_found = True
                                 index = lines.index(line)
 
                                 del lines[index]
-                                lines.insert(index, arco_xlrepo[0])
+                                lines.insert(index, snigdhaos_xlrepo[0])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, arco_xlrepo[1])
+                                lines.insert(index, snigdhaos_xlrepo[1])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, arco_xlrepo[2])
+                                lines.insert(index, snigdhaos_xlrepo[2])
 
-                        if line.strip() == arco_test_repo[0]:
-                            arco_test_repo_found = True
+                        if line.strip() == snigdhaos_test_repo[0]:
+                            snigdhaos_test_repo_found = True
 
-                        if line.strip() == arco_repo[0]:
-                            arco_repo_found = True
+                        if line.strip() == snigdhaos_repo[0]:
+                            snigdhaos_repo_found = True
 
-                        if line.strip() == arco_3rd_party_repo[0]:
-                            arco_3rd_party_repo_found = True
+                        if line.strip() == snigdhaos_3rd_party_repo[0]:
+                            snigdhaos_3rd_party_repo_found = True
 
-                        if line.strip() == arco_xlrepo[0]:
-                            arco_xlrepo_found = True
+                        if line.strip() == snigdhaos_xlrepo[0]:
+                            snigdhaos_xlrepo_found = True
 
-                    if arco_test_repo_found is False:
+                    if snigdhaos_test_repo_found is False:
                         lines.append("\n")
 
-                        for arco_test_repo_line in arco_test_repo:
-                            lines.append(arco_test_repo_line)
+                        for snigdhaos_test_repo_line in snigdhaos_test_repo:
+                            lines.append(snigdhaos_test_repo_line)
 
-                    if arco_repo_found is False:
+                    if snigdhaos_repo_found is False:
                         lines.append("\n")
 
-                        for arco_repo_line in arco_repo:
-                            lines.append(arco_repo_line)
+                        for snigdhaos_repo_line in snigdhaos_repo:
+                            lines.append(snigdhaos_repo_line)
 
-                    if arco_3rd_party_repo_found is False:
+                    if snigdhaos_3rd_party_repo_found is False:
                         lines.append("\n")
 
-                        for arco_3rd_party_repo_line in arco_3rd_party_repo:
-                            lines.append(arco_3rd_party_repo_line)
+                        for snigdhaos_3rd_party_repo_line in snigdhaos_3rd_party_repo:
+                            lines.append(snigdhaos_3rd_party_repo_line)
 
-                    if arco_xlrepo_found is False:
+                    if snigdhaos_xlrepo_found is False:
                         lines.append("\n")
 
-                        for arco_xlrepo_line in arco_xlrepo:
-                            lines.append(arco_xlrepo_line)
+                        for snigdhaos_xlrepo_line in snigdhaos_xlrepo:
+                            lines.append(snigdhaos_xlrepo_line)
 
-                    logger.info("[Add ArcoLinux repos] Writing to %s" % pacman_conf)
+                    logger.info("[Add Snigdha OS repos] Writing to %s" % pacman_conf)
 
                     if len(lines) > 0:
                         with open(pacman_conf, "w", encoding="utf-8") as w:
@@ -2003,19 +1998,19 @@ def add_arco_repos():
                 else:
                     logger.error("Failed to read %s" % pacman_conf)
         else:
-            logger.info("ArcoLinux repos already setup inside pacman conf file")
+            logger.info("Snigdha OS repos already setup inside pacman conf file")
             return 0
 
     except Exception as e:
-        logger.error("Exception in add_arco_repos(): %s" % e)
+        logger.error("Exception in add_snigdhaos_repos(): %s" % e)
         return e
 
 
-def remove_arco_repos():
-    # remove the ArcoLinux repos in /etc/pacman.conf
+def remove_snigdhaos_repos():
+    # remove the Snigdha OS repos in /etc/pacman.conf
     try:
-        # check for existing ArcoLinux entries and remove
-        if verify_arco_pacman_conf() is True:
+        # check for existing Snigdha OS entries and remove
+        if verify_snigdhaos_pacman_conf() is True:
             if os.path.exists(pacman_conf):
                 shutil.copy(pacman_conf, pacman_conf_backup)
 
@@ -2030,48 +2025,48 @@ def remove_arco_repos():
                     index = 0
 
                     for line in lines:
-                        if arco_test_repo[0] == line.strip().replace(" ", ""):
+                        if snigdhaos_test_repo[0] == line.strip().replace(" ", ""):
                             index = lines.index(line)
 
                             if index > 0:
-                                if distr != "arcolinux":
+                                if distr != "snigdhaos":
                                     del lines[index]
                                     del lines[index]
                                     del lines[index]
 
-                        # make sure the arco testing repo is disabled, if absolutely required update the pacman conf file manually and enable them
+                        # make sure the snigdhaos testing repo is disabled, if absolutely required update the pacman conf file manually and enable them
 
-                        if "%s" % arco_test_repo[0].replace("#", "") == line.strip():
+                        if "%s" % snigdhaos_test_repo[0].replace("#", "") == line.strip():
                             index = lines.index(
-                                "%s\n" % arco_test_repo[0].replace("#", "")
+                                "%s\n" % snigdhaos_test_repo[0].replace("#", "")
                             )
-                            if distr != "arcolinux":
+                            if distr != "snigdhaos":
                                 del lines[index]
                                 del lines[index]
                                 del lines[index]
                             else:
                                 # comment out the testing repo
 
-                                lines[index] = "%s\n" % arco_test_repo[0]
-                                lines[index + 1] = "%s\n" % arco_test_repo[1]
-                                lines[index + 2] = "%s\n" % arco_test_repo[2]
+                                lines[index] = "%s\n" % snigdhaos_test_repo[0]
+                                lines[index + 1] = "%s\n" % snigdhaos_test_repo[1]
+                                lines[index + 2] = "%s\n" % snigdhaos_test_repo[2]
 
-                        if "%s\n" % arco_repo[0] == line:
-                            index = lines.index("%s\n" % arco_repo[0])
+                        if "%s\n" % snigdhaos_repo[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_repo[0])
 
                             if index > 0:
-                                if distr != "arcolinux":
+                                if distr != "snigdhaos":
                                     del lines[index]
                                     del lines[index]
                                     del lines[index]
                                 else:
-                                    lines[index] = "#%s\n" % arco_repo[0]
-                                    lines[index + 1] = "#%s\n" % arco_repo[1]
-                                    lines[index + 2] = "#%s\n" % arco_repo[2]
+                                    lines[index] = "#%s\n" % snigdhaos_repo[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_repo[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_repo[2]
                         elif (
                             "#" in line.strip()
-                            and arco_repo[0] == line.replace("#", "").strip()
-                            and distr != "arcolinux"
+                            and snigdhaos_repo[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
                         ):
                             # check if already commented
 
@@ -2080,22 +2075,22 @@ def remove_arco_repos():
                             del lines[index]
                             del lines[index]
 
-                        if "%s\n" % arco_3rd_party_repo[0] == line:
-                            index = lines.index("%s\n" % arco_3rd_party_repo[0])
+                        if "%s\n" % snigdhaos_3rd_party_repo[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_3rd_party_repo[0])
 
                             if index > 0:
-                                if distr != "arcolinux":
+                                if distr != "snigdhaos":
                                     del lines[index]
                                     del lines[index]
                                     del lines[index]
                                 else:
-                                    lines[index] = "#%s\n" % arco_3rd_party_repo[0]
-                                    lines[index + 1] = "#%s\n" % arco_3rd_party_repo[1]
-                                    lines[index + 2] = "#%s\n" % arco_3rd_party_repo[2]
+                                    lines[index] = "#%s\n" % snigdhaos_3rd_party_repo[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_3rd_party_repo[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_3rd_party_repo[2]
                         elif (
                             "#" in line.strip()
-                            and arco_3rd_party_repo[0] == line.replace("#", "").strip()
-                            and distr != "arcolinux"
+                            and snigdhaos_3rd_party_repo[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
                         ):
                             # check if already commented
 
@@ -2104,22 +2099,22 @@ def remove_arco_repos():
                             del lines[index]
                             del lines[index]
 
-                        if "%s\n" % arco_xlrepo[0] == line:
-                            index = lines.index("%s\n" % arco_xlrepo[0])
+                        if "%s\n" % snigdhaos_xlrepo[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_xlrepo[0])
 
                             if index > 0:
-                                if distr != "arcolinux":
+                                if distr != "snigdhaos":
                                     del lines[index]
                                     del lines[index]
                                     del lines[index]
                                 else:
-                                    lines[index] = "#%s\n" % arco_xlrepo[0]
-                                    lines[index + 1] = "#%s\n" % arco_xlrepo[1]
-                                    lines[index + 2] = "#%s\n" % arco_xlrepo[2]
+                                    lines[index] = "#%s\n" % snigdhaos_xlrepo[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_xlrepo[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_xlrepo[2]
                         elif (
                             "#" in line.strip()
-                            and arco_xlrepo[0] == line.replace("#", "").strip()
-                            and distr != "arcolinux"
+                            and snigdhaos_xlrepo[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
                         ):
                             # check if already commented
 
@@ -2128,10 +2123,10 @@ def remove_arco_repos():
                             del lines[index]
                             del lines[index]
 
-                    # remove any white spaces from end of the file only if on non arcolinux system
-                    # on any non arcolinux distro lines are deleted which leaves empty lines in the file
+                    # remove any white spaces from end of the file only if on non snigdhaos system
+                    # on any non snigdhaos distro lines are deleted which leaves empty lines in the file
                     # causing the file to grow in size
-                    if distr != "arcolinux":
+                    if distr != "snigdhaos":
                         if lines[-1] == "\n":
                             del lines[-1]
 
@@ -2144,7 +2139,7 @@ def remove_arco_repos():
                         if lines[-4] == "\n":
                             del lines[-4]
 
-                    logger.info("[Remove ArcoLinux Repos] Writing to %s" % pacman_conf)
+                    logger.info("[Remove Snigdha OS Repos] Writing to %s" % pacman_conf)
 
                     if len(lines) > 0:
                         with open(pacman_conf, "w") as w:
@@ -2160,56 +2155,56 @@ def remove_arco_repos():
                 else:
                     logger.error("Failed to read %s" % pacman_conf)
         else:
-            logger.info("No ArcoLinux repos setup inside pacman conf file")
+            logger.info("No Snigdha OS repos setup inside pacman conf file")
             return 0
 
     except Exception as e:
-        logger.error("Exception in remove_arco_repos(): %s" % e)
+        logger.error("Exception in remove_snigdhaos_repos(): %s" % e)
         return e
 
 
-# check if pacman.conf has arco repos setup
+# check if pacman.conf has snigdhaos repos setup
 
 
-def verify_arco_pacman_conf():
+def verify_snigdhaos_pacman_conf():
     try:
         lines = None
-        arco_repo_setup = False
-        arco_3rd_party_repo_setup = False
-        arco_xlrepo_setup = False
+        snigdhaos_repo_setup = False
+        snigdhaos_3rd_party_repo_setup = False
+        snigdhaos_xlrepo_setup = False
         with open(pacman_conf, "r") as r:
             lines = r.readlines()
 
         if lines is not None:
             for line in lines:
-                if arco_repo[0] in line.strip():
+                if snigdhaos_repo[0] in line.strip():
                     if "#" not in line.strip():
-                        arco_repo_setup = True
+                        snigdhaos_repo_setup = True
                     else:
                         return False
 
-                if arco_3rd_party_repo[0] in line.strip():
+                if snigdhaos_3rd_party_repo[0] in line.strip():
                     if "#" not in line.strip():
-                        arco_3rd_party_repo_setup = True
+                        snigdhaos_3rd_party_repo_setup = True
                     else:
                         return False
 
-                if arco_xlrepo[0] in line.strip():
+                if snigdhaos_xlrepo[0] in line.strip():
                     if "#" not in line.strip():
-                        arco_xlrepo_setup = True
+                        snigdhaos_xlrepo_setup = True
                     else:
                         return False
 
             if (
-                arco_repo_setup is True
-                and arco_3rd_party_repo_setup is True
-                and arco_xlrepo_setup is True
+                snigdhaos_repo_setup is True
+                and snigdhaos_3rd_party_repo_setup is True
+                and snigdhaos_xlrepo_setup is True
             ):
                 return True
             else:
                 return False
     except Exception as e:
-        logger.error("Exception in check_arco_pacman(): %s" % e)
+        logger.error("Exception in check_snigdhaos_pacman(): %s" % e)
 
 
 # =====================================================
