@@ -120,7 +120,7 @@ class Main(Gtk.Window):
                 "---------------------------------------------------------------------------"
             )
 
-            if os.path.exists(fn.sofirem_lockfile):
+            if os.path.exists(fn.blackbox_lockfile):
                 running = fn.check_if_process_running("sofirem")
                 if running is True:
                     fn.logger.error(
