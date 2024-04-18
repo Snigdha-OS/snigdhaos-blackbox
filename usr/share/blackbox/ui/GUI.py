@@ -192,7 +192,7 @@ class GUI:
 
             ivbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             pixbuf = GdkPixbuf.Pixbuf().new_from_file_at_size(
-                os.path.join(base_dir, "images/sofirem.png"), 45, 45
+                os.path.join(base_dir, "images/blackbox.png"), 45, 45
             )
             image = Gtk.Image().new_from_pixbuf(pixbuf)
 
@@ -421,7 +421,7 @@ class GUI:
 
             ivbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             pixbuf = GdkPixbuf.Pixbuf().new_from_file_at_size(
-                os.path.join(base_dir, "images/sofirem.png"), 45, 45
+                os.path.join(base_dir, "images/blackbox.png"), 45, 45
             )
             image = Gtk.Image().new_from_pixbuf(pixbuf)
 
@@ -487,7 +487,7 @@ class GUI:
 # setup headerbar including popover settings
 def setup_headerbar(self, Gtk, settings):
     try:
-        header_bar_title = "Sofirem"
+        header_bar_title = "BlackBox"
         headerbar = Gtk.HeaderBar()
         headerbar.set_title(header_bar_title)
         headerbar.set_show_close_button(True)
@@ -595,7 +595,7 @@ def setup_headerbar(self, Gtk, settings):
         modelbtn_about_app.connect("clicked", self.on_about_app_clicked)
         modelbtn_about_app.set_name("modelbtn_popover")
         modelbtn_about_app.props.centered = False
-        modelbtn_about_app.props.text = "About Sofirem"
+        modelbtn_about_app.props.text = "About BlackBox"
 
         # button to show iso package lists window
         modelbtn_iso_packages_list = Gtk.ModelButton()
