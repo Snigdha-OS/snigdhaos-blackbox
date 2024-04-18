@@ -121,7 +121,7 @@ class Main(Gtk.Window):
             )
 
             if os.path.exists(fn.blackbox_lockfile):
-                running = fn.check_if_process_running("sofirem")
+                running = fn.check_if_process_running("blackbox")
                 if running is True:
                     fn.logger.error(
                         "Sofirem lock file found in %s" % fn.sofirem_lockfile
