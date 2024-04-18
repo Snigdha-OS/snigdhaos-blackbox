@@ -1216,12 +1216,12 @@ if __name__ == "__main__":
     try:
         signal.signal(signal.SIGINT, signal_handler)
 
-        if not os.path.isfile("/tmp/sofirem.lock"):
-            with open("/tmp/sofirem.pid", "w") as f:
+        if not os.path.isfile("/tmp/blackbox.lock"):
+            with open("/tmp/blackbox.pid", "w") as f:
                 f.write(str(os.getpid()))
 
             style_provider = Gtk.CssProvider()
-            style_provider.load_from_path(base_dir + "/sofirem.css")
+            style_provider.load_from_path(base_dir + "/blackbox.css")
 
             Gtk.StyleContext.add_provider_for_screen(
                 Gdk.Screen.get_default(),
@@ -1235,17 +1235,17 @@ if __name__ == "__main__":
 
             Gtk.main()
         else:
-            fn.logger.info("Sofirem lock file found")
+            fn.logger.info("BlackBox lock file found")
 
             md = Gtk.MessageDialog(
                 parent=Main(),
                 flags=0,
                 message_type=Gtk.MessageType.INFO,
                 buttons=Gtk.ButtonsType.YES_NO,
-                text="Sofirem Lock File Found",
+                text="BlackBox Lock File Found",
             )
             md.format_secondary_markup(
-                "A Sofirem lock file has been found. This indicates there is already an instance of <b>Sofirem</b> running.\n\
+                "A BlackBox lock file has been found. This indicates there is already an instance of <b>BlackBox</b> running.\n\
                 Click 'Yes' to remove the lock file and try running again"
             )  # noqa
 
@@ -1254,8 +1254,8 @@ if __name__ == "__main__":
 
             if result in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
                 pid = ""
-                if os.path.exists(fn.sofirem_pidfile):
-                    with open("/tmp/sofirem.pid", "r") as f:
+                if os.path.exists(fn.blackbox_pidfile):
+                    with open("/tmp/blackbox.pid", "r") as f:
                         line = f.read()
                         pid = line.rstrip().lstrip()
 
@@ -1278,11 +1278,11 @@ if __name__ == "__main__":
                             "You first need to close the existing application"
                         )
                     else:
-                        os.unlink("/tmp/sofirem.lock")
+                        os.unlink("/tmp/blackbox.lock")
                         sys.exit(1)
                 else:
                     # in the rare event that the lock file is present, but the pid isn't
-                    os.unlink("/tmp/sofirem.lock")
+                    os.unlink("/tmp/blackbox.lock")
                     sys.exit(1)
             else:
                 sys.exit(1)
