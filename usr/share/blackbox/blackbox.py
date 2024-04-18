@@ -107,7 +107,7 @@ class Main(Gtk.Window):
             print(
                 "without any issues. Other applications are available from third party repos"
             )
-            print("like Chaotic repo, ArcoLinux repo and others.")
+            print("like Chaotic repo, Snigdha OS repo and others.")
             print(
                 "---------------------------------------------------------------------------"
             )
@@ -115,7 +115,7 @@ class Main(Gtk.Window):
             print(
                 "---------------------------------------------------------------------------"
             )
-            print("Some packages are only available on the ArcoLinux repos.")
+            print("Some packages are only available on the Snigdha OS repos.")
             print(
                 "---------------------------------------------------------------------------"
             )
@@ -732,10 +732,10 @@ class Main(Gtk.Window):
         package_search_win = PackageSearchWindow()
         package_search_win.show_all()
 
-    def on_arcolinux_iso_packages_clicked(self, widget):
-        fn.logger.debug("Showing ArcoLinux ISO Packages window")
-        arcolinux_iso_packages_window = ISOPackagesWindow()
-        arcolinux_iso_packages_window.show()
+    def on_snigdhaos_iso_packages_clicked(self, widget):
+        fn.logger.debug("Showing Snigdha OS ISO Packages window")
+        snigdhaos_iso_packages_window = ISOPackagesWindow()
+        snigdhaos_iso_packages_window.show()
 
     def on_about_app_clicked(self, widget):
         fn.logger.debug("Showing About dialog")
