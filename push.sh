@@ -7,4 +7,4 @@ CMSG="⏳ @eshanized updated the repository!!!"
 
 git add .
 git commit -m "${CMSG}"
-git push origin "${BRANCH}"
+# git push origin "${BRANCH}"
