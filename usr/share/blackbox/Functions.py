@@ -38,8 +38,8 @@ home = "/home/" + str(sudo_username)
 path_dir_cache = base_dir + "/cache/"
 packages = []
 distr = id()
-sofirem_lockfile = "/tmp/sofirem.lock"
-sofirem_pidfile = "/tmp/sofirem.pid"
+blackbox_lockfile = "/tmp/blackbox.lock"
+blackbox_pidfile = "/tmp/blackbox.pid"
 # 10m timeout
 process_timeout = 600
 
@@ -75,9 +75,9 @@ arco_xlrepo = [
 ]
 
 
-log_dir = "/var/log/sofirem/"
-config_dir = "%s/.config/sofirem" % home
-config_file = "%s/sofirem.yaml" % config_dir
+log_dir = "/var/log/blackbox/"
+config_dir = "%s/.config/blackbox" % home
+config_file = "%s/blackbox.yaml" % config_dir
 
 
 event_log_file = "%s/event.log" % log_dir

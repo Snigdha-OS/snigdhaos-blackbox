@@ -67,12 +67,12 @@ class Main(Gtk.Window):
 
     def __init__(self):
         try:
-            super(Main, self).__init__(title="Sofirem")
+            super(Main, self).__init__(title="BLACKBOX")
 
             self.set_border_width(10)
             self.connect("delete-event", self.on_close)
             self.set_position(Gtk.WindowPosition.CENTER)
-            self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+            self.set_icon_from_file(os.path.join(base_dir, "images/snigdhaos-blackbox.png"))
             self.set_default_size(1100, 900)
 
             # ctrl+f give focus to search entry
