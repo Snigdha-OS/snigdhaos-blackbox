@@ -851,10 +851,10 @@ class Main(Gtk.Window):
             install_keyring = fn.install_snigdhaos_keyring()
 
             if install_keyring == 0:
-                fn.logger.info("Installation of ArcoLinux keyring = OK")
-                rc = fn.add_arco_repos()
+                fn.logger.info("Installation of Snigdha OS keyring = OK")
+                rc = fn.add_snigdhaos_repos()
                 if rc == 0:
-                    fn.logger.info("ArcoLinux repos added into %s" % fn.pacman_conf)
+                    fn.logger.info("Snigdha OS repos added into %s" % fn.pacman_conf)
                     widget.set_active(True)
                 else:
                     message_dialog = MessageDialog(
@@ -878,8 +878,8 @@ class Main(Gtk.Window):
             else:
                 message_dialog = MessageDialog(
                     "Error",
-                    "Failed to install ArcoLinux keyring",
-                    "Errors occurred during install of the ArcoLinux keyring",
+                    "Failed to install Snigdha OS keyring",
+                    "Errors occurred during install of the Snigdha OS keyring",
                     "Command run = %s\n\n Error = %s"
                     % (install_keyring["cmd_str"], install_keyring["output"]),
                     "error",
@@ -896,12 +896,12 @@ class Main(Gtk.Window):
                 return True
         # toggle is currently on
         if widget.get_state() == True and widget.get_active() == False:
-            remove_keyring = fn.remove_arco_keyring()
+            remove_keyring = fn.remove_snigdhaos_keyring()
 
             if remove_keyring == 0:
-                fn.logger.info("Removing ArcoLinux keyring OK")
+                fn.logger.info("Removing Snigdha OS keyring OK")
 
-                rc = fn.remove_arco_repos()
+                rc = fn.remove_snigdhaos_repos()
                 if rc == 0:
                     fn.logger.info("ArcoLinux repos removed from %s" % fn.pacman_conf)
                     widget.set_active(False)
