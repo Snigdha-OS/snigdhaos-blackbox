@@ -903,7 +903,7 @@ class Main(Gtk.Window):
 
                 rc = fn.remove_snigdhaos_repos()
                 if rc == 0:
-                    fn.logger.info("ArcoLinux repos removed from %s" % fn.pacman_conf)
+                    fn.logger.info("Snigdha OS repos removed from %s" % fn.pacman_conf)
                     widget.set_active(False)
                 else:
                     message_dialog = MessageDialog(
@@ -924,12 +924,12 @@ class Main(Gtk.Window):
 
                     return True
             else:
-                fn.logger.error("Failed to remove ArcoLinux keyring")
+                fn.logger.error("Failed to remove Snigdha OS keyring")
 
                 message_dialog = MessageDialog(
                     "Error",
-                    "Failed to remove ArcoLinux keyring",
-                    "Errors occurred during removal of the ArcoLinux keyring",
+                    "Failed to remove Snigdha OS keyring",
+                    "Errors occurred during removal of the Snigdha OS keyring",
                     "Command run = %s\n\n Error = %s"
                     % (remove_keyring["cmd_str"], remove_keyring["output"]),
                     "error",
@@ -945,7 +945,7 @@ class Main(Gtk.Window):
 
                 return True
 
-    def arco_mirrorlist_toggle(self, widget, data):
+    def snigdhaos_mirrorlist_toggle(self, widget, data):
         # self.toggle_popover()
 
         # toggle is currently off
@@ -954,18 +954,18 @@ class Main(Gtk.Window):
             widget.set_active(True)
             widget.set_state(True)
 
-            # before installing the mirrorlist make sure the pacman.conf file does not have any references to /etc/pacman.d/arcolinux-mirrorlist
+            # before installing the mirrorlist make sure the pacman.conf file does not have any references to /etc/pacman.d/snigdhaos-mirrorlist
             # otherwise the mirrorlist package will not install
-            rc_remove = fn.remove_arco_repos()
+            rc_remove = fn.remove_snigdhaos_repos()
             if rc_remove == 0:
-                install_mirrorlist = fn.install_arco_mirrorlist()
+                install_mirrorlist = fn.install_snigdhaos_mirrorlist()
 
                 if install_mirrorlist == 0:
-                    fn.logger.info("Installation of ArcoLinux mirrorlist = OK")
+                    fn.logger.info("Installation of Snigdha OS mirrorlist = OK")
 
-                    rc_add = fn.add_arco_repos()
+                    rc_add = fn.add_snigdhaos_repos()
                     if rc_add == 0:
-                        fn.logger.info("ArcoLinux repos added into %s" % fn.pacman_conf)
+                        fn.logger.info("Snigdha OS repos added into %s" % fn.pacman_conf)
                         self.pacman_db_sync()
 
                     else:
@@ -988,12 +988,12 @@ class Main(Gtk.Window):
                         return True
 
                 else:
-                    fn.logger.error("Failed to install ArcoLinux mirrorlist")
+                    fn.logger.error("Failed to install Snigdha OS mirrorlist")
 
                     message_dialog = MessageDialog(
                         "Error",
-                        "Failed to install ArcoLinux mirrorlist",
-                        "Errors occurred during install of the ArcoLinux mirrorlist",
+                        "Failed to install Snigdha OS mirrorlist",
+                        "Errors occurred during install of the Snigdha OS mirrorlist",
                         "Command run = %s\n\n Error = %s"
                         % (install_mirrorlist["cmd_str"], install_mirrorlist["output"]),
                         "error",
@@ -1030,16 +1030,16 @@ class Main(Gtk.Window):
             widget.set_active(False)
             widget.set_state(False)
 
-            fn.logger.info("Removing ArcoLinux mirrorlist")
+            fn.logger.info("Removing Snigdha OS mirrorlist")
 
-            remove_mirrorlist = fn.remove_arco_mirrorlist()
+            remove_mirrorlist = fn.remove_snigdhaos_mirrorlist()
 
             if remove_mirrorlist == 0:
-                fn.logger.info("Removing ArcoLinux mirrorlist OK")
+                fn.logger.info("Removing Snigdha OS mirrorlist OK")
 
-                rc = fn.remove_arco_repos()
+                rc = fn.remove_snigdhaos_repos()
                 if rc == 0:
-                    fn.logger.info("ArcoLinux repos removed from %s" % fn.pacman_conf)
+                    fn.logger.info("Snigdha OS repos removed from %s" % fn.pacman_conf)
                     widget.set_active(False)
                 else:
                     message_dialog = MessageDialog(
@@ -1060,12 +1060,12 @@ class Main(Gtk.Window):
 
                     return True
             else:
-                fn.logger.error("Failed to remove ArcoLinux mirrorlist")
+                fn.logger.error("Failed to remove Snigdha OS mirrorlist")
 
                 message_dialog = MessageDialog(
                     "Error",
-                    "Failed to remove ArcoLinux mirrorlist",
-                    "Errors occurred during removal of the ArcoLinux mirrorlist",
+                    "Failed to remove Snigdha OS mirrorlist",
+                    "Errors occurred during removal of the Snigdha OS mirrorlist",
                     "Command run = %s\n\n Error = %s"
                     % (remove_mirrorlist["cmd_str"], remove_mirrorlist["output"]),
                     "error",
