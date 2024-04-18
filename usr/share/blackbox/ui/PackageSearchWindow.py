@@ -29,7 +29,7 @@ class PackageSearchWindow(Gtk.Window):
         self.set_size_request(700, 500)
         self.set_border_width(10)
         self.set_titlebar(self.headerbar)
-        self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+        self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
         self.search_package_activated = False
         self.build_gui()
 
