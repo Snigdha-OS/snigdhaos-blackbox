@@ -20,6 +20,7 @@ from Settings import Settings
 from ui.MessageDialog import MessageDialog
 from distro import id
 from os import makedirs
+import Functions as fn
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import GLib, Gtk
