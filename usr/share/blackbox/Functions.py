@@ -44,45 +44,28 @@ blackbox_pidfile = "/tmp/blackbox.pid"
 # 10m timeout
 process_timeout = 600
 
-arcolinux_mirrorlist = "/etc/pacman.d/arcolinux-mirrorlist"
+snigdhaos_mirrorlist = "/etc/pacman.d/snigdhaos-mirrorlist"
 pacman_conf = "/etc/pacman.conf"
 pacman_conf_backup = "/etc/pacman.conf.bak"
 pacman_logfile = "/var/log/pacman.log"
 pacman_lockfile = "/var/lib/pacman/db.lck"
 pacman_cache_dir = "/var/cache/pacman/pkg/"
 
-arco_test_repo = [
-    "#[arcolinux_repo_testing]",
-    "#SigLevel = PackageRequired DatabaseNever",
-    "#Include = /etc/pacman.d/arcolinux-mirrorlist",
-]
-
-arco_repo = [
-    "[arcolinux_repo]",
+snigdhaos_core = [
+    "[snigdhaos-core]",
     "SigLevel = PackageRequired DatabaseNever",
-    "Include = /etc/pacman.d/arcolinux-mirrorlist",
-]
-
-arco_3rd_party_repo = [
-    "[arcolinux_repo_3party]",
+    "Include = /etc/pacman.d/snigdhaos-mirrorlist",
+]snigdhaos_extra = [
+    "[snigdhaos-extra]",
     "SigLevel = PackageRequired DatabaseNever",
-    "Include = /etc/pacman.d/arcolinux-mirrorlist",
+    "Include = /etc/pacman.d/snigdhaos-mirrorlist",
 ]
-
-arco_xlrepo = [
-    "[arcolinux_repo_xlarge]",
-    "SigLevel = PackageRequired DatabaseNever",
-    "Include = /etc/pacman.d/arcolinux-mirrorlist",
-]
-
 
 log_dir = "/var/log/blackbox/"
 config_dir = "%s/.config/blackbox" % home
 config_file = "%s/blackbox.yaml" % config_dir
 
-
 event_log_file = "%s/event.log" % log_dir
-
 export_dir = "%s/blackbox-exports" % home
 
 
@@ -1789,7 +1772,7 @@ def remove_arco_keyring():
 
 def install_arco_mirrorlist():
     try:
-        mirrorlist = base_dir + "/packages/arcolinux-mirrorlist/"
+        mirrorlist = base_dir + "/packages/snigdhaos-mirrorlist/"
         file = os.listdir(mirrorlist)
         cmd_str = [
             "pacman",
@@ -1841,7 +1824,7 @@ def install_arco_mirrorlist():
 
 def remove_arco_mirrorlist():
     try:
-        cmd_str = ["pacman", "-Rdd", "arcolinux-mirrorlist-git", "--noconfirm"]
+        cmd_str = ["pacman", "-Rdd", "snigdhaos-mirrorlist-git", "--noconfirm"]
         logger.debug("%s" % " ".join(cmd_str))
         with subprocess.Popen(
             cmd_str,
