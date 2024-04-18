@@ -1886,7 +1886,7 @@ def add_snigdhaos_repos():
                 # check for existing Snigdha OS entries
                 if len(lines) > 0:
                     snigdhaos_test_repo_found = False
-                    snigdhaos_repo_found = False
+                    snigdhaos_core_found = False
                     snigdhaos_3rd_party_repo_found = False
                     snigdhaos_xlrepo_found = False
 
@@ -1895,22 +1895,22 @@ def add_snigdhaos_repos():
                             if snigdhaos_test_repo[0].replace("#", "") in line.strip():
                                 snigdhaos_test_repo_found = True
 
-                            if snigdhaos_repo[0].replace("#", "") in line.strip():
-                                snigdhaos_repo_found = True
+                            if snigdhaos_core[0].replace("#", "") in line.strip():
+                                snigdhaos_core_found = True
                                 index = lines.index(line)
 
                                 del lines[index]
-                                lines.insert(index, snigdhaos_repo[0])
+                                lines.insert(index, snigdhaos_core[0])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, snigdhaos_repo[1])
+                                lines.insert(index, snigdhaos_core[1])
 
                                 index += 1
 
                                 del lines[index]
-                                lines.insert(index, snigdhaos_repo[2])
+                                lines.insert(index, snigdhaos_core[2])
 
                             if snigdhaos_3rd_party_repo[0].replace("#", "") in line.strip():
                                 snigdhaos_3rd_party_repo_found = True
@@ -1949,8 +1949,8 @@ def add_snigdhaos_repos():
                         if line.strip() == snigdhaos_test_repo[0]:
                             snigdhaos_test_repo_found = True
 
-                        if line.strip() == snigdhaos_repo[0]:
-                            snigdhaos_repo_found = True
+                        if line.strip() == snigdhaos_core[0]:
+                            snigdhaos_core_found = True
 
                         if line.strip() == snigdhaos_3rd_party_repo[0]:
                             snigdhaos_3rd_party_repo_found = True
@@ -1964,11 +1964,11 @@ def add_snigdhaos_repos():
                         for snigdhaos_test_repo_line in snigdhaos_test_repo:
                             lines.append(snigdhaos_test_repo_line)
 
-                    if snigdhaos_repo_found is False:
+                    if snigdhaos_core_found is False:
                         lines.append("\n")
 
-                        for snigdhaos_repo_line in snigdhaos_repo:
-                            lines.append(snigdhaos_repo_line)
+                        for snigdhaos_core_line in snigdhaos_core:
+                            lines.append(snigdhaos_core_line)
 
                     if snigdhaos_3rd_party_repo_found is False:
                         lines.append("\n")
