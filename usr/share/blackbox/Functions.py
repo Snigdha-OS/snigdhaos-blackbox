@@ -55,7 +55,8 @@ snigdhaos_core = [
     "[snigdhaos-core]",
     "SigLevel = PackageRequired DatabaseNever",
     "Include = /etc/pacman.d/snigdhaos-mirrorlist",
-]snigdhaos_extra = [
+]
+snigdhaos_extra = [
     "[snigdhaos-extra]",
     "SigLevel = PackageRequired DatabaseNever",
     "Include = /etc/pacman.d/snigdhaos-mirrorlist",
