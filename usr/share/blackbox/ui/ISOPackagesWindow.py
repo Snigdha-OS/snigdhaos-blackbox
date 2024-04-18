@@ -79,7 +79,7 @@ class ISOPackagesWindow(Gtk.Window):
         self.set_size_request(500, 600)
         self.set_border_width(10)
         self.set_titlebar(headerbar)
-        self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+        self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
         self.treeview_loaded = False
         self.build_gui()
 
@@ -176,7 +176,7 @@ class ISOPackagesWindow(Gtk.Window):
                     lbl_package_count_value = Gtk.Label(xalign=0, yalign=0)
                     lbl_package_count_value.set_text(str(len(self.package_list)))
 
-                    self.filename = "%s/sofirem-exports/%s-%s-packages.x86_64.txt" % (
+                    self.filename = "%s/blackbox-exports/%s-%s-packages.x86_64.txt" % (
                         fn.home,
                         self.selected_iso,
                         fn.datetime.now().strftime("%Y-%m-%d"),
@@ -285,13 +285,13 @@ class ISOPackagesWindow(Gtk.Window):
             fn.logger.error("Exception in on_combo_iso_changed(): %s" % e)
 
     def on_iso_package_list_export(self, widget):
-        # export the package list to a file inside $HOME/sofirem-exports
+        # export the package list to a file inside $HOME/blackbox-exports
         fn.logger.debug("Exporting ArcoLinux ISO package list")
         try:
             if self.filename is not None:
                 with open(self.filename, "w", encoding="utf-8") as f:
                     f.write(
-                        "# Created by Sofirem on %s\n"
+                        "# Created by BlackBox on %s\n"
                         % fn.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     )
                     f.write("# %s\n" % self.github_source)
