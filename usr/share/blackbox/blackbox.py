@@ -842,13 +842,13 @@ class Main(Gtk.Window):
     def on_settings_clicked(self, widget):
         self.toggle_popover()
 
-    # ArcoLinux keys, mirrors setup
+    # Snigdha OS keys, mirrors setup
 
-    def arco_keyring_toggle(self, widget, data):
+    def snigdhaos_keyring_toggle(self, widget, data):
         # toggle is currently off, add keyring
         if widget.get_state() == False and widget.get_active() == True:
-            fn.logger.info("Installing ArcoLinux keyring")
-            install_keyring = fn.install_arco_keyring()
+            fn.logger.info("Installing Snigdha OS keyring")
+            install_keyring = fn.install_snigdhaos_keyring()
 
             if install_keyring == 0:
                 fn.logger.info("Installation of ArcoLinux keyring = OK")
