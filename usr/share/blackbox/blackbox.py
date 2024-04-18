@@ -93,11 +93,11 @@ class Main(Gtk.Window):
             print(
                 "---------------------------------------------------------------------------"
             )
-            print("If you have errors, report it on the discord channel of ArcoLinux")
+            print("If you have errors, report it on Snigdha OS Issue")
             print(
                 "---------------------------------------------------------------------------"
             )
-            print("You can receive support on https://discord.gg/stBhS4taje")
+            print("To report Bug go to https://github.com/Snigdha-OS/snigdhaos-issues")
             print(
                 "---------------------------------------------------------------------------"
             )
