@@ -34,7 +34,7 @@ class MessageDialog(Gtk.Dialog):
         btn_ok.set_size_request(100, 30)
         btn_ok.connect("clicked", on_message_dialog_ok_response, self)
         btn_ok.set_halign(Gtk.Align.END)
-        self.set_icon_from_file(os.path.join(base_dir, "images/sofirem.png"))
+        self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
 
         infobar = Gtk.InfoBar()
 
