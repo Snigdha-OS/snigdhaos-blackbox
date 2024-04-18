@@ -1,1 +1,0 @@
-Animated pipes terminal screensaver
