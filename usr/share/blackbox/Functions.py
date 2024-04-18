@@ -1674,9 +1674,9 @@ def repo_exist(value):
     return False
 
 
-def install_arco_keyring():
+def install_snigdhaos_keyring():
     try:
-        keyring = base_dir + "/packages/arcolinux-keyring/"
+        keyring = base_dir + "/packages/snigdhaos-keyring/"
         file = os.listdir(keyring)
         cmd_str = [
             "pacman",
@@ -1706,7 +1706,7 @@ def install_arco_keyring():
 
             else:
                 if len(output) == 0:
-                    output.append("Error: install of ArcoLinux keyring failed")
+                    output.append("Error: install of Snigdha OS keyring failed")
 
                 logger.error(" ".join(output))
 
@@ -1717,7 +1717,7 @@ def install_arco_keyring():
 
                 return result_err
     except Exception as e:
-        logger.error("Exception in install_arco_keyring(): %s" % e)
+        logger.error("Exception in install_snigdhaos_keyring(): %s" % e)
         result_err = {}
 
         result_err["cmd_str"] = cmd_str
@@ -1726,9 +1726,9 @@ def install_arco_keyring():
         return result_err
 
 
-def remove_arco_keyring():
+def remove_snigdhaos_keyring():
     try:
-        cmd_str = ["pacman", "-Rdd", "arcolinux-keyring", "--noconfirm"]
+        cmd_str = ["pacman", "-Rdd", "snigdhaos-keyring", "--noconfirm"]
         with subprocess.Popen(
             cmd_str,
             stdout=subprocess.PIPE,
@@ -1760,7 +1760,7 @@ def remove_arco_keyring():
                 return result_err
 
     except Exception as e:
-        logger.error("Exception in remove_arco_keyring(): %s" % e)
+        logger.error("Exception in remove_snigdhaos_keyring(): %s" % e)
 
         result_err = {}
 
