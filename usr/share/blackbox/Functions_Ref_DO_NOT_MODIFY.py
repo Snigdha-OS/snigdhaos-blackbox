@@ -119,13 +119,13 @@ i3wm_config = home + "/.config/i3/config"
 awesome_config = home + "/.config/awesome/rc.lua"
 qtile_config = home + "/.config/qtile/config.py"
 
-arepo = "[arcolinux_repo]\n\
+arepo = "[snigdhaos-core]\n\
 SigLevel = Required DatabaseOptional\n\
-Include = /etc/pacman.d/arcolinux-mirrorlist"
+Include = /etc/pacman.d/snigdhaos-mirrorlist"
 
-a3drepo = "[arcolinux_repo_3party]\n\
+a3drepo = "[snigdhaos-extra]\n\
 SigLevel = Required DatabaseOptional\n\
-Include = /etc/pacman.d/arcolinux-mirrorlist"
+Include = /etc/pacman.d/snigdhaos-mirrorlist"
 
 # =====================================================
 #               NOTIFICATIONS
