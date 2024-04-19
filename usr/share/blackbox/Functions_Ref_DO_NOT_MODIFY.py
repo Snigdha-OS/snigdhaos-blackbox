@@ -119,12 +119,6 @@ i3wm_config = home + "/.config/i3/config"
 awesome_config = home + "/.config/awesome/rc.lua"
 qtile_config = home + "/.config/qtile/config.py"
 
-seedhostmirror = "Server = https://ant.seedhost.eu/snigdhaos/$repo/$arch"
-
-arepo_test = "[arcolinux_repo_testing]\n\
-SigLevel = Required DatabaseOptional\n\
-Include = /etc/pacman.d/arcolinux-mirrorlist"
-
 arepo = "[arcolinux_repo]\n\
 SigLevel = Required DatabaseOptional\n\
 Include = /etc/pacman.d/arcolinux-mirrorlist"
@@ -132,18 +126,6 @@ Include = /etc/pacman.d/arcolinux-mirrorlist"
 a3drepo = "[arcolinux_repo_3party]\n\
 SigLevel = Required DatabaseOptional\n\
 Include = /etc/pacman.d/arcolinux-mirrorlist"
-
-axlrepo = "[arcolinux_repo_xlarge]\n\
-SigLevel = Required DatabaseOptional\n\
-Include = /etc/pacman.d/arcolinux-mirrorlist"
-
-hefftor_repo = "[hefftor-repo]\n\
-SigLevel = Optional TrustedOnly\n\
-Include = /etc/pacman.d/arcolinux-mirrorlist-bradheff"
-
-bobo_repo = "[chaotic-aur]\n\
-SigLevel = Required DatabaseOptional\n\
-Include = /etc/pacman.d/chaotic-mirrorlist"
 
 # =====================================================
 #               NOTIFICATIONS
