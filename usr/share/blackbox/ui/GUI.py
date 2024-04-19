@@ -524,33 +524,33 @@ def setup_headerbar(self, Gtk, settings):
 
         self.switch_package_version.connect("notify::active", self.version_toggle)
 
-        # switch to import arcolinux keyring
-        self.switch_arco_keyring = Gtk.Switch()
+        # switch to import snigdhaos keyring
+        self.switch_snigdhaos_keyring = Gtk.Switch()
 
         if (
-            fn.check_package_installed("arcolinux-keyring") is False
-            or fn.verify_arco_pacman_conf() is False
+            fn.check_package_installed("snigdhaos-keyring") is False
+            or fn.verify_snigdhaos_pacman_conf() is False
         ):
-            self.switch_arco_keyring.set_state(False)
+            self.switch_snigdhaos_keyring.set_state(False)
 
         else:
-            self.switch_arco_keyring.set_state(True)
+            self.switch_snigdhaos_keyring.set_state(True)
 
-        self.switch_arco_keyring.connect("state-set", self.arco_keyring_toggle)
+        self.switch_snigdhaos_keyring.connect("state-set", self.snigdhaos_keyring_toggle)
 
-        # switch to import arcolinix mirrorlist
-        self.switch_arco_mirrorlist = Gtk.Switch()
+        # switch to import snigdhaos mirrorlist
+        self.switch_snigdhaos_mirrorlist = Gtk.Switch()
 
         if (
-            fn.check_package_installed("arcolinux-mirrorlist-git") is False
-            or fn.verify_arco_pacman_conf() is False
+            fn.check_package_installed("snigdhaos-mirrorlist") is False
+            or fn.verify_snigdhaos_pacman_conf() is False
         ):
-            self.switch_arco_mirrorlist.set_state(False)
+            self.switch_snigdhaos_mirrorlist.set_state(False)
 
         else:
-            self.switch_arco_mirrorlist.set_state(True)
+            self.switch_snigdhaos_mirrorlist.set_state(True)
 
-        self.switch_arco_mirrorlist.connect("state-set", self.arco_mirrorlist_toggle)
+        self.switch_snigdhaos_mirrorlist.connect("state-set", self.snigdhaos_mirrorlist_toggle)
 
         # switch to display package progress window
         self.switch_package_progress = Gtk.Switch()
