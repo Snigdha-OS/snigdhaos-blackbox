@@ -23,12 +23,12 @@ from gi.repository import GLib, Gtk  # noqa
 #               Create log file
 # =====================================================
 
-log_dir = "/var/log/arcolinux/"
-aai_log_dir = "/var/log/arcolinux/aai/"
+log_dir = "/var/log/snigdhaos/"
+aai_log_dir = "/var/log/snigdhaos/aai/"
 
 
 def create_log(self):
-    print("Making log in /var/log/arcolinux")
+    print("Making log in /var/log/snigdhaos")
     now = datetime.datetime.now()
     time = now.strftime("%Y-%m-%d-%H-%M-%S")
     destination = aai_log_dir + "aai-log-" + time
@@ -79,14 +79,14 @@ sudo_username = os.getlogin()
 home = "/home/" + str(sudo_username)
 
 sddm_default = "/etc/sddm.conf"
-sddm_default_original = "/usr/local/share/arcolinux/sddm/sddm.conf"
+sddm_default_original = "/usr/local/share/snigdhaos/sddm/sddm.conf"
 
 sddm_default_d1 = "/etc/sddm.conf"
 sddm_default_d2 = "/etc/sddm.conf.d/kde_settings.conf"
 sddm_default_d2_dir = "/etc/sddm.conf.d/"
-sddm_default_d_sddm_original_1 = "/usr/local/share/arcolinux/sddm.conf.d/sddm.conf"
+sddm_default_d_sddm_original_1 = "/usr/local/share/snigdhaos/sddm.conf.d/sddm.conf"
 sddm_default_d_sddm_original_2 = (
-    "/usr/local/share/arcolinux/sddm.conf.d/kde_settings.conf"
+    "/usr/local/share/snigdhaos/sddm.conf.d/kde_settings.conf"
 )
 
 if os.path.exists("/etc/sddm.conf.d/kde_settings.conf"):
@@ -94,14 +94,14 @@ if os.path.exists("/etc/sddm.conf.d/kde_settings.conf"):
 else:
     sddm_conf = "/etc/sddm.conf"
 
-arcolinux_mirrorlist = "/etc/pacman.d/arcolinux-mirrorlist"
-arcolinux_mirrorlist_original = "/usr/local/share/arcolinux/arcolinux-mirrorlist"
+snigdhaos_mirrorlist = "/etc/pacman.d/snigdhaos-mirrorlist"
+snigdhaos_mirrorlist_original = "/usr/local/share/snigdhaos/snigdhaos-mirrorlist"
 pacman = "/etc/pacman.conf"
 oblogout_conf = "/etc/oblogout.conf"
 # oblogout_conf = home + "/oblogout.conf"
 gtk3_settings = home + "/.config/gtk-3.0/settings.ini"
 gtk2_settings = home + "/.gtkrc-2.0"
-grub_theme_conf = "/boot/grub/themes/Vimix/theme.txt"
+grub_theme_conf = "/boot/grub/themes/snigdhaos-grub-theme/theme.txt"
 xfce_config = home + "/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml"
 slimlock_conf = "/etc/slim.conf"
 termite_config = home + "/.config/termite/config"
@@ -119,7 +119,7 @@ i3wm_config = home + "/.config/i3/config"
 awesome_config = home + "/.config/awesome/rc.lua"
 qtile_config = home + "/.config/qtile/config.py"
 
-seedhostmirror = "Server = https://ant.seedhost.eu/arcolinux/$repo/$arch"
+seedhostmirror = "Server = https://ant.seedhost.eu/snigdhaos/$repo/$arch"
 
 arepo_test = "[arcolinux_repo_testing]\n\
 SigLevel = Required DatabaseOptional\n\
