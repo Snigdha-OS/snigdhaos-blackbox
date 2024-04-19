@@ -474,20 +474,6 @@ def install_alacritty(self):
             stderr=subprocess.STDOUT,
         )
 
-
-def get_desktop(self):
-    base_dir = os.path.dirname(os.path.realpath(__file__))
-
-    desktop = subprocess.run(
-        ["sh", base_dir + "/get_desktop.sh", "-n"],
-        shell=False,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-    dsk = desktop.stdout.decode().strip().split("\n")
-    self.desktop = dsk[-1].strip()
-
-
 def copytree(self, src, dst, symlinks=False, ignore=None):  # noqa
 
     if not os.path.exists(dst):
@@ -535,12 +521,3 @@ def checkIfProcessRunning(processName):
 def restart_program():
     python = sys.executable
     os.execl(python, python, *sys.argv)
-
-
-# JUNK CODE FOR LEARNING PROGRESS BARS:
-# from tqdm import tqdm
-# loop = tqdm(total = 1000, position = 0, leave = False)
-# for k in range(1001):
-#    loop.set_description("Loading...".format(k))
-#    loop.update(1)
-# loop.close
