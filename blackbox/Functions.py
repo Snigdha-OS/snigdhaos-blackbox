@@ -8,6 +8,7 @@ import subprocess
 import logging
 import datetime
 from datetime import datetime
+from datetime import timedelta
 # from logging import Logger
 import shutil
 import Settings
@@ -168,3 +169,96 @@ def _on_close_create_package_file():
     except Exception as e:
         logger.error("[ERROR] Exception: %s" % e)
         
+# NOTE: Global Functions
+def _get_position(lists, value):
+    data = [
+        string for string in lists if value in string
+    ]
+    position = lists.index(data[0])
+    return position
+
+def is_file_stale(filepath, stale_days, stale_hours, stale_minutes):
+    now = datetime.now()
+    stale_datetime = now - timedelta(
+        days=stale_days,
+        hours=stale_hours,
+        minutes=stale_minutes,
+    )
+    if os.path.exists(filepath):
+        file_created = datetime.fromtimestamp(
+            os.path.getctime(filepath)
+        )
+        if file_created < stale_datetime:
+            return True
+    else:
+        return False
+    
+# NOTE : Pacman
+def sync_package_db():
+    try:
+        sync_str = [
+            "pacman",
+            "-Sy",
+        ]
+        logger.info(
+            "Synchronizing Package Database..."
+        )
+        process_sync = subprocess.run(
+            sync_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=process_timeout,
+        )
+        if process_sync.returncode == 0:
+            return None
+        else:
+            if process_sync.stdout:
+                out = str(process_sync.stdout.decode("UTF-8"))
+                logger.error(out)
+                return out
+    except Exception as e:
+        logger.error(
+            "[ERROR] Exception: %s" % e
+        )
+
+def sync_file_db():
+    try:
+        sync_str = [
+            "pacman",
+            "-Fy",
+        ]
+        logger.info(
+            "Synchronizing File Database..."
+        )
+        process_sync = subprocess.run(
+            sync_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=process_timeout,
+
+        )
+        if process_sync.returncode == 0:
+            return None
+        else:
+            if process_sync.stdout:
+                out = str(process_sync.stdout.decode("UTF-8"))
+                logger.error(out)
+                return out
+    except Exception as e:
+        logger.error(
+            "[ERROR] Exception: %s" % e
+        )
+
+# NOTE: Installation & Uninstallation Process
+def start_subprocess(
+        self,
+        cmd,
+        progress_dialog,
+        action,
+        pkg,
+        widget
+):
+    try:
+        self.switch_package_version
