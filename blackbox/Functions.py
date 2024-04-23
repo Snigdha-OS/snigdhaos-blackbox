@@ -14,6 +14,8 @@ import shutil
 import Settings
 from logging.handlers import TimedRotatingFileHandler
 
+from ui.GUI import *
+
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
 
@@ -261,4 +263,32 @@ def start_subprocess(
         widget
 ):
     try:
-        self.switch_package_version
+        self.switch_package_version.set_sensitive(False)
+        self.switch_snigdhaos_keyring.set_sensitive(False)
+        self.switch_snigdhaos_mirrorlist.set_sensitive(False)
+
+        widget.set_sensitive(False)
+
+        process_stdout_lst = []
+        process_stdout_lst.append(
+            "Command = %s\n\n" % " ".join(cmd)
+        )
+        with subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            if progress_dialog is not None:
+                progress_dialog.pkg_dialog_closed = False
+            self.in_progress = True
+            if (
+                progress_dialog is not None and progress_dialog.pkg_dialog_closed is False
+            ):
+                line = (
+                    "Pacman Processing: %s Package: %s \n\n Command: %s\n\n" % (action, pkg.name, " ".join(cmd))
+                )
+
+    except Exception as e:
+        print(e)
