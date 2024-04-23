@@ -75,7 +75,7 @@ class Settings(object):
         except Exception as e:
             fn.Logger.error("[ERROR] Exception: %s" % e)
     
-    def read_cofig_file(self):
+    def read_config_file(self):
         try:
             if os.path.exists(fn.config_file):
                 contents = []
@@ -125,4 +125,3 @@ class Settings(object):
             return conf_settings
         else:
             print("[ERROR] Failed To Read Settings!")
-            

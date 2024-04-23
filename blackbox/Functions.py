@@ -5,9 +5,11 @@ from os import makedirs
 import sys
 import gi
 import subprocess
-# import logging
-from logging import Logger
+import logging
+# from logging import Logger
 import shutil
+import Settings
+from logging.handlers import TimedRotatingFileHandler
 
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
@@ -69,7 +71,7 @@ def permissions(dst):
                 group = g.replace(")", "").strip() # NOTE: replace with nothing!
         subprocess.call(["chown", "-R", sudo_username + ":" + group, dst], shell=False)
     except Exception as e:
-        Logger.error(e)
+        logger.error(e)
 
 # NOTE: Creating Log, Export and Config Directory:
 try:
@@ -93,3 +95,35 @@ except os.error as oserror:
 
 # NOTE: Read Config File dst: $HOME/.config/blackbox/blackbox.yaml
 # NOTE: Initiate logger
+try:
+    settings = Settings(False, False)
+    settings_config = settings.read_config_file()
+    logger = logging.getLogger("logger")
+    # NOTE: Create a console handler
+    ch = logging.StreamHandler()
+    # NOTE: Rotate the fucking event log!
+    tfh = TimedRotatingFileHandler(
+        event_log_file,
+        encoding="UTF-8",
+        delay=False,
+        when="W4",
+    )
+
+    if settings_config:
+        debug_logging_enabled = None
+        debug_logging_enabled = settings_config[
+            "Debug Logging"
+        ]
+
+        if debug_logging_enabled is not None and debug_logging_enabled is True:
+            logger.setLevel(logging.DEBUG)
+            ch.setLevel(logging.DEBUG)
+            tfh.setLevel(level=logging.DEBUG)
+        else:
+            logger.setLevel(logging.INFO)
+            ch.setLevel(logging.INFO)
+            tfh.setLevel(level=logging.INFO)
+    else:
+        logger.setLevel(logging.INFO)
+        ch.setLevel(logging.INFO)
+        tfh.setLevel(level=logging.INFO)
