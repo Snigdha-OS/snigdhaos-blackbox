@@ -77,5 +77,52 @@ class Settings(object):
     
     def read_cofig_file(self):
         try:
-            
+            if os.path.exists(fn.config_file):
+                contents = []
+                with open(fn.config_file, "r", encoding="UTF-8") as f:
+                    contents = f.readlines()
+                if len(contents) == 0:
+                    fn.shutil.copy(default_file, fn.config_file)
+                    fn.permissions(fn.config_dir)
+                else:
+                    return self.read(contents)
+            else:
+                # NOTE: String Replaces the Template File
+                fn.shutil.copy(default_file, fn.config_file)
+                fn.permissions(fn.config_dir)
+                with open(fn.config_file, "r", encoding="UTF-8") as f:
+                    contents = f.readlines()
+                return self.read(contents)
+        except Exception as e:
+            print("[ERROR] Exception: %s" % e)
 
+    def read(self, contents):
+        setting_name = None
+        setting_value_enabled = None
+        conf_settings = {}
+        for line in contents:
+            if line.startswith("- name:"):
+                setting_name = (
+                    line.strip("- name: ")
+                    .strip()
+                    .strip('"')
+                    .strip("\n")
+                    .strip()
+                )
+            elif line.startswith(" enabled: "):
+                setting_value_enabled = (
+                    line.strip("- name: ")
+                    .strip()
+                    .strip('"')
+                    .strip("\n")
+                    .strip()
+                )
+                if setting_value_enabled == "False":
+                    conf_settings[setting_name] = False
+                else:
+                    conf_settings[setting_name] = True
+        if len(conf_settings) > 0:
+            return conf_settings
+        else:
+            print("[ERROR] Failed To Read Settings!")
+            

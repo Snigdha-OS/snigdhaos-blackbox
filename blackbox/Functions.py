@@ -7,6 +7,7 @@ import gi
 import subprocess
 # import logging
 from logging import Logger
+import shutil
 
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
