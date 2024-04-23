@@ -204,26 +204,6 @@ class GUI:
 
             btn_recache = Gtk.Button(label="Recache Applications")
             btn_recache.connect("clicked", self.recache_clicked)
-            # btnReCache.set_property("has-tooltip", True)
-            # btnReCache.connect("query-tooltip", self.tooltip_callback,
-            #           "Refresh the application cache")
-
-            # =====================================================
-            #                   REPOS
-            # =====================================================
-
-            # if not (
-            #     fn.check_package_installed("arcolinux-keyring")
-            #     or fn.check_package_installed("arcolinux-mirrorlist-git")
-            # ):
-            #     self.btnRepos = Gtk.Button(label="Add ArcoLinux Repo")
-            #     self.btnRepos._value = 1
-            # else:
-            #     self.btnRepos = Gtk.Button(label="Remove ArcoLinux Repo")
-            #     self.btnRepos._value = 2
-            #
-            # self.btnRepos.set_size_request(100, 30)
-            # self.btnRepos.connect("clicked", self.on_repos_clicked)
 
             # =====================================================
             #               QUIT BUTTON
@@ -341,7 +321,7 @@ class GUI:
                     yaml_files_unsorted.append(file)
                 else:
                     print(
-                        "Unsupported configuration file type. Please contact Arcolinux Support."
+                        "Unsupported configuration file type. Please contact Snigdha OS Support."
                     )
             # Need to sort the list (Or do we? I choose to)
             yaml_files = sorted(yaml_files_unsorted)
@@ -523,32 +503,32 @@ def setup_headerbar(self, Gtk, settings):
         self.switch_package_version.connect("notify::active", self.version_toggle)
 
         # switch to import arcolinux keyring
-        self.switch_arco_keyring = Gtk.Switch()
+        self.switch_snigdhaos_keyring = Gtk.Switch()
 
         if (
-            fn.check_package_installed("arcolinux-keyring") is False
-            or fn.verify_arco_pacman_conf() is False
+            fn.check_package_installed("snigdhaos-keyring") is False
+            or fn.verify_snigdhaos_pacman_conf() is False
         ):
-            self.switch_arco_keyring.set_state(False)
+            self.switch_snigdhaos_keyring.set_state(False)
 
         else:
-            self.switch_arco_keyring.set_state(True)
+            self.switch_snigdhaos_keyring.set_state(True)
 
-        self.switch_arco_keyring.connect("state-set", self.arco_keyring_toggle)
+        self.switch_snigdhaos_keyring.connect("state-set", self.snigdhaos_keyring_toggle)
 
         # switch to import arcolinix mirrorlist
-        self.switch_arco_mirrorlist = Gtk.Switch()
+        self.switch_snigdhaos_mirrorlist = Gtk.Switch()
 
         if (
-            fn.check_package_installed("arcolinux-mirrorlist-git") is False
-            or fn.verify_arco_pacman_conf() is False
+            fn.check_package_installed("snigdhaos-mirrorlist") is False
+            or fn.verify_snigdhaos_pacman_conf() is False
         ):
-            self.switch_arco_mirrorlist.set_state(False)
+            self.switch_snigdhaos_mirrorlist.set_state(False)
 
         else:
-            self.switch_arco_mirrorlist.set_state(True)
+            self.switch_snigdhaos_mirrorlist.set_state(True)
 
-        self.switch_arco_mirrorlist.connect("state-set", self.arco_mirrorlist_toggle)
+        self.switch_snigdhaos_mirrorlist.connect("state-set", self.snigdhaos_mirrorlist_toggle)
 
         # switch to display package progress window
         self.switch_package_progress = Gtk.Switch()
@@ -596,13 +576,13 @@ def setup_headerbar(self, Gtk, settings):
         modelbtn_about_app.props.text = "About Sofirem"
 
         # button to show iso package lists window
-        modelbtn_iso_packages_list = Gtk.ModelButton()
-        modelbtn_iso_packages_list.connect(
-            "clicked", self.on_arcolinux_iso_packages_clicked
-        )
-        modelbtn_iso_packages_list.set_name("modelbtn_popover")
-        modelbtn_iso_packages_list.props.centered = False
-        modelbtn_iso_packages_list.props.text = "Explore ArcoLinux ISO Packages"
+        # modelbtn_iso_packages_list = Gtk.ModelButton()
+        # modelbtn_iso_packages_list.connect(
+        #     "clicked", self.on_arcolinux_iso_packages_clicked
+        # )
+        # modelbtn_iso_packages_list.set_name("modelbtn_popover")
+        # modelbtn_iso_packages_list.props.centered = False
+        # modelbtn_iso_packages_list.props.text = "Explore ArcoLinux ISO Packages"
 
         # button to show package search window
         modelbtn_package_search = Gtk.ModelButton()
@@ -627,17 +607,17 @@ def setup_headerbar(self, Gtk, settings):
         lbl_package_progress_padding = Gtk.Label(xalign=0)
         lbl_package_progress_padding.set_text("  ")
 
-        lbl_arco_keyring = Gtk.Label(xalign=0)
-        lbl_arco_keyring.set_text("Import ArcoLinux Keyring")
+        lbl_snigdhaos_keyring = Gtk.Label(xalign=0)
+        lbl_snigdhaos_keyring.set_text("Import Snigdha OS Keyring")
 
-        lbl_arco_keyring_padding = Gtk.Label(xalign=0)
-        lbl_arco_keyring_padding.set_text("  ")
+        lbl_snigdhaos_keyring_padding = Gtk.Label(xalign=0)
+        lbl_snigdhaos_keyring_padding.set_text("  ")
 
-        lbl_arco_mirrorlist = Gtk.Label(xalign=0)
-        lbl_arco_mirrorlist.set_text("Import ArcoLinux Mirrorlist")
+        lbl_snigdhaos_mirrorlist = Gtk.Label(xalign=0)
+        lbl_snigdhaos_mirrorlist.set_text("Import Snigdha OS Mirrorlist")
 
-        lbl_arco_mirrorlist_padding = Gtk.Label(xalign=0)
-        lbl_arco_mirrorlist_padding.set_text("  ")
+        lbl_snigdhaos_mirrorlist_padding = Gtk.Label(xalign=0)
+        lbl_snigdhaos_mirrorlist_padding.set_text("  ")
 
         grid_switches.attach(lbl_package_version, 0, 1, 1, 1)
         grid_switches.attach_next_to(
@@ -673,35 +653,35 @@ def setup_headerbar(self, Gtk, settings):
             1,
         )
 
-        grid_switches.attach(lbl_arco_keyring, 0, 3, 1, 1)
+        grid_switches.attach(lbl_snigdhaos_keyring, 0, 3, 1, 1)
         grid_switches.attach_next_to(
-            lbl_arco_keyring_padding,
-            lbl_arco_keyring,
+            lbl_snigdhaos_keyring_padding,
+            lbl_snigdhaos_keyring,
             Gtk.PositionType.RIGHT,
             1,
             1,
         )
 
         grid_switches.attach_next_to(
-            self.switch_arco_keyring,
-            lbl_arco_keyring_padding,
+            self.switch_snigdhaos_keyring,
+            lbl_snigdhaos_keyring_padding,
             Gtk.PositionType.RIGHT,
             1,
             1,
         )
 
-        grid_switches.attach(lbl_arco_mirrorlist, 0, 4, 1, 1)
+        grid_switches.attach(lbl_snigdhaos_mirrorlist, 0, 4, 1, 1)
         grid_switches.attach_next_to(
-            lbl_arco_mirrorlist_padding,
-            lbl_arco_mirrorlist,
+            lbl_snigdhaos_mirrorlist_padding,
+            lbl_snigdhaos_mirrorlist,
             Gtk.PositionType.RIGHT,
             1,
             1,
         )
 
         grid_switches.attach_next_to(
-            self.switch_arco_mirrorlist,
-            lbl_arco_mirrorlist_padding,
+            self.switch_snigdhaos_mirrorlist,
+            lbl_snigdhaos_mirrorlist_padding,
             Gtk.PositionType.RIGHT,
             1,
             1,
