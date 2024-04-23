@@ -6,6 +6,8 @@ import sys
 import gi
 import subprocess
 import logging
+import datetime
+from datetime import datetime
 # from logging import Logger
 import shutil
 import Settings
@@ -127,3 +129,42 @@ try:
         logger.setLevel(logging.INFO)
         ch.setLevel(logging.INFO)
         tfh.setLevel(level=logging.INFO)
+    # NOTE: Docs -> https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
+    formatter = logging.Formatter(
+        "%(asctime)s:%(levelname)s > %(message)s",
+        "%Y-%m-%d %H:%M:%S"
+    )
+    # NOTE :  Call formatter to ch & tfh
+    ch.setFormatter(formatter)
+    tfh.setFormatter(formatter)
+    # NOTE: Append ch to logger
+    logger.addHandler(ch)
+    # NOTE: Append File Handler to logger
+    logger.addHandler(tfh)
+
+except Exception as e:
+    print("[ERROR] Failed: %s" % e)
+
+# NOTE : On app close create package file 
+def _on_close_create_package_file():
+    try:
+        logger.info("App cloding saving currently installed package to file")
+        package_file = "%s-packages.txt" % datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        logger.info("Saving: %s%s" %(log_dir, package_file))
+        cmd = [
+            "pacman",
+            "-Q",
+        ]
+        with subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            with open("%s/%s" % (log_dir, package_file), "w") as f:
+                for line in process.stdout:
+                    f.write("%s" %line)
+    except Exception as e:
+        logger.error("[ERROR] Exception: %s" % e)
+        
