@@ -19,5 +19,31 @@ blackbox_lockfile = "/tmp/blackbox.lock"
 blackbox_pidfile = "/tmp/blackbox.pid"
 process_timeout = 300 # NOTE: process time out has been set to 5 mins.
 snigdhaos_mirrorlist = "/etc/pacman.d/snigdhaos-mirrorlist"
+
+# NOTE: pacman settings
 pacman_conf = "/etc/pacman.conf"
 pacman_conf_backup = "/etc/pacman.conf.bak" # NOTE: Bak stands for backup
+pacman_logfile = "/var/log/pacman.log"
+pacman_lockfile = "/var/lib/pacman/db.lck"
+pacman_cache_dir = "/var/cache/pacman/pkg/"
+
+# NOTE: Snigdha OS Mirror Config
+snigdhaos_core = [
+    "[snigdhaos-core]"
+    "SigLevel = PackageRequired DatabaseNever"
+    "Include = /etc/pacman.d/snigdhaos-mirrorlist"
+]
+snigdhaos_extra = [
+    "[snigdhaos-extra]"
+    "SigLevel = PackageRequired DatabaseNever"
+    "Include = /etc/pacman.d/snigdhaos-mirrorlist"
+]
+
+# NOTE: BlackBox Specific
+log_dir = "/var/log/blackbox/"
+config_dir = "%s/.config/blackbox" % home
+config_file = "%s/blackbox.yaml" % config_dir # NOTE: It is already on $pwd
+event_log_file = "%s/event.log" % log_dir
+export_dir = "%s/blackbox-exports" % home
+
+# NOTE: Permissions specified here
