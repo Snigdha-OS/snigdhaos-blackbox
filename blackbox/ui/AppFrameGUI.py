@@ -1,4 +1,4 @@
-#!usr/bin/python
+#!/bin/python
 from socket import TIPC_ADDR_NAME
 from urllib.parse import scheme_chars
 import Functions as fn
