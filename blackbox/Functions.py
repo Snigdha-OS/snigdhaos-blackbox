@@ -1,7 +1,12 @@
 #!/bin/python
 
 import os
+from os import makedirs
+import sys
 import gi
+import subprocess
+# import logging
+from logging import Logger
 
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
@@ -47,3 +52,40 @@ event_log_file = "%s/event.log" % log_dir
 export_dir = "%s/blackbox-exports" % home
 
 # NOTE: Permissions specified here
+
+def permissions(dst):
+    try:
+        # NOTE : Use try-catch block so that we can trace any error!
+        groups = subprocess.run(
+            ["sh", "-c", "id " + sudo_username],
+            shell=False,
+            stdout=subprocess.PIPE, # NOTE: Standard Output
+            stderr=subprocess.STDOUT, # NOTE: Standard Error Output
+        )
+        for i in groups.stdout.decode().split(" "):
+            if "gid" in i:
+                g = i.split("(")[1]
+                group = g.replace(")", "").strip() # NOTE: replace with nothing!
+        subprocess.call(["chown", "-R", sudo_username + ":" + group, dst], shell=False)
+    except Exception as e:
+        Logger.error(e)
+
+# NOTE: Creating Log, Export and Config Directory:
+try:
+    if not os.path.exists(log_dir):
+        makedirs(log_dir)
+    if not os.path.exists(export_dir):
+        makedirs(export_dir)
+    if not os.path.exists(config_dir):
+        makedirs(config_dir)
+    
+    permissions(export_dir)
+    permissions(config_dir)
+
+    print("[INFO] Log Directory: %s" % log_dir)
+    print("[INFO] Export Directory: %s" % export_dir)
+    print("[INFO] Config Directory: %s" % config_dir)
+
+except os.error as oserror:
+    print("[ERROR] Exception: %s" % oserror)
+    sys.exit(1)
