@@ -1,0 +1,131 @@
+name: 👾 Report Bug in $Packages of Snigdha OS
+description: Help us to improve the $Packages Snigdha OS 
+labels: [bug]
+assignees: eshanized
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## First Thing First!
+
+        Before filing any issue, ask yourself:
+        - Are you sure the package built by Snigdha OS? (e.g snigdhaos-welcome) 
+        - Do I have basic ideas about where it goes wrong? (e.g crashing)
+        - Could it be because of my own mistakes?
+
+        **The GitHub issue tracker is not a support forum**. If you are not sure whether it could be your mistakes, ask in the [Snigdha OS Forum](https://forum.snigdhaos.org/) first. The quickest way to verify whether the problem is of Snigdha OS is through a **reproduction**, starting with a fresh installation(note: install on virtual machine) and making changes until the bug is reproduced.
+
+        Make the bug obvious. Ideally, we should be able to understand it without running any code.
+
+        Bugs are fixed faster if you include:
+        - A repro repository to inspect the code
+        - An url to see the problem live (if possible)
+
+
+  - type: checkboxes
+    attributes:
+      label: Have you read the Contributing Guidelines?
+      options:
+        - label: I have read the [Contributing Guidelines](https://snigdha-os.github.io/documentation/introduction/contributing).
+          required: true
+
+  - type: checkboxes
+    attributes:
+      label: Prerequisites
+      description: Please check the following items before creating a issue. This way we know you've done these steps first.
+      options:
+        - label: I'm using the latest version of the package. Read [How to see package version in Snigdha OS?](https://snigdhaos.org/blog/check-package-version-on-snigdha-os/)
+          required: true
+        - label: I have cleared the package cache and reinstalled the package. Read [How to clear package cache?](https://snigdhaos.org/blog/check-package-version-on-snigdha-os/)
+          required: true
+        - label: I have checked for latest package update.
+          required: true
+        - label: I have tried the `sudo pacman -Syyu` or `update` command.
+          required: true
+        - label: I have read the console error message carefully (if applicable).
+        - label: I am not using virtual machine.
+
+  - type: input
+    attributes:
+      label: Package Name
+      description: Be sure about the package name.
+      placeholder: e.g snigdhaos-gtk-theme.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Reproducible demo
+      description: |
+        > **What happens if you skip this step?** Someone will read your bug report, and maybe will be able to help you, but it’s unlikely that it will get much attention from the team. Eventually, the issue will likely get closed in favor of issues that have reproducible demos.
+
+        Please remember that:
+
+        - Issues without reproducible demos have a very low priority.
+        - The person fixing the bug would have to do that anyway. Please be respectful of their time.
+        - You might figure out the issues yourself as you work on extracting it.
+
+        Thanks for helping us help you!
+      placeholder: e.g https://github.com/eshanized/snigdhaos-welcome
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Write down the steps to reproduce the bug. You should start with a fresh installation, or your git repository linked above.
+      placeholder: |
+        Step 1:
+        Step 2:
+        Step 3:
+        Step 4:
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: |
+        How did you expect your project to behave? It’s fine if you’re not sure your understanding is correct. Write down what you thought would happen.
+      placeholder: Write what you thought would happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Actual behavior
+      description: |
+        Did something go wrong? Is something broken, or not behaving as you expected?
+        Describe this section in detail, and attach screenshots if possible. Don't only say "it doesn't work"!
+        Please submit exhaustive and complete log messages (we also need the error stack-traces, not just the message).
+        > Please read error messages carefully: it often tells you exactly what you are doing wrong.
+      placeholder: Write what happened. Add full console log messages and screenshots, if applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Your PC Specification
+      description: |
+        Include as many relevant details about the environment you experienced the bug in.
+        > run `cat /etc/os-release` on terminal to see **OS Build ID**
+      value: |
+        - CPU: [e.g i5 1335U]
+        - RAM: [e.g 2 GiB]
+        - STORAGE: [e.g SSD/HDD]
+        - Snigdha OS Build: [e.g arctic]
+        - Snigdha OS Version: [e.g 4.5]
+
+  - type: checkboxes
+    attributes:
+      label: Self-service
+      description: |
+        If you feel like you could contribute to this issue, please check the box below. This would tell us and other people looking for contributions that someone's working on it.
+        If you do check this box, please send a pull request within 7 days so we can still delegate this to someone else.
+      options:
+        - label: I'd be willing to fix this bug myself.
