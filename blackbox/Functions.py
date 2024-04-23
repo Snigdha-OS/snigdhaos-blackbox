@@ -89,3 +89,6 @@ try:
 except os.error as oserror:
     print("[ERROR] Exception: %s" % oserror)
     sys.exit(1)
+
+# NOTE: Read Config File dst: $HOME/.config/blackbox/blackbox.yaml
+# NOTE: Initiate logger
