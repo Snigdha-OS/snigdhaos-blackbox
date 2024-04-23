@@ -1,0 +1,11 @@
+- name: "Display Package Versions"
+  description: "<True/False>"
+  enabled: False
+
+- name: "Display Package Progress"
+  description: "<True/False>"
+  enabled: False
+
+- name: "Debug Loggings"
+  description: "<True/False>"
+  enabled: False
