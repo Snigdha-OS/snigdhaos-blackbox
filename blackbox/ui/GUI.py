@@ -1,4 +1,7 @@
-#!/bin/python .venv
+#!/bin/python
+
+# NOTE : We apply python system wide !
+
 import Functions as fn
 from ui.AppFrameGUI import AppFrameGUI
 from multiprocessing import cpu_count
