@@ -1225,3 +1225,45 @@ def query_pkg(package):
         return False
     except Exception as e:
         logger.error("Exception in LOC1206: %s " % e)
+
+def cache(package, path_dir_cache):
+    try:
+        pkg = package.strip()
+        query_str = [
+            "pacman", 
+            "-Si", 
+            pkg, 
+            " --noconfirm",
+            ]
+        process = subprocess.Popen(
+            query_str, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        out, err = process.communicate()
+        if process.returncode == 0:
+            # out, err = process.communicate()
+
+            output = out.decode("utf-8")
+
+            if len(output) > 0:
+                split = output.splitlines()
+                desc = str(split[3]) # Ref: LOC:963
+                description = desc[18:] # Ref: LOC:964
+                filename = path_dir_cache + pkg
+
+                file = open(filename, "w")
+                file.write(description)
+                file.close()
+
+                return description
+ 
+        if process.returncode != 0:
+            exceptions = [
+                "cached-package-goes-here"
+            ]
+            if pkg in exceptions:
+                description = file_lookup(pkg, path_dir_cache + "corrections/")
+                return description
+        return "No Description Found"
+
+    except Exception as e:
+        logger.error("Exception in cache(): %s " % e)
