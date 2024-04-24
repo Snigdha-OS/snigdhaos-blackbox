@@ -1174,4 +1174,31 @@ def get_package_information(package_name):
             return "error: package '%s' not found!\n" % package_name
         else:
             
-    
+# NOTE : ICON ON THE BACK
+def get_current_installed():
+    logger.debug(
+        "Get currently installed packages"
+    )
+    path = base_dir + "/cache/installed.lst"
+
+    query_str = [
+        "pacman", 
+        "-Q",
+    ]
+
+    subprocess_query = subprocess.Popen(
+        query_str,
+        shell=False,
+        stdout=subprocess.PIPE,
+    )
+
+    out, err = subprocess_query.communicate(timeout=process_timeout)
+
+    # added validation on process result
+    if subprocess_query.returncode == 0:
+        file = open(path, "w")
+        for line in out.decode("utf-8"):
+            file.write(line)
+        file.close()
+    else:
+        logger.warning("Failed to run %s" % query_str)
