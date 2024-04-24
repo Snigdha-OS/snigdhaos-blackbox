@@ -19,7 +19,7 @@ import Functions as fn
 from Settings import Settings
 from Package import Package
 from ui.MessageDialog import MessageDialog
-
+from ui.GUI import GUI
 
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
@@ -981,3 +981,105 @@ def cache(package, path_dir_cache):
             "Exception %s" % e
         )
 
+def get_package_description(package):
+    query_str = [
+        "pacman",
+        "-Si",
+        package,
+    ]
+    try:
+        with subprocess.Popen(
+            query_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            while True:
+                if process.poll() is not None:
+                    break
+            returncode = None
+            returncode = process.poll()
+            if returncode is not None:
+                for line in process.stdout:
+                    if "Description         :" in line.strip():
+                        return line.replace(" ", "").split("Description:")[1].strip()
+    
+    except Exception as e:
+        logger.error(
+            "Exception: %s" % e
+        )
+
+def get_installed_package_data(self):
+    latest_package_data = get_all_package_info()
+    try:
+        installed_packages_list = []
+        pkg_name = None
+        pkg_version = None
+        pkg_install_date = None
+        pkg_installed_size = None
+        pkg_latest_version = None
+        with subprocess.Popen(
+            self.pacman_export_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            for line in process.stdout:
+                if "Name            :" in line.strip():
+                    pkg_name = line.replace(" ", "").split("Name:")[1].strip()
+                if "Version            :" in line.strip():
+                    pkg_name = line.replace(" ", "").split("Version:")[1].strip()
+                if "Installed Size            :" in line.strip():
+                    pkg_name = line.replace(" ", "").split("Installed Size :")[1].strip()
+                if "Install Date            :" in line.strip():
+                    pkg_name = line.replace(" ", "").split("Install Date :")[1].strip()
+                    found = False
+                    pkg_latest_version = None
+                    for i in latest_package_data:
+                        if i["name"] == pkg_name:
+                            pkg_latest_version = i["version"]
+                            break
+                        installed_packages_list.append(
+                            (
+                                pkg_name,
+                                pkg_version,
+                                pkg_latest_version,
+                                pkg_installed_size,
+                                pkg_install_date,
+                            )
+                        )
+        self.pkg_export_queue.put(
+            installed_packages_list
+        )
+    except Exception as e:
+        logger.error(
+            "Exception: %s" % e
+        )
+
+def get_package_files(package_name):
+    try:
+        query_str = [
+            "pacman",
+            "-Fl",
+            package_name,
+        ]
+        process = subprocess.run(
+            query_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=process_timeout,
+        )
+        if process.returncode == 0:
+            package_files = []
+            for line in process.stdout.decode("UTF-8").splitlines():
+                package_files.append(line.split(" ")[1], None)
+            return package_files
+        else:
+            return None
+    except Exception as e:
+        logger.error(
+            "Exception in LOC1161: %s" % e
+        )
