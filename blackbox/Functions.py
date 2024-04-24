@@ -501,6 +501,69 @@ def refresh_ui(
                 message_dialog.show_all()
                 result = message_dialog.run()
                 message_dialog.destroy()
+    if installed is False and action =="uninstall":
+        logger.debug("Toggle switch state = False")
+        switch.set_sensitive(True)
+        switch.set_state(True)
+        switch.set_active(True)
+        if progress_dialog is not None:
+            if progress_dialog.pkg_dialog_closed is False:
+                progress_dialog.set_title(
+                    "%s uninstalled!" %pkg.name
+                )
+                progress_dialog.infobar.set_name("infobar_info")
+                content =progress_dialog.infobar.get_content_area()
+                if content is not None:
+                    for widget in content.get_children():
+                        content.remove(widget)
+                    lbl_install = Gtk.Label(xalign=0, yalign=0)
+                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    lbl_install.set_markup(
+                        "<b>Package %s installed.</b>" % pkg.name
+                    )
+                    content.add(lbl_install)
+                    if self.timeout_id is not None:
+                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        GLib.source_remove(self.timeout_id)
+                        self.timeout_id = None
+                    self.timeout_id = GLib.timeout_add(
+                        100,
+                        reveal_infobar,
+                        self,
+                        progress_dialog,
+                    )
+    if installed is True and action == "uninstall":
+        logger.debug("Toggle switch state = False")
+        switch.set_sensitive(True)
+        switch.set_state(False)
+        switch.set_active(False)
+        if progress_dialog is not None:
+            if progress_dialog.pkg_dialog_closed is False:
+                progress_dialog.set_title(
+                    "%s uninstalled!" %pkg.name
+                )
+                progress_dialog.infobar.set_name("infobar_info")
+                content =progress_dialog.infobar.get_content_area()
+                if content is not None:
+                    for widget in content.get_children():
+                        content.remove(widget)
+                    lbl_install = Gtk.Label(xalign=0, yalign=0)
+                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    lbl_install.set_markup(
+                        "<b>Package %s installed.</b>" % pkg.name
+                    )
+                    content.add(lbl_install)
+                    if self.timeout_id is not None:
+                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        GLib.source_remove(self.timeout_id)
+                        self.timeout_id = None
+                    self.timeout_id = GLib.timeout_add(
+                        100,
+                        reveal_infobar,
+                        self,
+                        progress_dialog,
+                    )
+
 def reveal_infobar(
         self,
         progress_dialog,
