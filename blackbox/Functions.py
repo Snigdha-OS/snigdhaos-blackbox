@@ -7,7 +7,7 @@ import psutil
 import time
 import datetime
 from datetime import datetime
-from datetime import timedelta
+from datetime import timedelta # DOCS : https://www.freecodecamp.org/news/how-to-use-timedelta-objects-in-python/
 import subprocess
 import threading
 import logging # DOCS : https://docs.python.org/3/library/logging.html
@@ -19,8 +19,8 @@ from Settings import Settings
 from ui.MessageDialog import MessageDialog
 from distro import id # DOCS : https://github.com/python-distro/distro
 
-import gi
-gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
+import gi # DOCS : https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
+gi.require_version("Gtk" "3.0")
 from gi.repository import GLib, Gtk
 
 # NOTE: Base Directory
@@ -91,7 +91,7 @@ def permissions(dst):
 try:
     # DOCS : https://docs.python.org/3/library/os.path.html
     if not os.path.exists(log_dir):
-        makedirs(log_dir)
+        makedirs(log_dir) # REF : LOC 4
     if not os.path.exists(export_dir):
         makedirs(export_dir)
     if not os.path.exists(config_dir):
@@ -101,6 +101,7 @@ try:
     print("[INFO] Log Directory: %s" % log_dir)
     print("[INFO] Export Directory: %s" % export_dir)
     print("[INFO] Config Directory: %s" % config_dir)
+# DOCS : https://www.geeksforgeeks.org/handling-oserror-exception-in-python/
 except os.error as oserror:
     print("[ERROR] Exception: %s" % oserror)
     sys.exit(1)
@@ -139,22 +140,17 @@ try:
         logger.setLevel(logging.INFO)
         ch.setLevel(logging.INFO)
         tfh.setLevel(level=logging.INFO)
-    # NOTE: Docs -> https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
+    # DOCS : https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
     formatter = logging.Formatter(
         "%(asctime)s:%(levelname)s > %(message)s",
         "%Y-%m-%d %H:%M:%S"
     )
-    # NOTE :  Call formatter to ch & tfh
     ch.setFormatter(formatter)
     tfh.setFormatter(formatter)
-    # NOTE: Append ch to logger
     logger.addHandler(ch)
-    # NOTE: Append File Handler to logger
     logger.addHandler(tfh)
-
 except Exception as e:
     print("[ERROR] Exception in LOC109: %s" % e)
-
 # NOTE : On app close create package file 
 def _on_close_create_package_file():
     try:
@@ -179,7 +175,6 @@ def _on_close_create_package_file():
         logger.error("[ERROR] Exception in LOC158: %s" % e)
         
 # NOTE: Global Functions
-
 def _get_position(lists, value):
     data = [
         string for string in lists if value in string
@@ -418,7 +413,7 @@ def refresh_ui(
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
                         100,
-                        reveal_infobar,
+                        reveal_infobar, # LOC : 618
                         self,
                         progress_dialog,
                     )
