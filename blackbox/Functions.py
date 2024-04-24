@@ -333,11 +333,42 @@ def start_subprocess(
                     "Pacman process completion: %s" % " ".join(cmd)
                 )
                 GLib.idle_add(
-                    refresh_ui # INCOMPLETE: 
+                    refresh_ui,
+                    self,
+                    action,
+                    widget,
+                    pkg,
+                    progress_dialog,
+                    process_stdout_lst,
+                    priority=GLib.PRIORITY_DEFAULT,
+                )
+            else:
+                logger.error(
+                    "Pacman process failed to run %s" % " ".join(cmd)
                 )
 
-    except Exception as e:
-        print(e)
+    except TimeoutError as terr:
+        # print(e)
+        logger.error(
+            "Timeout Error in %s : %s" % (action, terr)
+        )
+        process.terminate()
+        if progress_dialog is not None:
+            progress_dialog.btn_package_progress_close.set_sensitive(True)
+        self.switch_package_version.set_sensitive(True)
+        self.switch_snigdhaos_keyring.set_sensitive(True)
+        self.switch_snigdhaos_mirrorlist.set_sensitive(True)
+    
+    except SystemError as syerr:
+        logger.error(
+            "Timeout Error in %s : %s" % (action, syerr)
+        )
+        process.terminate()
+        if progress_dialog is not None:
+            progress_dialog.btn_package_progress_close.set_sensitive(True)
+        self.switch_package_version.set_sensitive(True)
+        self.switch_snigdhaos_keyring.set_sensitive(True)
+        self.switch_snigdhaos_mirrorlist.set_sensitive(True)
 
 def refresh_ui(
         self,
@@ -533,16 +564,16 @@ def refresh_ui(
                         progress_dialog,
                     )
     if installed is True and action == "uninstall":
-        logger.debug("Toggle switch state = False")
+        # logger.debug("Toggle switch state = False")
         switch.set_sensitive(True)
-        switch.set_state(False)
-        switch.set_active(False)
+        switch.set_state(True)
+        switch.set_active(True)
         if progress_dialog is not None:
             if progress_dialog.pkg_dialog_closed is False:
                 progress_dialog.set_title(
-                    "%s uninstalled!" %pkg.name
+                    "Failed to uninstall %s !" %pkg.name
                 )
-                progress_dialog.infobar.set_name("infobar_info")
+                progress_dialog.infobar.set_name("infobar_error")
                 content =progress_dialog.infobar.get_content_area()
                 if content is not None:
                     for widget in content.get_children():
@@ -550,7 +581,7 @@ def refresh_ui(
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
                     # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
-                        "<b>Package %s installed.</b>" % pkg.name
+                        "<b>Package %s uninstallation failed!</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
@@ -563,6 +594,24 @@ def refresh_ui(
                         self,
                         progress_dialog,
                     )
+        elif progress_dialog is None or progress_dialog.pkg_dialog_closed is True:
+            if (
+                "error: failed to init transaction (unable to lock database)\n" in process_stdout_lst
+            ):
+                logger.error(" ".join(process_stdout_lst))
+            else:
+                message_dialog = MessageDialog(
+                    "Errors occured during uninstall",
+                    "Errors occured during uninstallation of %s failed" % pkg.name,
+                    "Pacman failed to uninstall %s\n" %pkg.name,
+                    " ".join(process_stdout_lst),
+                    "error",
+                    True,
+                )
+                message_dialog.show_all()
+                result = message_dialog.run()
+                message_dialog.destroy()
+
 
 def reveal_infobar(
         self,
