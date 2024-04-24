@@ -80,7 +80,9 @@ def permissions(dst):
                 group = g.replace(")", "").strip() # NOTE: replace with nothing!
         subprocess.call(["chown", "-R", sudo_username + ":" + group, dst], shell=False)
     except Exception as e:
-        logger.error(e)
+        logger.error(
+            "Exception occured in LOC68: %s" % e
+        )
 
 # NOTE: Creating Log, Export and Config Directory:
 try:
