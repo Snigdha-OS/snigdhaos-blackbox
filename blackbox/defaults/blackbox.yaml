@@ -1,11 +1,11 @@
 - name: "Display Package Versions"
-  description: "<True/False>"
+  description: "Show package version labels alongside the package description <True/False>"
   enabled: False
 
 - name: "Display Package Progress"
-  description: "<True/False>"
+  description: "Show the package install/uninstall progress window <True/False>"
   enabled: False
 
 - name: "Debug Loggings"
-  description: "<True/False>"
+  description: "Enable debug logging for more verbose app logging <True/False>"
   enabled: False
