@@ -697,3 +697,196 @@ def check_pacman_localdb(package_name):
             return False
     except subprocess.CalledProcessError:
         return False # LOC: 387
+
+# NOTE: App installation
+def install(self):
+    pkg, action, widget, inst_str, progress_dialog = self.pkg_queue.get()
+    try:
+        if action == "install":
+            logger.debug(
+                "Running inside install thread"
+            )
+            logger.info(
+                "Installing: %s" % pkg.name
+            )
+            logger.debug(
+                inst_str,
+            )
+            th_subprocess_install = Thread(
+                name = "thread_subprocess",
+                target=start_subprocess,
+                args=(
+                    self,
+                    inst_str,
+                    progress_dialog,
+                    action,
+                    pkg,
+                    widget,
+                ),
+                daemon=True
+            )
+            th_subprocess_install.start()
+            logger.debug(
+                "Thread: subprocess install started!"
+            )
+    except Exception as e:
+        widget.set_state(False)
+        if progress_dialog is not None:
+            progress_dialog.btn_package_progress_close.set_sensitive(True)
+    finally:
+        self.pkg_queue.task_done()
+
+# NOTE: App uninstall
+def uninstall(self):
+    pkg, action, widget, uninst_str, progress_dialog = self.pkg_queue.get()
+    try:
+        if action == "uninstall":
+            logger.debug(
+                "Running inside uninstall thread"
+            )
+            logger.info(
+                "Uninstalling: %s" % pkg.name
+            )
+            logger.debug(
+                uninst_str,
+            )
+            th_subprocess_install = Thread(
+                name = "thread_subprocess",
+                target=start_subprocess,
+                args=(
+                    self,
+                    uninst_str,
+                    progress_dialog,
+                    action,
+                    pkg,
+                    widget,
+                ),
+                daemon=True
+            )
+            th_subprocess_install.start()
+            logger.debug(
+                "Thread: subprocess uninstall started!"
+            )
+    except Exception as e:
+        widget.set_state(True)
+        if progress_dialog is not None:
+            progress_dialog.btn_package_progress_close.set_sensitive(True)
+    finally:
+        self.pkg_queue.task_done()
+
+def store_packages():
+    path = base_dir + "/yaml/"
+    cache = base_dir + "/cache/yaml-packages.lst"
+    yaml_files = []
+    packages = []
+    category_dict = {}
+    try:
+        package_metadata = get_all_package_info()
+        for file in os.listdir(path):
+            if file.endswith(".yaml"):
+                yaml_files.append(file)
+        
+        if len(yaml_files) > 0:
+            for yaml_file in yaml_files:
+                cat_desc = ""
+                package_name = ""
+                package_cat = ""
+                category_name = yaml_file[11:-5].strip().capitalize()
+                with open(path + yaml_file, "r") as yaml:
+                    content = yaml.readlines()
+                for line in content:
+                    if line.startswith("  packages:"):
+                        continue
+                    elif line.startswith("  description: "):
+                        subcat_desc = (
+                            line.strip("  description: ")
+                            .strip()
+                            .strip('"')
+                            .strip("\n")
+                            .strip()
+                        )
+                    elif line.startswith("- name:"):
+                        subcat_name = (
+                            line.strip("- name:")
+                            .strip()
+                            .strip('"')
+                            .strip("\n")
+                            .strip()
+                        )
+                    elif line.startswith("      - "):
+                        package_name = line.strip("     - ").strip()
+                        package_version = "Unknown"
+                        package_description = "Unknown"
+                        for data in package_metadata:
+                            if data["name"] == package_name:
+                                package_version = data["version"]
+                                package_description = data["description"]
+                                break
+                            if package_description == "Unknown":
+                                package_description = obtain_pkg_description(package_name)
+                                package = Package(
+                                    package_name,
+                                    package_description,
+                                    category_name,
+                                    subcat_name,
+                                    subcat_desc,
+                                    package_version,
+                                )
+                                packages.append(package)
+
+            category_name = None
+            packages_cat_lst = []
+            for pkg in packages:
+                if category_name == pkg.category:
+                    packages_cat_lst.append(pkg)
+                    category_dict[category_name] = packages_cat_lst
+                elif category_name is None:
+                    packages_cat_lst.append(pkg)
+                    category_dict[pkg.category] = packages_cat_lst
+                else:
+                    packages_cat_lst = []
+                    packages_cat_lst.append(pkg)
+                    category_dict[pkg.category] = packages_cat_lst
+                category_name = pkg.category
+            sorted_dict = None
+            sorted_dict = dict(sorted(category_dict.items()))
+            if sorted_dict is None:
+                logger.error(
+                    "An error occurred during sort of packages in stored_packages()"
+                )
+            else:
+                with open(cache, "w", encoding="UTF-8") as f:
+                    for key in category_dict.keys():
+                        pkg_list = category_dict[key]
+                        for pkg in pkg_list:
+                            f.write("%s\n" % pkg.name)
+            return sorted_dict
+    except Exception as e:
+        logger.error(
+            "Exception found: %s" % e
+        )
+        sys.exit(1)
+
+def get_all_package_info():
+    query_str = [
+        "pacman",
+        "-Si",
+    ]
+    try:
+        process_pkg_query = subprocess.Popen(
+            query_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        out, err = process_pkg_query.communicate(timeout=process_timeout)
+        if process_pkg_query.returncode == 0:
+            if out:
+                package_data = []
+                package_name = "Unknown"
+                package_version = "Unknown"
+                package_description = "Unknown"
+                package_repository = "Unknown"
+                for line in out.decode("UTF-8").splitlines():
+                    package_dict = {}
+                    
