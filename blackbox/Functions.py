@@ -1284,3 +1284,12 @@ def add_pacmanlog_queue(self):
         logger.error("Exception in add_pacmanlog_queue() : %s" % e)
     finally:
         logger.debug("No new lines found inside the pacman log file")
+
+def start_log_timer(self, window_pacmanlog):
+    while True:
+        if window_pacmanlog.start_logtimer is False:
+            logger.debug("Stopping Pacman log monitoring timer")
+            return False
+
+        GLib.idle_add(update_textview_pacmanlog, self, priority=GLib.PRIORITY_DEFAULT)
+        time.sleep(2)
