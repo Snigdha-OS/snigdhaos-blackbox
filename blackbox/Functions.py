@@ -10,14 +10,14 @@ from datetime import datetime
 from datetime import timedelta
 import subprocess
 import threading
-import logging # DOCS: https://docs.python.org/3/library/logging.html
-from logging.handlers import TimedRotatingFileHandler
+import logging # DOCS : https://docs.python.org/3/library/logging.html
+from logging.handlers import TimedRotatingFileHandler # DOCS : https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
 import shutil
 from threading import Thread
 from Package import Package
 from Settings import Settings
 from ui.MessageDialog import MessageDialog
-from distro import id
+from distro import id # DOCS : https://github.com/python-distro/distro
 
 import gi
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
