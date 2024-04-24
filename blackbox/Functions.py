@@ -889,4 +889,95 @@ def get_all_package_info():
                 package_repository = "Unknown"
                 for line in out.decode("UTF-8").splitlines():
                     package_dict = {}
-                    
+                    if "Name            :" in line.strip():
+                        package_name = line.replace(" ", "").split("Name:")[1].strip()
+                    if "Version            :" in line.strip():
+                        package_version = line.replace(" ", "").split("Version:")[1].strip()
+                    if "Description            :" in line.strip():
+                        package_description = line.replace(" ", "").split("Description:")[1].strip()
+                    if "Repository            :" in line.strip():
+                        package_repository = line.replace(" ", "").split("Repository:")[1].strip()
+
+                        package_dict["name"] = package_name
+                        package_dict["version"] = package_version
+                        package_dict["description"] = package_description
+                        package_dict["repository"] = package_repository
+
+                        package_data.append(package_dict)
+                return package_data
+        else:
+            logger.error(
+                "Failed to extract Package Version Info!"
+            )
+    except Exception as e:
+        logger.error(
+            "Exception Occured: %s" % e
+        )
+
+def file_lookup(package, path):
+    pkg = package.strip("\n")
+    output =""
+    if os.path.exists(path + "corrections/" + pkg):
+        file_name = path + "corrections/" + pkg
+    else:
+        file_name = path + pkg
+    file = open(file_name, "r")
+    output = file.read()
+    file.close()
+    if len(output) > 0:
+        return output
+    return "No Description Found!"
+
+
+def obtain_pkg_description(package):
+    output = ""
+    path = base_dir + "/cache/"
+    if os.path.exists(path + package.strip("\n")):
+        output = file_lookup(package, path)
+    else:
+        output = cache(package, path)
+    packages.append(package)
+    return output
+
+def cache(package, path_dir_cache):
+    try:
+        pkg = package.strip()
+        query_str = [
+            "pacman",
+            "-Si",
+            pkg,
+            "--noconfirm",
+        ]
+        process = subprocess.Popen(
+            query_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            # stderr=subprocess.STDOUT,
+            stderr=subprocess.PIPE,
+        )
+        out, err = process.communicate()
+
+        if process.returncode == 0:
+            output = out.decode("UTF-8")
+            if len(output) > 0:
+                split = output.splitlines()
+                desc = str(split[3])
+                description = desc[18:]
+                filename = path_dir_cache + pkg
+                file = open(filename, "w")
+                file.write(description)
+                file.close()
+                return description
+        if process.returncode != 0:
+            exceptions = [
+                "ttf-firacode" # NOTE: ADD ESSENTIAL PACKAGES ONLY! # INS0011
+            ]
+            if pkg in exceptions:
+                description = file_lookup(pkg, path_dir_cache + "corrections/")
+                return description
+        return "No Description Found!"
+    except Exception as e:
+        logger.error(
+            "Exception %s" % e
+        )
+
