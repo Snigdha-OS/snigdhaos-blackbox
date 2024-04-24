@@ -177,6 +177,7 @@ def _on_close_create_package_file():
         logger.error("[ERROR] Exception: %s" % e)
         
 # NOTE: Global Functions
+
 def _get_position(lists, value):
     data = [
         string for string in lists if value in string
@@ -350,6 +351,88 @@ def refresh_ui(
     self.switch_snigdhaos_keyring.set_sensitive(False)
     self.switch_snigdhaos_mirrorlist.set_sensitive(False)  
 
+    logger.debug("Checking if the package installed..." % pkg.name)
+    installed = check_package_installed(pkg.name)
+    if progress_dialog is not None:
+        progress_dialog.btn_package_progress_close.set_sentitive(True)
+    if installed is True and action == "install":
+        logger.debug("Toggle switch state = True")
+        switch.set_sensitive(True)
+        switch.set_state(True)
+        switch.set_active(True)
     
-    
-def update_progress_textview():
+def update_progress_textview(
+        self,
+        line,
+        progress_dialog
+):
+    if (
+        progress_dialog is not None 
+        and progress_dialog.pkg_dialog_closed is False 
+        and self.in_progress is True
+    ):
+        buffer = progress_dialog.package_progress_textview.get_buffer()
+        # Docs: https://docs.python.org/3/library/asyncio-protocol.html#buffered-streaming-protocols
+        if len(line) > 0 or buffer is None:
+            buffer.insert(buffer.get_end_iter(), "%s" % line, len("%s" % line))
+            text_mark_end = buffer.create_mark("\nend", buffer.get_end_iter(), False)
+            # DOCS: https://lazka.github.io/pgi-docs/#Gtk-4.0/classes/TextView.html#Gtk.TextView.scroll_mark_onscreen
+            progress_dialog.package_progress_textview.scroll_mark_onscreen(
+                text_mark_end
+            )
+    else:
+        line = None
+        return False
+
+
+def check_package_installed(package_name):
+    query_str = [
+        "pacman",
+        "-Qq",
+    ]
+    try:
+        process_pkg_installed = subprocess.run(
+            query_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+        )
+        if package_name in process_pkg_installed.stdout.splitlines():
+            return True
+        else:
+            if check_pacman_localdb(package_name):
+                return True
+            else:
+                return False
+    except subprocess.CalledProcessError:
+        return False # NOTE : It means package is not installed.
+
+def check_pacman_localdb(package_name):
+    query_str = [
+        "pacman",
+        "-Qi",
+        package_name,
+    ]
+    try:
+        process_pkg_installed = subprocess.run(
+            query_str,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=process_timeout,
+        )
+        if process_pkg_installed.returncode == 0:
+            for line in process_pkg_installed.stdout.decode("UTF-8").splitlines():
+                if line.startswith("Name        :"):
+                    if line.replace(" ", "").split("Name:")[1].strip() == package_name:
+                        return True
+                if line.startswith("Replaces        :"):
+                    replaces = line.split("Replaces        :")[1].strip()
+                    if len(replaces) > 0:
+                        if package_name in replaces:
+                            return True
+        else:
+            return False
+    except subprocess.CalledProcessError:
+        return False # LOC: 387
