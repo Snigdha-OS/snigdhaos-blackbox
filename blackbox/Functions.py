@@ -1539,21 +1539,21 @@ def add_snigdha_repos():
                 with open(pacman_conf, "r", encoding="utf-8") as r:
                     lines = r.readlines()
                 if len(lines) > 0:
-                    snigddhaos_core_found = False
+                    snigdhaos_core_found = False
                     snigdhaos_extra_found = False
                     for line in lines:
                         if "#" in line.strip():
-                            if snigddhaos_core[0].replace("#", "") in line.strip():
-                                snigddhaos_core_found = True
+                            if snigdhaos_core[0].replace("#", "") in line.strip():
+                                snigdhaos_core_found = True
                                 index = lines.index(line)
                                 del lines[index]
-                                lines.insert(index, snigddhaos_core[0])
+                                lines.insert(index, snigdhaos_core[0])
                                 index += 1
                                 del lines[index]
-                                lines.insert(index, snigddhaos_core[1])
+                                lines.insert(index, snigdhaos_core[1])
                                 index += 1
                                 del lines[index]
-                                lines.insert(index, snigddhaos_core[2])
+                                lines.insert(index, snigdhaos_core[2])
                             if snigdhaos_extra[0].replace("#", "") in line.strip():
                                 snigdhaos_extra_found = True
                                 index = lines.index(line)
@@ -1565,13 +1565,13 @@ def add_snigdha_repos():
                                 index += 1
                                 del lines[index]
                                 lines.insert(index, snigdhaos_extra[2])
-                        if line.strip() == snigddhaos_core[0]:
-                            snigddhaos_core_found = True
+                        if line.strip() == snigdhaos_core[0]:
+                            snigdhaos_core_found = True
                         if line.strip() == snigdhaos_extra[0]:
                             snigdhaos_extra_found = True
-                    if snigddhaos_core_found is False:
+                    if snigdhaos_core_found is False:
                         lines.append("\n")
-                        for snigdhaos_core_line in snigddhaos_core:
+                        for snigdhaos_core_line in snigdhaos_core:
                             lines.append(snigdhaos_core_line)
                     if snigdhaos_extra_found is False:
                         lines.append("\n")
