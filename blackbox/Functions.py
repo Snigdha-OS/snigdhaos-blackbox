@@ -271,11 +271,11 @@ def start_subprocess(
         widget
 ):
     try:
-        # DOCS: https://www.knowledgehut.com/blog/programming/self-variabe-python-examples
+        # DOCS : https://www.knowledgehut.com/blog/programming/self-variabe-python-examples
         self.switch_package_version.set_sensitive(False)
         self.switch_snigdhaos_keyring.set_sensitive(False)
         self.switch_snigdhaos_mirrorlist.set_sensitive(False)
-        # DOCS: https://irtfweb.ifa.hawaii.edu/SoftwareDocs/gtk20/gtk/gtkwidget.html
+        # DOCS : https://irtfweb.ifa.hawaii.edu/SoftwareDocs/gtk20/gtk/gtkwidget.html
         widget.set_sensitive(False)
         process_stdout_lst = []
         process_stdout_lst.append(
@@ -297,7 +297,7 @@ def start_subprocess(
                 line = (
                     "Pacman Processing: %s Package: %s \n\n Command: %s\n\n" % (action, pkg.name, " ".join(cmd))
                 )
-                # DOC: https://docs.gtk.org/glib/const.PRIORITY_DEFAULT.html
+                # DOCS : https://docs.gtk.org/glib/const.PRIORITY_DEFAULT.html
                 GLib.idle_add(
                     update_progress_textview,
                     self,
@@ -405,15 +405,15 @@ def refresh_ui(
                 if content is not None:
                     for widget in content.get_children():
                         content.remove(widget)
-                    # DOCS: https://docs.gtk.org/gtk3/class.Label.html
+                    # DOCS : https://docs.gtk.org/gtk3/class.Label.html
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
-                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    # DOCS : https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
                         "<b>Package %s installed.</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -441,7 +441,7 @@ def refresh_ui(
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -464,7 +464,7 @@ def refresh_ui(
                 result = message_dialog.run()
                 message_dialog.destroy()
         elif progress_dialog is None or progress_dialog.pkg_dialog_closed is True:
-            # DOCS: https://bbs.archlinux.org/viewtopic.php?id=48234
+            # DOCS : https://bbs.archlinux.org/viewtopic.php?id=48234
             if (
                 "error: failed to init transaction (unable to lock database)\n" in process_stdout_lst
             ):
@@ -550,13 +550,13 @@ def refresh_ui(
                     for widget in content.get_children():
                         content.remove(widget)
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
-                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    # DOCS : https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
                         "<b>Package %s installed.</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -581,13 +581,13 @@ def refresh_ui(
                     for widget in content.get_children():
                         content.remove(widget)
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
-                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    # DOCS : https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
                         "<b>Package %s uninstallation failed!</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -635,11 +635,11 @@ def update_progress_textview(
         and self.in_progress is True
     ):
         buffer = progress_dialog.package_progress_textview.get_buffer()
-        # Docs: https://docs.python.org/3/library/asyncio-protocol.html#buffered-streaming-protocols
+        # DOCS : https://docs.python.org/3/library/asyncio-protocol.html#buffered-streaming-protocols
         if len(line) > 0 or buffer is None:
             buffer.insert(buffer.get_end_iter(), "%s" % line, len("%s" % line))
             text_mark_end = buffer.create_mark("\nend", buffer.get_end_iter(), False)
-            # DOCS: https://lazka.github.io/pgi-docs/#Gtk-4.0/classes/TextView.html#Gtk.TextView.scroll_mark_onscreen
+            # DOCS : https://lazka.github.io/pgi-docs/#Gtk-4.0/classes/TextView.html#Gtk.TextView.scroll_mark_onscreen
             progress_dialog.package_progress_textview.scroll_mark_onscreen(
                 text_mark_end
             )
