@@ -1084,14 +1084,14 @@ def get_package_files(package_name):
             "Exception in LOC1161: %s" % e
         )
 
+
+# NOTE : Fixed where functions were not mutable and uable to call.
 def get_package_information(package_name):
-    logger.info(
-        "Fetching Package Information: %s" % package_name
-    )
+    logger.info("Fetching Information: %s" % package_name)
     try:
         pkg_name = "Unknown"
         pkg_version = "Unknown"
-        pkg_repository = "Unknown / Pacman Misconfig!"
+        pkg_repository = "Unknown / pacman mirrorlist not configured"
         pkg_description = "Unknown"
         pkg_arch = "Unknown"
         pkg_url = "Unknown"
@@ -1101,17 +1101,9 @@ def get_package_information(package_name):
         pkg_installed_size = "Unknown"
         pkg_build_date = "Unknown"
         pkg_packager = "Unknown"
-        pkg_metadata = {}
-        query_local_cmd = [
-            "pacman",
-            "-Qi",
-            package_name,
-        ]
-        query_remote_cmd = [
-            "pacman",
-            "-Si",
-            package_name,
-        ]
+        package_metadata = {}
+        query_local_cmd = ["pacman", "-Qi", package_name]
+        query_remote_cmd = ["pacman", "-Si", package_name]
         process_query_remote = subprocess.run(
             query_remote_cmd,
             shell=False,
@@ -1120,59 +1112,127 @@ def get_package_information(package_name):
             timeout=process_timeout,
         )
         if process_query_remote.returncode == 0:
-            for line in process_query_remote.stdout.decode("UTF-8").splitlines():
-                if "Name        :" in line.strip():
+            for line in process_query_remote.stdout.decode("utf-8").splitlines():
+                if "Name            :" in line.strip():
                     pkg_name = line.replace(" ", "").split("Name:")[1].strip()
-                if "Version        :" in line.strip():
+                if "Version         :" in line.strip():
                     pkg_version = line.replace(" ", "").split("Version:")[1].strip()
-                if "Repository        :" in line.strip():
-                    pkg_repository = line.split("Repository:")[1].strip()
-                if "Decription        :" in line.strip():
-                    pkg_description = line.split("Decription:")[1].strip()
-                if "Architecture        :" in line.strip():
-                    pkg_arch = line.split("Architecture:")[1].strip()
-                if "URL        :" in line.strip():
-                    pkg_url = line.split("URL:")[1].strip()
-                if "Depends On        :" in line.strip():
-                    if line.split("Depends On     :")[1].strip() != "None":
-                        pkg_depend_on_str = line.split("Depends On     :")[1].strip()
-                        for pkg_dep in pkg_depend_on_str.split(" "):
+                if "Repository      :" in line.strip():
+                    pkg_repository = line.split("Repository      :")[1].strip()
+                if "Description     :" in line.strip():
+                    pkg_description = line.split("Description     :")[1].strip()
+                if "Architecture    :" in line.strip():
+                    pkg_arch = line.split("Architecture    :")[1].strip()
+                if "URL             :" in line.strip():
+                    pkg_url = line.split("URL             :")[1].strip()
+                if "Depends On      :" in line.strip():
+                    if line.split("Depends On      :")[1].strip() != "None":
+                        pkg_depends_on_str = line.split("Depends On      :")[1].strip()
+                        for pkg_dep in pkg_depends_on_str.split("  "):
                             pkg_depends_on.append((pkg_dep, None))
                     else:
                         pkg_depends_on = []
-                if "Conflicts With        :" in line.strip():
-                    if line.split("Conflicts With        :")[1].strip() != "None":
-                        pkg_conflicts_with_str = line.split("Conflicts With        :")[1].strip()
-                        for pkg_con in pkg_conflicts_with_str.split(" "):
+                if "Conflicts With  :" in line.strip():
+                    if line.split("Conflicts With  :")[1].strip() != "None":
+                        pkg_conflicts_with_str = line.split("Conflicts With  :")[
+                            1
+                        ].strip()
+                        for pkg_con in pkg_conflicts_with_str.split("  "):
                             pkg_conflicts_with.append((pkg_con, None))
                     else:
                         pkg_conflicts_with = []
-                if "Download Size        :" in line.strip():
-                    pkg_download_size = line.split("Download Size:")[1].strip()
-                if "Installed Size        :" in line.strip():
-                    pkg_installed_size = line.split("Installed Size:")[1].strip()
-                if "Build Date        :" in line.strip():
-                    pkg_build_date = line.split("Build Date:")[1].strip()
+                if "Download Size   :" in line.strip():
+                    pkg_download_size = line.split("Download Size   :")[1].strip()
+                if "Installed Size  :" in line.strip():
+                    pkg_installed_size = line.split("Installed Size  :")[1].strip()
+                if "Build Date      :" in line.strip():
+                    pkg_build_date = line.split("Build Date      :")[1].strip()
                 if "Packager        :" in line.strip():
-                    pkg_packager = line.split("Packager:")[1].strip()
-            pkg_metadata["name"] = pkg_name
-            pkg_metadata["version"] = pkg_version
-            pkg_metadata["repository"] = pkg_repository
-            pkg_metadata["description"] = pkg_description
-            pkg_metadata["arch"] = pkg_arch
-            pkg_metadata["url"] = pkg_url
-            pkg_metadata["depends_on"] = pkg_depends_on
-            pkg_metadata["conflicts_with"] = pkg_conflicts_with
-            pkg_metadata["download_size"] = pkg_download_size
-            pkg_metadata["installed_size"] = pkg_installed_size
-            pkg_metadata["build_date"] = pkg_build_date
-            pkg_metadata["packager"] = pkg_packager
-            return pkg_metadata
+                    pkg_packager = line.split("Packager        :")[1].strip()
+            package_metadata["name"] = pkg_name
+            package_metadata["version"] = pkg_version
+            package_metadata["repository"] = pkg_repository
+            package_metadata["description"] = pkg_description
+            package_metadata["arch"] = pkg_arch
+            package_metadata["url"] = pkg_url
+            package_metadata["depends_on"] = pkg_depends_on
+            package_metadata["conflicts_with"] = pkg_conflicts_with
+            package_metadata["download_size"] = pkg_download_size
+            package_metadata["installed_size"] = pkg_installed_size
+            package_metadata["build_date"] = pkg_build_date
+            package_metadata["packager"] = pkg_packager
+            return package_metadata
         elif (
-            "error: package '%s' not found!\n" % package_name in process_query_remote.stdout.decode("UTF-8")
+            "error: package '%s' was not found\n" % package_name
+            in process_query_remote.stdout.decode("utf-8")
         ):
-            return "error: package '%s' not found!\n" % package_name
+            return "error: package '%s' was not found" % package_name
         else:
+            process_query_local = subprocess.run(
+                query_local_cmd,
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                timeout=process_timeout,
+            )
+            # NOTE: Added validation on process result
+            if process_query_local.returncode == 0:
+                for line in process_query_local.stdout.decode("utf-8").splitlines():
+                    if "Name            :" in line.strip():
+                        pkg_name = line.replace(" ", "").split("Name:")[1].strip()
+                    if "Version         :" in line.strip():
+                        pkg_version = line.replace(" ", "").split("Version:")[1].strip()
+                    if "Repository      :" in line.strip():
+                        pkg_repository = line.split("Repository      :")[1].strip()
+                    if "Description     :" in line.strip():
+                        pkg_description = line.split("Description     :")[1].strip()
+                    if "Architecture    :" in line.strip():
+                        pkg_arch = line.split("Architecture    :")[1].strip()
+                    if "URL             :" in line.strip():
+                        pkg_url = line.split("URL             :")[1].strip()
+                    if "Depends On      :" in line.strip():
+                        if line.split("Depends On      :")[1].strip() != "None":
+                            pkg_depends_on_str = line.split("Depends On      :")[
+                                1
+                            ].strip()
+                            for pkg_dep in pkg_depends_on_str.split("  "):
+                                pkg_depends_on.append((pkg_dep, None))
+                        else:
+                            pkg_depends_on = []
+                    if "Conflicts With  :" in line.strip():
+                        if line.split("Conflicts With  :")[1].strip() != "None":
+                            pkg_conflicts_with_str = line.split("Conflicts With  :")[
+                                1
+                            ].strip()
+                            for pkg_con in pkg_conflicts_with_str.split("  "):
+                                pkg_conflicts_with.append((pkg_con, None))
+                        else:
+                            pkg_conflicts_with = []
+                    if "Download Size   :" in line.strip():
+                        pkg_download_size = line.split("Download Size   :")[1].strip()
+                    if "Installed Size  :" in line.strip():
+                        pkg_installed_size = line.split("Installed Size  :")[1].strip()
+                    if "Build Date      :" in line.strip():
+                        pkg_build_date = line.split("Build Date      :")[1].strip()
+                    if "Packager        :" in line.strip():
+                        pkg_packager = line.split("Packager        :")[1].strip()
+                package_metadata["name"] = pkg_name
+                package_metadata["version"] = pkg_version
+                package_metadata["repository"] = pkg_repository
+                package_metadata["description"] = pkg_description
+                package_metadata["arch"] = pkg_arch
+                package_metadata["url"] = pkg_url
+                package_metadata["depends_on"] = pkg_depends_on
+                package_metadata["conflicts_with"] = pkg_conflicts_with
+                package_metadata["download_size"] = pkg_download_size
+                package_metadata["installed_size"] = pkg_installed_size
+                package_metadata["build_date"] = pkg_build_date
+                package_metadata["packager"] = pkg_packager
+                return package_metadata
+            else:
+                return None
+    except Exception as e:
+        logger.error("Exception in LOC1061: %s" % e)
             
 # NOTE : ICON ON THE BACK
 def get_current_installed():
