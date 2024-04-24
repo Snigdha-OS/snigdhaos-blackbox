@@ -1,14 +1,15 @@
 #!/bin/python
 
 import os
+from os import makedirs
 import sys
 import psutil
 import time
 import datetime
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 import subprocess
 import threading
-import gi
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import shutil
@@ -17,8 +18,8 @@ from Package import Package
 from Settings import Settings
 from ui.MessageDialog import MessageDialog
 from distro import id
-from os import makedirs
 
+import gi
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
 
