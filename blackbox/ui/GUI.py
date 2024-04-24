@@ -1,7 +1,5 @@
 #!/bin/python
 
-# NOTE : We apply python system wide !
-
 import Functions as fn
 from ui.AppFrameGUI import AppFrameGUI
 from multiprocessing import cpu_count
@@ -9,8 +7,6 @@ from queue import Queue
 from threading import Thread
 
 base_dir = fn.os.path.abspath(fn.os.path.join(fn.os.path.dirname(__file__), ".."))
-# base_dir = fn.os.path.dirname(fn.os.path.realpath(__file__))
-
 
 class GUI_Worker(Thread):
     def __init__(self, queue):
@@ -21,14 +17,10 @@ class GUI_Worker(Thread):
         while True:
             # pull what we need from the queue so we can process properly.
             items = self.queue.get()
-
             try:
                 # make sure we have the required number of items on the queue
                 if items is not None:
-                    # self, Gtk, vboxStack1, category, package_file = items
-
                     self, Gtk, vbox_stack, category, packages = items
-
                     AppFrameGUI.build_ui_frame(
                         self,
                         Gtk,
@@ -38,14 +30,13 @@ class GUI_Worker(Thread):
                     )
 
             except Exception as e:
-                fn.logger.error("Exception in GUI_Worker(): %s" % e)
+                fn.logger.error("Exception in LOC11: %s" % e)
             finally:
                 if items is None:
                     fn.logger.debug("Stopping GUI Worker thread")
                     self.queue.task_done()
                     return False
                 self.queue.task_done()
-
 
 class GUI:
     def setup_gui_search(
@@ -70,15 +61,7 @@ class GUI:
             # lets quickly create the latest installed list.
             fn.get_current_installed()
 
-            # =======================================================
-            #                       HeaderBar
-            # =======================================================
-
             setup_headerbar(self, Gtk, settings)
-
-            # =======================================================
-            #                       App Notifications
-            # =======================================================
 
             hbox0 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
 
@@ -113,7 +96,7 @@ class GUI:
             #                    PREP WORK
             # ==========================================================
 
-            # This section sets up the tabs, and the array for dealing with the tab content
+            
 
             # ==========================================================
             #                       GENERATE STACK
@@ -190,7 +173,7 @@ class GUI:
 
             ivbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             pixbuf = GdkPixbuf.Pixbuf().new_from_file_at_size(
-                os.path.join(base_dir, "images/sofirem.png"), 45, 45
+                os.path.join(base_dir, "images/blackbox.png"), 45, 45
             )
             image = Gtk.Image().new_from_pixbuf(pixbuf)
 
@@ -399,7 +382,7 @@ class GUI:
 
             ivbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             pixbuf = GdkPixbuf.Pixbuf().new_from_file_at_size(
-                os.path.join(base_dir, "images/sofirem.png"), 45, 45
+                os.path.join(base_dir, "images/blackbox.png"), 45, 45
             )
             image = Gtk.Image().new_from_pixbuf(pixbuf)
 
@@ -465,7 +448,7 @@ class GUI:
 # setup headerbar including popover settings
 def setup_headerbar(self, Gtk, settings):
     try:
-        header_bar_title = "Sofirem"
+        header_bar_title = "BlackBox"
         headerbar = Gtk.HeaderBar()
         headerbar.set_title(header_bar_title)
         headerbar.set_show_close_button(True)
@@ -573,7 +556,7 @@ def setup_headerbar(self, Gtk, settings):
         modelbtn_about_app.connect("clicked", self.on_about_app_clicked)
         modelbtn_about_app.set_name("modelbtn_popover")
         modelbtn_about_app.props.centered = False
-        modelbtn_about_app.props.text = "About Sofirem"
+        modelbtn_about_app.props.text = "About BlackBox"
 
         # button to show iso package lists window
         # modelbtn_iso_packages_list = Gtk.ModelButton()
