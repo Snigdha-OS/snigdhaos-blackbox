@@ -1569,8 +1569,8 @@ def add_snigdha_repos():
                             snigdhaos_extra_found = True
                     if snigddhaos_core_found is False:
                         lines.append("\n")
-                        for snigdhaos_repo_line in snigddhaos_core:
-                            lines.append(snigdhaos_repo_line)
+                        for snigdhaos_core_line in snigddhaos_core:
+                            lines.append(snigdhaos_core_line)
                     if snigdhaos_extra_found is False:
                         lines.append("\n")
                         for snigdhaos_extra_found_line in snigdhaos_extra_found:
@@ -1602,7 +1602,7 @@ def verify_snigdhaos_pacman_conf():
             lines = r.readlines()
         if lines is not None:
             for line in lines:
-                if snigdhaos_repo[0] in line.strip():
+                if snigdhaos_core[0] in line.strip():
                     if "#" not in line.strip():
                         snigdhaos_core_setup = True
                     else:
