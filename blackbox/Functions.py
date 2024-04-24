@@ -14,7 +14,7 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import time
 import shutil
-
+import Functions as fn
 
 from Settings import Settings
 from Package import Package
@@ -372,8 +372,143 @@ def refresh_ui(
                 if content is not None:
                     for widget in content.get_children():
                         content.remove(widget)
-                    
-
+                    # DOCS: https://docs.gtk.org/gtk3/class.Label.html
+                    lbl_install = Gtk.Label(xalign=0, yalign=0)
+                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    lbl_install.set_markup(
+                        "<b>Package %s installed.</b>" % pkg.name
+                    )
+                    content.add(lbl_install)
+                    if self.timeout_id is not None:
+                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        GLib.source_remove(self.timeout_id)
+                        self.timeout_id = None
+                    self.timeout_id = GLib.timeout_add(
+                        100,
+                        reveal_infobar,
+                        self,
+                        progress_dialog,
+                    )
+    if installed is False and action == "install":
+        logger.debug("Toggle switch state = False")
+        if progress_dialog is not None:
+            switch.set_sensitive(True)
+            switch.set_state(False)
+            switch.set_active(False)
+            if progress_dialog.pkg_dialog_closed is False:
+                progress_dialog.set_title("%s install failed" % pkg.name)
+                progress_dialog.infobar.set_name("infobar_error")
+                content = progress_dialog.infobar.get_content_area()
+                if content is not None:
+                    for widget in content.get_children():
+                        content.remove(widget)
+                    lbl_install = Gtk.Label(xalign=0, yalign=0) 
+                    lbl_install.set_markup(
+                        "<b>Package %s installed failed.</b>" % pkg.name
+                    )
+                    content.add(lbl_install)
+                    if self.timeout_id is not None:
+                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        GLib.source_remove(self.timeout_id)
+                        self.timeout_id = None
+                    self.timeout_id = GLib.timeout_add(
+                        100,
+                        reveal_infobar,
+                        self,
+                        progress_dialog,
+                    )
+            else:
+                logger.debug(" ".join(process_stdout_lst))
+                message_dialog = MessageDialog(
+                    "Errors occured suring installation",
+                    "Errors occured during installation of %s failed" % pkg.name,
+                    "Pacman failed to install %s" %pkg.name,
+                    " ".join(process_stdout_lst),
+                    "error",
+                    True,
+                )
+                message_dialog.show_all()
+                result = message_dialog.run()
+                message_dialog.destroy()
+        elif progress_dialog is None or progress_dialog.pkg_dialog_closed is True:
+            # DOCS: https://bbs.archlinux.org/viewtopic.php?id=48234
+            if (
+                "error: failed to init transaction (unable to lock database)\n" in process_stdout_lst
+            ):
+                if progress_dialog is None:
+                    logger.debug("Holding Package")
+                    if self.display_package_progress is False:
+                        inst_str = [
+                            "pacman",
+                            "-S",
+                            pkg.name,
+                            "--needed",
+                            "--noconfirm",
+                        ]
+                        self.pkg_holding_queue.put(
+                            (
+                                pkg,
+                                action,
+                                switch,
+                                inst_str,
+                                progress_dialog,
+                            ),
+                        )
+                else:
+                    logger.debug(" ".join(process_stdout_lst))
+                    switch.set_sensitive(True)
+                    switch.set_state(False)
+                    switch.set_active(False)
+                    proc = fn.get_pacman_process()
+                    message_dialog = MessageDialog(
+                        "Warning",
+                        "Unable to proceed, pacman lock found!",
+                        "Pacman is unable to lock the database inside: %s" % fn.pacman_lockfile,
+                        "Pacman is processing: %s" % proc,
+                        "warning",
+                        False,
+                    )
+                    message_dialog.show_all()
+                    result = message_dialog.run()
+                    message_dialog.destroy()
+            elif "error: traget not found: %s\n" %pkg.name in process_stdout_lst:
+                switch.set_sensitive(True)
+                switch.set_state(False)
+                switch.set_active(False)
+                message_dialog = MessageDialog(
+                        "Error",
+                        "%s not found!" % pkg.name,
+                        "Blackbox unable to process the request!",
+                        "Are you sure pacman config is correct?",
+                        "error",
+                        False,
+                    )
+                message_dialog.show_all()
+                result = message_dialog.run()
+                message_dialog.destroy()
+            else:
+                switch.set_sensitive(True)
+                switch.set_state(False)
+                switch.set_active(False)
+                message_dialog = MessageDialog(
+                        "Errors occured",
+                        "Errors occured during installation of %s failed" % pkg.name,
+                        "Pacman failed to install %s\n" %pkg.name,
+                        " ".join(process_stdout_lst),
+                        "error",
+                        True,
+                    )
+                message_dialog.show_all()
+                result = message_dialog.run()
+                message_dialog.destroy()
+def reveal_infobar(
+        self,
+        progress_dialog,
+):
+    progress_dialog.infobar.set_revealed(True)
+    progress_dialog.infobar.show_all()
+    GLib.source_remove(self.timeout_id)
+    self.timeout_id = None
 
 def update_progress_textview(
         self,

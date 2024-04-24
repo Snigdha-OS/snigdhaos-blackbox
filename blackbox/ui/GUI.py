@@ -691,7 +691,7 @@ def setup_headerbar(self, Gtk, settings):
         vbox_buttons.pack_start(self.modelbtn_pacmanlog, False, True, 0)
         vbox_buttons.pack_start(modelbtn_packages_export, False, True, 0)
         vbox_buttons.pack_start(modelbtn_packages_import, False, True, 0)
-        vbox_buttons.pack_start(modelbtn_iso_packages_list, False, True, 0)
+        # vbox_buttons.pack_start(modelbtn_iso_packages_list, False, True, 0)
         vbox_buttons.pack_start(modelbtn_package_search, False, True, 0)
         vbox_buttons.pack_start(modelbtn_about_app, False, True, 0)
 
