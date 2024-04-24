@@ -1465,3 +1465,104 @@ def remove_snigdhaos_mirrorlist():
         result_err["cmd_str"] = cmd_str
         result_err["output"] = e
         return result_err
+
+def add_snigdha_repos():
+    logger.info("Adding Snigdha OS Repos on %s" % distr)
+    try:
+        if verify_snigdhaos_pacman_conf() is False:
+            if os.path.exists(pacman_conf):
+                shutil.copy(
+                    pacman_conf, 
+                    pacman_conf_backup,
+                )
+                logger.info("Reading from %s" % pacman_conf)
+                lines = []
+                with open(pacman_conf, "r", encoding="utf-8") as r:
+                    lines = r.readlines()
+                if len(lines) > 0:
+                    snigddhaos_core_found = False
+                    snigdhaos_extra_found = False
+                    for line in lines:
+                        if "#" in line.strip():
+                            if snigddhaos_core[0].replace("#", "") in line.strip():
+                                snigddhaos_core_found = True
+                                index = lines.index(line)
+                                del lines[index]
+                                lines.insert(index, snigddhaos_core[0])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigddhaos_core[1])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigddhaos_core[2])
+                            if snigdhaos_extra[0].replace("#", "") in line.strip():
+                                snigdhaos_extra_found = True
+                                index = lines.index(line)
+                                del lines[index]
+                                lines.insert(index, snigdhaos_extra[0])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigdhaos_extra[1])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigdhaos_extra[2])
+                        if line.strip() == snigddhaos_core[0]:
+                            snigddhaos_core_found = True
+                        if line.strip() == snigdhaos_extra[0]:
+                            snigdhaos_extra_found = True
+                    if snigddhaos_core_found is False:
+                        lines.append("\n")
+                        for snigdhaos_repo_line in snigddhaos_core:
+                            lines.append(snigdhaos_repo_line)
+                    if snigdhaos_extra_found is False:
+                        lines.append("\n")
+                        for snigdhaos_extra_found_line in snigdhaos_extra_found:
+                            lines.append(snigdhaos_extra_found_line)
+                    logger.info("[Add Snigdha OS repos] Writing to %s" % pacman_conf)
+                    if len(lines) > 0:
+                        with open(pacman_conf, "w", encoding="utf-8") as w:
+                            for l in lines:
+                                w.write(l.strip() + "\n")
+                            w.flush()
+                        return 0
+                    else:
+                        logger.error("Failed to process %s" % pacman_conf)
+                else:
+                    logger.error("Failed to read %s" % pacman_conf)
+        else:
+            logger.info("Snigdha OS repos already setup inside pacman conf file")
+            return 0
+    except Exception as e:
+        logger.error("Exception in LOC1469: %s" % e)
+        return e
+
+def verify_snigdhaos_pacman_conf():
+    try:
+        lines = None
+        snigdhaos_core_setup = False
+        snigdhaos_extra_setup = False
+        with open(pacman_conf, "r") as r:
+            lines = r.readlines()
+        if lines is not None:
+            for line in lines:
+                if snigdhaos_repo[0] in line.strip():
+                    if "#" not in line.strip():
+                        snigdhaos_core_setup = True
+                    else:
+                        return False
+
+                if snigdhaos_extra[0] in line.strip():
+                    if "#" not in line.strip():
+                        snigdhaos_extra_setup = True
+                    else:
+                        return False
+            if (
+                snigdhaos_core_setup is True
+                and snigdhaos_extra_setup is True
+            ):
+                return True
+            else:
+                return False
+    except Exception as e:
+        logger.error("Exception in LOC1604: %s" % e)
+
