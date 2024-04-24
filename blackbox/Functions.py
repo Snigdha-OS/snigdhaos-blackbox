@@ -1389,3 +1389,42 @@ def remove_snigdhaos_keyring():
         result_err["cmd_str"] = cmd_str
         result_err["output"] = e
         return result_err
+
+def install_snigdhaos_mirrorlist():
+    try:
+        mirrorlist = base_dir + "/packages/snigdhaos-mirrorlist/"
+        file = os.listdir(mirrorlist)
+        cmd_str = [
+            "pacman",
+            "-U",
+            mirrorlist + str(file).strip("[]'"),
+            "--noconfirm",
+        ]
+        logger.debug("%s" % " ".join(cmd_str))
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("[Error] install of Snigdha OS Mirrorlist failed")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1393: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = output
+        return result_err
