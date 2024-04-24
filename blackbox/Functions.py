@@ -1354,3 +1354,38 @@ def install_snigdhaos_keyring():
         result_err["output"] = e
         return result_err
 
+def remove_snigdhaos_keyring():
+    try:
+        cmd_str = [
+            "pacman", 
+            "-Rdd", 
+            "snigdhaos-keyring", 
+            "--noconfirm"
+        ]
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("[Error] Removal of Snigdha OS keyring failed!")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1357: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = e
+        return result_err
