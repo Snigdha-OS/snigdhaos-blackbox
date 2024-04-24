@@ -22,8 +22,8 @@ from distro import id # DOCS : https://github.com/python-distro/distro
 import Functions as fn
 
 import gi # DOCS : https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
-gi.require_version("Gtk" "3.0")
 from gi.repository import GLib, Gtk
+gi.require_version("Gtk" "3.0")
 
 # NOTE: Base Directory
 base_dir = os.path.dirname(os.path.realpath(__file__))
