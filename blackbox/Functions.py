@@ -1267,3 +1267,20 @@ def cache(package, path_dir_cache):
 
     except Exception as e:
         logger.error("Exception in cache(): %s " % e)
+
+def add_pacmanlog_queue(self):
+    try:
+        lines = []
+        with open(pacman_logfile, "r", encoding="utf-8") as f:
+            while True:
+                line = f.readline()
+                if line:
+                    lines.append(line.encode("utf-8"))
+                    self.pacmanlog_queue.put(lines)
+                else:
+                    time.sleep(0.5)
+
+    except Exception as e:
+        logger.error("Exception in add_pacmanlog_queue() : %s" % e)
+    finally:
+        logger.debug("No new lines found inside the pacman log file")
