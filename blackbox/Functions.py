@@ -1,25 +1,23 @@
 #!/bin/python
 
 import os
-from os import makedirs
 import sys
 import psutil
-import gi
+import time
+import datetime
+from datetime import datetime, timedelta
 import subprocess
+import threading
+import gi
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from threading import Thread
-import datetime
-from datetime import datetime
-from datetime import timedelta
-from datetime import time
 import shutil
-import Functions as fn
-
-from Settings import Settings
+from threading import Thread
 from Package import Package
+from Settings import Settings
 from ui.MessageDialog import MessageDialog
-from ui.GUI import GUI
+from distro import id
+from os import makedirs
 
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
