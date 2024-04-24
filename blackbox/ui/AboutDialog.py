@@ -1,15 +1,14 @@
+#!/bin/python
+
 # This class stores static information about the app, and is displayed in the about dialog
+
 import os
+
 import gi
-
 from gi.repository import Gtk, Gdk, GdkPixbuf, Pango, GLib
-
 gi.require_version("Gtk", "3.0")
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-# base_dir = os.path.dirname(os.path.realpath(__file__))
-
 
 class AboutDialog(Gtk.Dialog):
     def __init__(self):
@@ -21,7 +20,7 @@ class AboutDialog(Gtk.Dialog):
         app_secondary_message = "Install or remove software"
         app_secondary_description = "Report issues to make it even better"
         app_version = "pkgversion-pkgrelease"
-        app_discord = "https://discord.gg/stBhS4taje"
+        app_discord = "#"
         app_website = "https://snigdhaos.org"
         app_github = "https://github.com/Snigdha-OS/snigdhaos-blackbox"
         app_authors = []

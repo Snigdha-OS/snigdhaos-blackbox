@@ -1,27 +1,26 @@
 #!/bin/python
 
 import os
-from os import makedirs
+from os import makedirs # DOCS : https://docs.python.org/3/library/os.html#os.makedirs
 import sys
 import psutil
-import gi
-import subprocess
-import logging
-from logging.handlers import TimedRotatingFileHandler
-from threading import Thread
+import time
 import datetime
 from datetime import datetime
-from datetime import timedelta
-from datetime import time
+from datetime import timedelta # DOCS : https://www.freecodecamp.org/news/how-to-use-timedelta-objects-in-python/
+import subprocess
+import threading
+import logging # DOCS : https://docs.python.org/3/library/logging.html
+from logging.handlers import TimedRotatingFileHandler # DOCS : https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
 import shutil
-import Functions as fn
-
-from Settings import Settings
+from threading import Thread
 from Package import Package
+from Settings import Settings
 from ui.MessageDialog import MessageDialog
-from ui.GUI import GUI
+from distro import id # DOCS : https://github.com/python-distro/distro
 
-gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
+import gi # DOCS : https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
+gi.require_version("Gtk" "3.0")
 from gi.repository import GLib, Gtk
 
 # NOTE: Base Directory
@@ -69,36 +68,40 @@ export_dir = "%s/blackbox-exports" % home
 def permissions(dst):
     try:
         # NOTE : Use try-catch block so that we can trace any error!
+        # DOCS : https://docs.python.org/3/library/subprocess.html
         groups = subprocess.run(
             ["sh", "-c", "id " + sudo_username],
             shell=False,
-            stdout=subprocess.PIPE, # NOTE: Standard Output
-            stderr=subprocess.STDOUT, # NOTE: Standard Error Output
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
         )
+        # DOCS : https://www.geeksforgeeks.org/python-strings-decode-method/
         for i in groups.stdout.decode().split(" "):
             if "gid" in i:
                 g = i.split("(")[1]
                 group = g.replace(")", "").strip() # NOTE: replace with nothing!
         subprocess.call(["chown", "-R", sudo_username + ":" + group, dst], shell=False)
     except Exception as e:
-        logger.error(e)
+        logger.error(
+            "Exception occured in LOC68: %s" % e
+        )
 
 # NOTE: Creating Log, Export and Config Directory:
+# DOCS : https://python.land/deep-dives/python-try-except
 try:
+    # DOCS : https://docs.python.org/3/library/os.path.html
     if not os.path.exists(log_dir):
-        makedirs(log_dir)
+        makedirs(log_dir) # REF : LOC 4
     if not os.path.exists(export_dir):
         makedirs(export_dir)
     if not os.path.exists(config_dir):
         makedirs(config_dir)
-    
     permissions(export_dir)
     permissions(config_dir)
-
     print("[INFO] Log Directory: %s" % log_dir)
     print("[INFO] Export Directory: %s" % export_dir)
     print("[INFO] Config Directory: %s" % config_dir)
-
+# DOCS : https://www.geeksforgeeks.org/handling-oserror-exception-in-python/
 except os.error as oserror:
     print("[ERROR] Exception: %s" % oserror)
     sys.exit(1)
@@ -137,22 +140,17 @@ try:
         logger.setLevel(logging.INFO)
         ch.setLevel(logging.INFO)
         tfh.setLevel(level=logging.INFO)
-    # NOTE: Docs -> https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
+    # DOCS : https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
     formatter = logging.Formatter(
         "%(asctime)s:%(levelname)s > %(message)s",
         "%Y-%m-%d %H:%M:%S"
     )
-    # NOTE :  Call formatter to ch & tfh
     ch.setFormatter(formatter)
     tfh.setFormatter(formatter)
-    # NOTE: Append ch to logger
     logger.addHandler(ch)
-    # NOTE: Append File Handler to logger
     logger.addHandler(tfh)
-
 except Exception as e:
-    print("[ERROR] Failed: %s" % e)
-
+    print("[ERROR] Exception in LOC109: %s" % e)
 # NOTE : On app close create package file 
 def _on_close_create_package_file():
     try:
@@ -174,10 +172,9 @@ def _on_close_create_package_file():
                 for line in process.stdout:
                     f.write("%s" %line)
     except Exception as e:
-        logger.error("[ERROR] Exception: %s" % e)
+        logger.error("[ERROR] Exception in LOC158: %s" % e)
         
 # NOTE: Global Functions
-
 def _get_position(lists, value):
     data = [
         string for string in lists if value in string
@@ -227,7 +224,7 @@ def sync_package_db():
                 return out
     except Exception as e:
         logger.error(
-            "[ERROR] Exception: %s" % e
+            "[ERROR] Exception in LOC206: %s" % e
         )
 
 def sync_file_db():
@@ -256,7 +253,7 @@ def sync_file_db():
                 return out
     except Exception as e:
         logger.error(
-            "[ERROR] Exception: %s" % e
+            "[ERROR] Exception in LOC234: %s" % e
         )
 
 # NOTE: Installation & Uninstallation Process
@@ -269,12 +266,12 @@ def start_subprocess(
         widget
 ):
     try:
+        # DOCS : https://www.knowledgehut.com/blog/programming/self-variabe-python-examples
         self.switch_package_version.set_sensitive(False)
         self.switch_snigdhaos_keyring.set_sensitive(False)
         self.switch_snigdhaos_mirrorlist.set_sensitive(False)
-
+        # DOCS : https://irtfweb.ifa.hawaii.edu/SoftwareDocs/gtk20/gtk/gtkwidget.html
         widget.set_sensitive(False)
-
         process_stdout_lst = []
         process_stdout_lst.append(
             "Command = %s\n\n" % " ".join(cmd)
@@ -295,7 +292,7 @@ def start_subprocess(
                 line = (
                     "Pacman Processing: %s Package: %s \n\n Command: %s\n\n" % (action, pkg.name, " ".join(cmd))
                 )
-                # DOC: https://docs.gtk.org/glib/const.PRIORITY_DEFAULT.html
+                # DOCS : https://docs.gtk.org/glib/const.PRIORITY_DEFAULT.html
                 GLib.idle_add(
                     update_progress_textview,
                     self,
@@ -403,20 +400,20 @@ def refresh_ui(
                 if content is not None:
                     for widget in content.get_children():
                         content.remove(widget)
-                    # DOCS: https://docs.gtk.org/gtk3/class.Label.html
+                    # DOCS : https://docs.gtk.org/gtk3/class.Label.html
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
-                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    # DOCS : https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
                         "<b>Package %s installed.</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
                         100,
-                        reveal_infobar,
+                        reveal_infobar, # LOC : 618
                         self,
                         progress_dialog,
                     )
@@ -439,7 +436,7 @@ def refresh_ui(
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -462,7 +459,7 @@ def refresh_ui(
                 result = message_dialog.run()
                 message_dialog.destroy()
         elif progress_dialog is None or progress_dialog.pkg_dialog_closed is True:
-            # DOCS: https://bbs.archlinux.org/viewtopic.php?id=48234
+            # DOCS : https://bbs.archlinux.org/viewtopic.php?id=48234
             if (
                 "error: failed to init transaction (unable to lock database)\n" in process_stdout_lst
             ):
@@ -548,13 +545,13 @@ def refresh_ui(
                     for widget in content.get_children():
                         content.remove(widget)
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
-                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    # DOCS : https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
                         "<b>Package %s installed.</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -579,13 +576,13 @@ def refresh_ui(
                     for widget in content.get_children():
                         content.remove(widget)
                     lbl_install = Gtk.Label(xalign=0, yalign=0)
-                    # DOCS: https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
+                    # DOCS : https://stackoverflow.com/questions/40072104/multi-color-text-in-one-gtk-label
                     lbl_install.set_markup(
                         "<b>Package %s uninstallation failed!</b>" % pkg.name
                     )
                     content.add(lbl_install)
                     if self.timeout_id is not None:
-                        # DOCS: https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
+                        # DOCS : https://gtk-rs.org/gtk-rs-core/stable/0.14/docs/glib/source/fn.source_remove.html
                         GLib.source_remove(self.timeout_id)
                         self.timeout_id = None
                     self.timeout_id = GLib.timeout_add(
@@ -633,11 +630,11 @@ def update_progress_textview(
         and self.in_progress is True
     ):
         buffer = progress_dialog.package_progress_textview.get_buffer()
-        # Docs: https://docs.python.org/3/library/asyncio-protocol.html#buffered-streaming-protocols
+        # DOCS : https://docs.python.org/3/library/asyncio-protocol.html#buffered-streaming-protocols
         if len(line) > 0 or buffer is None:
             buffer.insert(buffer.get_end_iter(), "%s" % line, len("%s" % line))
             text_mark_end = buffer.create_mark("\nend", buffer.get_end_iter(), False)
-            # DOCS: https://lazka.github.io/pgi-docs/#Gtk-4.0/classes/TextView.html#Gtk.TextView.scroll_mark_onscreen
+            # DOCS : https://lazka.github.io/pgi-docs/#Gtk-4.0/classes/TextView.html#Gtk.TextView.scroll_mark_onscreen
             progress_dialog.package_progress_textview.scroll_mark_onscreen(
                 text_mark_end
             )
@@ -1084,14 +1081,14 @@ def get_package_files(package_name):
             "Exception in LOC1161: %s" % e
         )
 
+
+# NOTE : Fixed where functions were not mutable and uable to call.
 def get_package_information(package_name):
-    logger.info(
-        "Fetching Package Information: %s" % package_name
-    )
+    logger.info("Fetching Information: %s" % package_name)
     try:
         pkg_name = "Unknown"
         pkg_version = "Unknown"
-        pkg_repository = "Unknown / Pacman Misconfig!"
+        pkg_repository = "Unknown / pacman mirrorlist not configured"
         pkg_description = "Unknown"
         pkg_arch = "Unknown"
         pkg_url = "Unknown"
@@ -1101,17 +1098,9 @@ def get_package_information(package_name):
         pkg_installed_size = "Unknown"
         pkg_build_date = "Unknown"
         pkg_packager = "Unknown"
-        pkg_metadata = {}
-        query_local_cmd = [
-            "pacman",
-            "-Qi",
-            package_name,
-        ]
-        query_remote_cmd = [
-            "pacman",
-            "-Si",
-            package_name,
-        ]
+        package_metadata = {}
+        query_local_cmd = ["pacman", "-Qi", package_name]
+        query_remote_cmd = ["pacman", "-Si", package_name]
         process_query_remote = subprocess.run(
             query_remote_cmd,
             shell=False,
@@ -1120,58 +1109,517 @@ def get_package_information(package_name):
             timeout=process_timeout,
         )
         if process_query_remote.returncode == 0:
-            for line in process_query_remote.stdout.decode("UTF-8").splitlines():
-                if "Name        :" in line.strip():
+            for line in process_query_remote.stdout.decode("utf-8").splitlines():
+                if "Name            :" in line.strip():
                     pkg_name = line.replace(" ", "").split("Name:")[1].strip()
-                if "Version        :" in line.strip():
+                if "Version         :" in line.strip():
                     pkg_version = line.replace(" ", "").split("Version:")[1].strip()
-                if "Repository        :" in line.strip():
-                    pkg_repository = line.split("Repository:")[1].strip()
-                if "Decription        :" in line.strip():
-                    pkg_description = line.split("Decription:")[1].strip()
-                if "Architecture        :" in line.strip():
-                    pkg_arch = line.split("Architecture:")[1].strip()
-                if "URL        :" in line.strip():
-                    pkg_url = line.split("URL:")[1].strip()
-                if "Depends On        :" in line.strip():
-                    if line.split("Depends On     :")[1].strip() != "None":
-                        pkg_depend_on_str = line.split("Depends On     :")[1].strip()
-                        for pkg_dep in pkg_depend_on_str.split(" "):
+                if "Repository      :" in line.strip():
+                    pkg_repository = line.split("Repository      :")[1].strip()
+                if "Description     :" in line.strip():
+                    pkg_description = line.split("Description     :")[1].strip()
+                if "Architecture    :" in line.strip():
+                    pkg_arch = line.split("Architecture    :")[1].strip()
+                if "URL             :" in line.strip():
+                    pkg_url = line.split("URL             :")[1].strip()
+                if "Depends On      :" in line.strip():
+                    if line.split("Depends On      :")[1].strip() != "None":
+                        pkg_depends_on_str = line.split("Depends On      :")[1].strip()
+                        for pkg_dep in pkg_depends_on_str.split("  "):
                             pkg_depends_on.append((pkg_dep, None))
                     else:
                         pkg_depends_on = []
-                if "Conflicts With        :" in line.strip():
-                    if line.split("Conflicts With        :")[1].strip() != "None":
-                        pkg_conflicts_with_str = line.split("Conflicts With        :")[1].strip()
-                        for pkg_con in pkg_conflicts_with_str.split(" "):
+                if "Conflicts With  :" in line.strip():
+                    if line.split("Conflicts With  :")[1].strip() != "None":
+                        pkg_conflicts_with_str = line.split("Conflicts With  :")[
+                            1
+                        ].strip()
+                        for pkg_con in pkg_conflicts_with_str.split("  "):
                             pkg_conflicts_with.append((pkg_con, None))
                     else:
                         pkg_conflicts_with = []
-                if "Download Size        :" in line.strip():
-                    pkg_download_size = line.split("Download Size:")[1].strip()
-                if "Installed Size        :" in line.strip():
-                    pkg_installed_size = line.split("Installed Size:")[1].strip()
-                if "Build Date        :" in line.strip():
-                    pkg_build_date = line.split("Build Date:")[1].strip()
+                if "Download Size   :" in line.strip():
+                    pkg_download_size = line.split("Download Size   :")[1].strip()
+                if "Installed Size  :" in line.strip():
+                    pkg_installed_size = line.split("Installed Size  :")[1].strip()
+                if "Build Date      :" in line.strip():
+                    pkg_build_date = line.split("Build Date      :")[1].strip()
                 if "Packager        :" in line.strip():
-                    pkg_packager = line.split("Packager:")[1].strip()
-            pkg_metadata["name"] = pkg_name
-            pkg_metadata["version"] = pkg_version
-            pkg_metadata["repository"] = pkg_repository
-            pkg_metadata["description"] = pkg_description
-            pkg_metadata["arch"] = pkg_arch
-            pkg_metadata["url"] = pkg_url
-            pkg_metadata["depends_on"] = pkg_depends_on
-            pkg_metadata["conflicts_with"] = pkg_conflicts_with
-            pkg_metadata["download_size"] = pkg_download_size
-            pkg_metadata["installed_size"] = pkg_installed_size
-            pkg_metadata["build_date"] = pkg_build_date
-            pkg_metadata["packager"] = pkg_packager
-            return pkg_metadata
+                    pkg_packager = line.split("Packager        :")[1].strip()
+            package_metadata["name"] = pkg_name
+            package_metadata["version"] = pkg_version
+            package_metadata["repository"] = pkg_repository
+            package_metadata["description"] = pkg_description
+            package_metadata["arch"] = pkg_arch
+            package_metadata["url"] = pkg_url
+            package_metadata["depends_on"] = pkg_depends_on
+            package_metadata["conflicts_with"] = pkg_conflicts_with
+            package_metadata["download_size"] = pkg_download_size
+            package_metadata["installed_size"] = pkg_installed_size
+            package_metadata["build_date"] = pkg_build_date
+            package_metadata["packager"] = pkg_packager
+            return package_metadata
         elif (
-            "error: package '%s' not found!\n" % package_name in process_query_remote.stdout.decode("UTF-8")
+            "error: package '%s' was not found\n" % package_name
+            in process_query_remote.stdout.decode("utf-8")
         ):
-            return "error: package '%s' not found!\n" % package_name
+            return "error: package '%s' was not found" % package_name
         else:
+            process_query_local = subprocess.run(
+                query_local_cmd,
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                timeout=process_timeout,
+            )
+            # NOTE: Added validation on process result
+            if process_query_local.returncode == 0:
+                for line in process_query_local.stdout.decode("utf-8").splitlines():
+                    if "Name            :" in line.strip():
+                        pkg_name = line.replace(" ", "").split("Name:")[1].strip()
+                    if "Version         :" in line.strip():
+                        pkg_version = line.replace(" ", "").split("Version:")[1].strip()
+                    if "Repository      :" in line.strip():
+                        pkg_repository = line.split("Repository      :")[1].strip()
+                    if "Description     :" in line.strip():
+                        pkg_description = line.split("Description     :")[1].strip()
+                    if "Architecture    :" in line.strip():
+                        pkg_arch = line.split("Architecture    :")[1].strip()
+                    if "URL             :" in line.strip():
+                        pkg_url = line.split("URL             :")[1].strip()
+                    if "Depends On      :" in line.strip():
+                        if line.split("Depends On      :")[1].strip() != "None":
+                            pkg_depends_on_str = line.split("Depends On      :")[
+                                1
+                            ].strip()
+                            for pkg_dep in pkg_depends_on_str.split("  "):
+                                pkg_depends_on.append((pkg_dep, None))
+                        else:
+                            pkg_depends_on = []
+                    if "Conflicts With  :" in line.strip():
+                        if line.split("Conflicts With  :")[1].strip() != "None":
+                            pkg_conflicts_with_str = line.split("Conflicts With  :")[
+                                1
+                            ].strip()
+                            for pkg_con in pkg_conflicts_with_str.split("  "):
+                                pkg_conflicts_with.append((pkg_con, None))
+                        else:
+                            pkg_conflicts_with = []
+                    if "Download Size   :" in line.strip():
+                        pkg_download_size = line.split("Download Size   :")[1].strip()
+                    if "Installed Size  :" in line.strip():
+                        pkg_installed_size = line.split("Installed Size  :")[1].strip()
+                    if "Build Date      :" in line.strip():
+                        pkg_build_date = line.split("Build Date      :")[1].strip()
+                    if "Packager        :" in line.strip():
+                        pkg_packager = line.split("Packager        :")[1].strip()
+                package_metadata["name"] = pkg_name
+                package_metadata["version"] = pkg_version
+                package_metadata["repository"] = pkg_repository
+                package_metadata["description"] = pkg_description
+                package_metadata["arch"] = pkg_arch
+                package_metadata["url"] = pkg_url
+                package_metadata["depends_on"] = pkg_depends_on
+                package_metadata["conflicts_with"] = pkg_conflicts_with
+                package_metadata["download_size"] = pkg_download_size
+                package_metadata["installed_size"] = pkg_installed_size
+                package_metadata["build_date"] = pkg_build_date
+                package_metadata["packager"] = pkg_packager
+                return package_metadata
+            else:
+                return None
+    except Exception as e:
+        logger.error("Exception in LOC1061: %s" % e)
             
-    
+# NOTE : ICON ON THE BACK
+def get_current_installed():
+    logger.debug(
+        "Get currently installed packages"
+    )
+    path = base_dir + "/cache/installed.lst"
+
+    query_str = [
+        "pacman", 
+        "-Q",
+    ]
+
+    subprocess_query = subprocess.Popen(
+        query_str,
+        shell=False,
+        stdout=subprocess.PIPE,
+    )
+
+    out, err = subprocess_query.communicate(timeout=process_timeout)
+
+    # added validation on process result
+    if subprocess_query.returncode == 0:
+        file = open(path, "w")
+        for line in out.decode("utf-8"):
+            file.write(line)
+        file.close()
+    else:
+        logger.warning("Failed to run %s" % query_str)
+
+def query_pkg(package):
+    try:
+        package = package.strip()
+        path = base_dir + "/cache/installed.lst"
+
+        pacman_localdb = base_dir + "/cache/pacman-localdb"
+
+        if os.path.exists(path):
+            if is_file_stale(path, 0, 0, 30):
+                get_current_installed()
+        else:
+            get_current_installed()
+        with open(path, "r") as f:
+            pkg = package.strip("\n")
+            for line in f:
+                installed = line.split(" ")
+                if pkg == installed[0]:
+                    return True
+            # file.close()
+        return False
+    except Exception as e:
+        logger.error("Exception in LOC1206: %s " % e)
+
+def cache(package, path_dir_cache):
+    try:
+        pkg = package.strip()
+        query_str = [
+            "pacman", 
+            "-Si", 
+            pkg, 
+            " --noconfirm",
+            ]
+        process = subprocess.Popen(
+            query_str, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        out, err = process.communicate()
+        if process.returncode == 0:
+            # out, err = process.communicate()
+
+            output = out.decode("utf-8")
+
+            if len(output) > 0:
+                split = output.splitlines()
+                desc = str(split[3]) # Ref: LOC:963
+                description = desc[18:] # Ref: LOC:964
+                filename = path_dir_cache + pkg
+
+                file = open(filename, "w")
+                file.write(description)
+                file.close()
+
+                return description
+ 
+        if process.returncode != 0:
+            exceptions = [
+                "cached-package-goes-here"
+            ]
+            if pkg in exceptions:
+                description = file_lookup(pkg, path_dir_cache + "corrections/")
+                return description
+        return "No Description Found"
+
+    except Exception as e:
+        logger.error("Exception in cache(): %s " % e)
+
+def add_pacmanlog_queue(self):
+    try:
+        lines = []
+        with open(pacman_logfile, "r", encoding="utf-8") as f:
+            while True:
+                line = f.readline()
+                if line:
+                    lines.append(line.encode("utf-8"))
+                    self.pacmanlog_queue.put(lines)
+                else:
+                    time.sleep(0.5)
+
+    except Exception as e:
+        logger.error("Exception in add_pacmanlog_queue() : %s" % e)
+    finally:
+        logger.debug("No new lines found inside the pacman log file")
+
+def start_log_timer(self, window_pacmanlog):
+    while True:
+        if window_pacmanlog.start_logtimer is False:
+            logger.debug("Stopping Pacman log monitoring timer")
+            return False
+
+        GLib.idle_add(update_textview_pacmanlog, self, priority=GLib.PRIORITY_DEFAULT)
+        time.sleep(2)
+
+# NOTE: SNIGDHA OS SPECIFIC #
+
+def append_repo(text):
+    """Append a new repo"""
+    try:
+        with open(pacman_conf, "a", encoding="utf-8") as f:
+            f.write("\n\n")
+            f.write(text)
+    except Exception as e:
+        logger.error("Exception in LOC1299: %s" % e)
+
+def repo_exist(value):
+    """check repo_exists"""
+    with open(pacman_conf, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        f.close()
+    for line in lines:
+        if value in line:
+            return True
+    return False
+
+def install_snigdhaos_keyring():
+    try:
+        keyring = base_dir + "/packages/snigdhaos-keyring/"
+        file = os.listdir(keyring)
+        cmd_str = [
+            "pacman",
+            "-U",
+            keyring + str(file).strip("[]'"),
+            "--noconfirm",
+        ]
+        logger.debug("%s" % " ".join(cmd_str))
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("Error: install of ArcoLinux keyring failed")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1318: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = e
+        return result_err
+
+def remove_snigdhaos_keyring():
+    try:
+        cmd_str = [
+            "pacman", 
+            "-Rdd", 
+            "snigdhaos-keyring", 
+            "--noconfirm"
+        ]
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("[Error] Removal of Snigdha OS keyring failed!")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1357: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = e
+        return result_err
+
+def install_snigdhaos_mirrorlist():
+    try:
+        mirrorlist = base_dir + "/packages/snigdhaos-mirrorlist/"
+        file = os.listdir(mirrorlist)
+        cmd_str = [
+            "pacman",
+            "-U",
+            mirrorlist + str(file).strip("[]'"),
+            "--noconfirm",
+        ]
+        logger.debug("%s" % " ".join(cmd_str))
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("[Error] install of Snigdha OS Mirrorlist failed")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1393: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = output
+        return result_err
+
+def remove_snigdhaos_mirrorlist():
+    try:
+        cmd_str = [
+            "pacman", 
+            "-Rdd", 
+            "snigdhaos-mirrorlist", 
+            "--noconfirm",
+        ]
+        logger.debug("%s" % " ".join(cmd_str))
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("[Error] Removal of Snigdha OS Mirrorlist failed")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1432: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = e
+        return result_err
+
+def add_snigdha_repos():
+    logger.info("Adding Snigdha OS Repos on %s" % distr)
+    try:
+        if verify_snigdhaos_pacman_conf() is False:
+            if os.path.exists(pacman_conf):
+                shutil.copy(
+                    pacman_conf, 
+                    pacman_conf_backup,
+                )
+                logger.info("Reading from %s" % pacman_conf)
+                lines = []
+                with open(pacman_conf, "r", encoding="utf-8") as r:
+                    lines = r.readlines()
+                if len(lines) > 0:
+                    snigddhaos_core_found = False
+                    snigdhaos_extra_found = False
+                    for line in lines:
+                        if "#" in line.strip():
+                            if snigddhaos_core[0].replace("#", "") in line.strip():
+                                snigddhaos_core_found = True
+                                index = lines.index(line)
+                                del lines[index]
+                                lines.insert(index, snigddhaos_core[0])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigddhaos_core[1])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigddhaos_core[2])
+                            if snigdhaos_extra[0].replace("#", "") in line.strip():
+                                snigdhaos_extra_found = True
+                                index = lines.index(line)
+                                del lines[index]
+                                lines.insert(index, snigdhaos_extra[0])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigdhaos_extra[1])
+                                index += 1
+                                del lines[index]
+                                lines.insert(index, snigdhaos_extra[2])
+                        if line.strip() == snigddhaos_core[0]:
+                            snigddhaos_core_found = True
+                        if line.strip() == snigdhaos_extra[0]:
+                            snigdhaos_extra_found = True
+                    if snigddhaos_core_found is False:
+                        lines.append("\n")
+                        for snigdhaos_repo_line in snigddhaos_core:
+                            lines.append(snigdhaos_repo_line)
+                    if snigdhaos_extra_found is False:
+                        lines.append("\n")
+                        for snigdhaos_extra_found_line in snigdhaos_extra_found:
+                            lines.append(snigdhaos_extra_found_line)
+                    logger.info("[Add Snigdha OS repos] Writing to %s" % pacman_conf)
+                    if len(lines) > 0:
+                        with open(pacman_conf, "w", encoding="utf-8") as w:
+                            for l in lines:
+                                w.write(l.strip() + "\n")
+                            w.flush()
+                        return 0
+                    else:
+                        logger.error("Failed to process %s" % pacman_conf)
+                else:
+                    logger.error("Failed to read %s" % pacman_conf)
+        else:
+            logger.info("Snigdha OS repos already setup inside pacman conf file")
+            return 0
+    except Exception as e:
+        logger.error("Exception in LOC1469: %s" % e)
+        return e
+
+def verify_snigdhaos_pacman_conf():
+    try:
+        lines = None
+        snigdhaos_core_setup = False
+        snigdhaos_extra_setup = False
+        with open(pacman_conf, "r") as r:
+            lines = r.readlines()
+        if lines is not None:
+            for line in lines:
+                if snigdhaos_repo[0] in line.strip():
+                    if "#" not in line.strip():
+                        snigdhaos_core_setup = True
+                    else:
+                        return False
+
+                if snigdhaos_extra[0] in line.strip():
+                    if "#" not in line.strip():
+                        snigdhaos_extra_setup = True
+                    else:
+                        return False
+            if (
+                snigdhaos_core_setup is True
+                and snigdhaos_extra_setup is True
+            ):
+                return True
+            else:
+                return False
+    except Exception as e:
+        logger.error("Exception in LOC1604: %s" % e)
+
