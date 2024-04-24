@@ -68,12 +68,14 @@ export_dir = "%s/blackbox-exports" % home
 def permissions(dst):
     try:
         # NOTE : Use try-catch block so that we can trace any error!
+        # DOCS : https://docs.python.org/3/library/subprocess.html
         groups = subprocess.run(
             ["sh", "-c", "id " + sudo_username],
             shell=False,
-            stdout=subprocess.PIPE, # NOTE: Standard Output
-            stderr=subprocess.STDOUT, # NOTE: Standard Error Output
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
         )
+        # DOCS : https://www.geeksforgeeks.org/python-strings-decode-method/
         for i in groups.stdout.decode().split(" "):
             if "gid" in i:
                 g = i.split("(")[1]
@@ -152,7 +154,7 @@ try:
     logger.addHandler(tfh)
 
 except Exception as e:
-    print("[ERROR] Failed: %s" % e)
+    print("[ERROR] Exception in LOC109: %s" % e)
 
 # NOTE : On app close create package file 
 def _on_close_create_package_file():
@@ -175,7 +177,7 @@ def _on_close_create_package_file():
                 for line in process.stdout:
                     f.write("%s" %line)
     except Exception as e:
-        logger.error("[ERROR] Exception: %s" % e)
+        logger.error("[ERROR] Exception in LOC158: %s" % e)
         
 # NOTE: Global Functions
 
@@ -228,7 +230,7 @@ def sync_package_db():
                 return out
     except Exception as e:
         logger.error(
-            "[ERROR] Exception: %s" % e
+            "[ERROR] Exception in LOC206: %s" % e
         )
 
 def sync_file_db():
@@ -257,7 +259,7 @@ def sync_file_db():
                 return out
     except Exception as e:
         logger.error(
-            "[ERROR] Exception: %s" % e
+            "[ERROR] Exception in LOC234: %s" % e
         )
 
 # NOTE: Installation & Uninstallation Process
@@ -270,12 +272,12 @@ def start_subprocess(
         widget
 ):
     try:
+        # DOCS: https://www.knowledgehut.com/blog/programming/self-variabe-python-examples
         self.switch_package_version.set_sensitive(False)
         self.switch_snigdhaos_keyring.set_sensitive(False)
         self.switch_snigdhaos_mirrorlist.set_sensitive(False)
-
+        # DOCS: https://irtfweb.ifa.hawaii.edu/SoftwareDocs/gtk20/gtk/gtkwidget.html
         widget.set_sensitive(False)
-
         process_stdout_lst = []
         process_stdout_lst.append(
             "Command = %s\n\n" % " ".join(cmd)
