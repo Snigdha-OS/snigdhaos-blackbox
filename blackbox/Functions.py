@@ -1202,3 +1202,26 @@ def get_current_installed():
         file.close()
     else:
         logger.warning("Failed to run %s" % query_str)
+
+def query_pkg(package):
+    try:
+        package = package.strip()
+        path = base_dir + "/cache/installed.lst"
+
+        pacman_localdb = base_dir + "/cache/pacman-localdb"
+
+        if os.path.exists(path):
+            if is_file_stale(path, 0, 0, 30):
+                get_current_installed()
+        else:
+            get_current_installed()
+        with open(path, "r") as f:
+            pkg = package.strip("\n")
+            for line in f:
+                installed = line.split(" ")
+                if pkg == installed[0]:
+                    return True
+            # file.close()
+        return False
+    except Exception as e:
+        logger.error("Exception in LOC1206: %s " % e)
