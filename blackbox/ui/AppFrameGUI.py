@@ -1,8 +1,8 @@
 #!/bin/python
+
 from socket import TIPC_ADDR_NAME
 from urllib.parse import scheme_chars
 import Functions as fn
-
 
 class AppFrameGUI:
     def build_ui_frame(self, Gtk, vbox_stack, category, packages_list):
@@ -51,23 +51,16 @@ class AppFrameGUI:
             """
                 Store  a list of unique sub-categories
                 e.g.
-
-                category            --> applications
+                category        --> applications
                 sub category    --> Accessories
                 sub category    --> Conky
-
             """
-
             sub_catlabels = []
-
             # store unique subcategory names into a dictionary
-
             for package in packages_list:
                 subcats[package.subcategory] = package
-
             # we now iterate across the dictionary keys
             # each Stack has an associated subcategory
-
             for subcat in subcats.keys():
                 vbox_stacks.append(
                     Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -77,7 +70,6 @@ class AppFrameGUI:
 
                 vbox_stacknames.append(subcat)
                 # iterate across a list of packages
-
                 for package in packages_list:
                     if package.subcategory == subcat:
                         page = vbox_stacks.pop()
@@ -100,7 +92,6 @@ class AppFrameGUI:
                             page.pack_start(lbl_padding_page1, False, False, 0)
 
                         grid = Gtk.Grid()
-
                         grid.insert_row(index)
 
                         lbl_sep1 = Gtk.Label(xalign=0, yalign=0)
@@ -123,7 +114,6 @@ class AppFrameGUI:
 
                             Changing the switch using set_active(bool), and using the signal notify::active
                             caused a never-ending loop which would call app_toggle.
-
                         """
                         switch.set_state(fn.query_pkg(package.name))
                         switch.connect(
@@ -133,7 +123,6 @@ class AppFrameGUI:
                         )
 
                         # add switch widget to grid
-
                         # attach_next_to(child, sibling, side, width, height)
 
                         grid.attach_next_to(
@@ -141,7 +130,6 @@ class AppFrameGUI:
                         )
 
                         # add space seperator next to switch
-
                         lbl_sep_switch = Gtk.Label(xalign=0, yalign=0)
                         lbl_sep_switch.set_text(sep_text)
 
@@ -150,7 +138,6 @@ class AppFrameGUI:
                         )
 
                         ###### switch widget ends ######
-
                         ###### pkg name label widget starts ######
 
                         lbl_sep_package1 = Gtk.Label(xalign=0, yalign=0)
