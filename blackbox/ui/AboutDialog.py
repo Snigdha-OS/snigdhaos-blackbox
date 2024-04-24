@@ -21,7 +21,7 @@ class AboutDialog(Gtk.Dialog):
         app_secondary_message = "Install or remove software"
         app_secondary_description = "Report issues to make it even better"
         app_version = "pkgversion-pkgrelease"
-        # app_discord = "https://discord.gg/stBhS4taje"
+        app_discord = "https://discord.gg/stBhS4taje"
         app_website = "https://snigdhaos.org"
         app_github = "https://github.com/Snigdha-OS/snigdhaos-blackbox"
         app_authors = []

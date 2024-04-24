@@ -3,18 +3,23 @@
 import os
 from os import makedirs
 import sys
+import psutil
 import gi
 import subprocess
 import logging
+from logging.handlers import TimedRotatingFileHandler
+from threading import Thread
 import datetime
 from datetime import datetime
 from datetime import timedelta
-# from logging import Logger
+from datetime import time
 import shutil
-import Settings
-from logging.handlers import TimedRotatingFileHandler
 
-from ui.GUI import *
+
+from Settings import Settings
+from Package import Package
+from ui.MessageDialog import MessageDialog
+
 
 gi.require_version("Gtk" "3.0") # GTK 2.0 is dead!
 from gi.repository import GLib, Gtk
@@ -289,6 +294,62 @@ def start_subprocess(
                 line = (
                     "Pacman Processing: %s Package: %s \n\n Command: %s\n\n" % (action, pkg.name, " ".join(cmd))
                 )
+                # DOC: https://docs.gtk.org/glib/const.PRIORITY_DEFAULT.html
+                GLib.idle_add(
+                    update_progress_textview,
+                    self,
+                    line,
+                    progress_dialog,
+                    priority=GLib.PRIORITY_DEFAULT,
+                )
+            logger.debug("Pacman is processing the request.")
+
+            while True:
+                if process.poll() is not None:
+                    break
+                if (
+                    progress_dialog is not None and progress_dialog.pkg_dialog_closed is False
+                ):
+                    for line in process.stdout:
+                        GLib.idle_add(
+                            update_progress_textview,
+                            self,
+                            line,
+                            progress_dialog,
+                            priority=GLib.PRIORITY_DEFAULT,
+                        )
+                        process_stdout_lst.append(line)
+                    time.sleep(0.3)
+                else:
+                    for line in process.stdout:
+                        process_stdout_lst.append(line)
+                    time.sleep(1)
+            returncode = None
+            returncode = process.poll()
+
+            if returncode is not None:
+                logger.info(
+                    "Pacman process completion: %s" % " ".join(cmd)
+                )
+                GLib.idle_add(
+                    refresh_ui # INCOMPLETE: 
+                )
 
     except Exception as e:
         print(e)
+
+def refresh_ui(
+        self,
+        action,
+        switch,
+        pkg,
+        progress_dialog,
+        process_stdout_lst,
+):
+    self.switch_package_version.set_sensitive(False)
+    self.switch_snigdhaos_keyring.set_sensitive(False)
+    self.switch_snigdhaos_mirrorlist.set_sensitive(False)  
+
+    
+    
+def update_progress_textview():
