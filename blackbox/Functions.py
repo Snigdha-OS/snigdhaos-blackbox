@@ -360,7 +360,21 @@ def refresh_ui(
         switch.set_sensitive(True)
         switch.set_state(True)
         switch.set_active(True)
-    
+        if progress_dialog is not None:
+            if progress_dialog.pkg_dialog_closed is False:
+                progress_dialog.set_title(
+                    "Package installed: %s" % pkg.name
+                )
+                progress_dialog.infobar.set_name(
+                    "infobar_info"
+                )
+                content = progress_dialog.infobar.get_content_area()
+                if content is not None:
+                    for widget in content.get_children():
+                        content.remove(widget)
+                    
+
+
 def update_progress_textview(
         self,
         line,
