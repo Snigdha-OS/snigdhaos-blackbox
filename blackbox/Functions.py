@@ -1,7 +1,7 @@
 #!/bin/python
 
 import os
-from os import makedirs
+from os import makedirs # DOCS : https://docs.python.org/3/library/os.html#os.makedirs
 import sys
 import psutil
 import time
@@ -10,7 +10,7 @@ from datetime import datetime
 from datetime import timedelta
 import subprocess
 import threading
-import logging
+import logging # DOCS: https://docs.python.org/3/library/logging.html
 from logging.handlers import TimedRotatingFileHandler
 import shutil
 from threading import Thread
@@ -87,21 +87,20 @@ def permissions(dst):
         )
 
 # NOTE: Creating Log, Export and Config Directory:
+# DOCS : https://python.land/deep-dives/python-try-except
 try:
+    # DOCS : https://docs.python.org/3/library/os.path.html
     if not os.path.exists(log_dir):
         makedirs(log_dir)
     if not os.path.exists(export_dir):
         makedirs(export_dir)
     if not os.path.exists(config_dir):
         makedirs(config_dir)
-    
     permissions(export_dir)
     permissions(config_dir)
-
     print("[INFO] Log Directory: %s" % log_dir)
     print("[INFO] Export Directory: %s" % export_dir)
     print("[INFO] Config Directory: %s" % config_dir)
-
 except os.error as oserror:
     print("[ERROR] Exception: %s" % oserror)
     sys.exit(1)
