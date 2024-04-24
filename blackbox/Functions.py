@@ -1293,3 +1293,64 @@ def start_log_timer(self, window_pacmanlog):
 
         GLib.idle_add(update_textview_pacmanlog, self, priority=GLib.PRIORITY_DEFAULT)
         time.sleep(2)
+
+# NOTE: SNIGDHA OS SPECIFIC #
+
+def append_repo(text):
+    """Append a new repo"""
+    try:
+        with open(pacman_conf, "a", encoding="utf-8") as f:
+            f.write("\n\n")
+            f.write(text)
+    except Exception as e:
+        logger.error("Exception in LOC1299: %s" % e)
+
+def repo_exist(value):
+    """check repo_exists"""
+    with open(pacman_conf, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        f.close()
+    for line in lines:
+        if value in line:
+            return True
+    return False
+
+def install_snigdhaos_keyring():
+    try:
+        keyring = base_dir + "/packages/snigdhaos-keyring/"
+        file = os.listdir(keyring)
+        cmd_str = [
+            "pacman",
+            "-U",
+            keyring + str(file).strip("[]'"),
+            "--noconfirm",
+        ]
+        logger.debug("%s" % " ".join(cmd_str))
+        with subprocess.Popen(
+            cmd_str,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
+            universal_newlines=True,
+        ) as process:
+            process.wait(process_timeout)
+            output = []
+            for line in process.stdout:
+                output.append(line)
+            if process.returncode == 0:
+                return 0
+            else:
+                if len(output) == 0:
+                    output.append("Error: install of ArcoLinux keyring failed")
+                logger.error(" ".join(output))
+                result_err = {}
+                result_err["cmd_str"] = cmd_str
+                result_err["output"] = output
+                return result_err
+    except Exception as e:
+        logger.error("Exception in LOC1318: %s" % e)
+        result_err = {}
+        result_err["cmd_str"] = cmd_str
+        result_err["output"] = e
+        return result_err
+
