@@ -2181,3 +2181,13 @@ def log_package_status(self):
                             f.write("%s\n" % package)
             break
 
+def open_log_dir():
+    try:
+        subprocess.Popen(
+            ["sudo", "-u", sudo_username, "xdg-open", log_dir],
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+    except Exception as e:
+        logger.error("Exception in open_log_dir(): %s" % e)
