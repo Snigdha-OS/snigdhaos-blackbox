@@ -1806,3 +1806,52 @@ def check_if_process_running(process_name):
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
     return False
+
+def terminate_pacman():
+    try:
+        process_found = False
+        for proc in psutil.process_iter():
+            try:
+                pinfo = proc.as_dict(attrs=["pid", "name", "create_time"])
+                if pinfo["name"] == "pacman":
+                    process_found = True
+                    logger.debug(
+                        "Killing Pacman Process: %s" %pinfo["name"]
+                    )
+                    proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        if process_found == True:
+            if check_pacman_lockfile():
+                os.unlink(pacman_lockfile)
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1810: %s" % e 
+        )
+
+def check_pacman_lockfile():
+    try:
+        if os.path.exists(pacman_lockfile):
+            return True
+        else:
+            return False
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1832: %s" % e
+        )
+
+def is_thread_alive(thread_name):
+    for thread in threading.enumerate():
+        if thread.name == thread_name and thread.is_alive():
+            return True
+    return False
+
+def print_running_threads():
+    threads_alive = []
+    for thread in threading.enumerate():
+        if thread.is_alive():
+            threads_alive.append(thread.name)
+    for th in threads_alive:
+        logger.debug(
+            "Thread: %s Status: Alive" % th
+        )
