@@ -1525,7 +1525,7 @@ def remove_snigdhaos_mirrorlist():
         result_err["output"] = e
         return result_err
 
-def add_snigdha_repos():
+def add_snigdhaos_repos():
     logger.info("Adding Snigdha OS Repos on %s" % distr)
     try:
         if verify_snigdhaos_pacman_conf() is False:
@@ -1701,4 +1701,98 @@ def search(self, term):
         logger.error(
             "Found Exception in LOC1650: %s" % e 
         )
-        
+
+def remove_snigdhaos_repos():
+    try:
+        if verify_snigdhaos_pacman_conf() is True:
+            if os.path.exists(pacman_conf):
+                shutil.copy(
+                    pacman_conf,
+                    pacman_conf_backup,
+                )
+                logger.info(
+                    "Reading From: %s" % pacman_conf
+                )
+                lines = []
+                with open(
+                    pacman_conf, "r", encoding="UTF-8"
+                ) as r:
+                    lines = r.readlines()
+                if len(lines) > 0:
+                    index = 0
+                    for line in lines:
+                        if "%s\n" % snigdhaos_core[0] == line:
+                            index = line.index("%s\n" % snigdhaos_core[0])
+                            if index > 0:
+                                if distr != "snigdhaos":
+                                    del lines[index]
+                                    del lines[index]
+                                    del lines[index]
+                                else:
+                                    lines[index] = "#%s\n" % snigdhaos_core[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_core[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_core[2]
+                        elif (
+                            "#" in line.strip()
+                            and snigdhaos_core[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
+                        ):
+                            index = lines.index(line)
+                            del lines[index]
+                            del lines[index]
+                            del lines[index]
+                        if "%s\n" %snigdhaos_extra[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_extra[0])
+                            if index > 0:
+                                if distr != "snigdhaos":
+                                    del lines[index]
+                                    del lines[index]
+                                    del lines[index]
+                                else:
+                                    lines[index] = "#%s\n" % snigdhaos_extra[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_extra[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_extra[2]
+                        elif (
+                            "#" in line.strip()
+                            and snigdhaos_extra[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
+                        ):
+                            index = lines.index(line)
+                            del lines[index]
+                            del lines[index]
+                            del lines[index]
+                    if distr != "snigdhaos":
+                        if lines[-1] == "\n":
+                            del lines[-1]
+                        if lines[-2] == "\n":
+                            del lines[-2]
+                        if lines[-3] == "\n":
+                            del lines[-3]
+                        if lines[-4] == "\n":
+                            del lines[-4]
+                    logger.info(
+                        "[Remove Snigdha OS Repos] Writing to %s" % pacman_conf
+                    )
+                    if len(lines) > 0:
+                        with open(pacman_conf, "w") as w:
+                            w.writelines(lines)
+                            w.flush() # DOCS : https://www.geeksforgeeks.org/file-flush-method-in-python/
+                        return 0
+                    else:
+                        logger.error(
+                            "Failed to process: %s" % pacman_conf
+                        )
+                else:
+                    logger.error(
+                        "Failed to read %s" % pacman_conf
+                    )
+        else:
+            logger.info(
+                "No Snigdha OS Repos inside Pacman Config!"
+            )
+            return 0
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1705: %s" % e
+        )
+        return e
