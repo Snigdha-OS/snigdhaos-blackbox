@@ -1911,3 +1911,23 @@ def cache_btn():
 
     logger.debug("Caching applications finished")
 
+def restart_program():
+    os.unlink("/tmp/blackbox.lock")
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
+def show_in_app_notification(self, message, err):
+    if self.timeout_id is not None:
+        GLib.source_remove(self.timeout_id)
+        self.timeout_id = None
+
+    if err is True:
+        self.notification_label.set_markup(
+            '<span background="yellow" foreground="black">' + message + "</span>"
+        )
+    else:
+        self.notification_label.set_markup(
+            '<span foreground="white">' + message + "</span>"
+        )
+    self.notification_revealer.set_reveal_child(True)
+    self.timeout_id = GLib.timeout_add(3000, timeout, self)
