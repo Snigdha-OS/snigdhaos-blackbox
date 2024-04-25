@@ -1796,3 +1796,13 @@ def remove_snigdhaos_repos():
             "Found Exception in LOC1705: %s" % e
         )
         return e
+def check_if_process_running(process_name):
+    # DOCS : https://psutil.readthedocs.io/en/latest/#psutil.process_iter
+    for proc in psutil.process_iter():
+        try:
+            pinfo = proc.as_dict(attrs=["pid", "name", "create_time"])
+            if process_name == pinfo["pid"]:
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return False
