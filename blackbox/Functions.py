@@ -22,8 +22,8 @@ from distro import id # DOCS : https://github.com/python-distro/distro
 import Functions as fn
 
 import gi # DOCS : https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
-gi.require_version("Gtk" "3.0")
 from gi.repository import GLib, Gtk
+gi.require_version("Gtk" "3.0")
 
 # NOTE: Base Directory
 base_dir = os.path.dirname(os.path.realpath(__file__))
@@ -1525,7 +1525,7 @@ def remove_snigdhaos_mirrorlist():
         result_err["output"] = e
         return result_err
 
-def add_snigdha_repos():
+def add_snigdhaos_repos():
     logger.info("Adding Snigdha OS Repos on %s" % distr)
     try:
         if verify_snigdhaos_pacman_conf() is False:
@@ -1625,3 +1625,276 @@ def verify_snigdhaos_pacman_conf():
     except Exception as e:
         logger.error("Exception in LOC1604: %s" % e)
 
+def update_textview_pacmanlog(self):
+    lines = self.pacmanlog_queue.get()
+    try:
+        buffer = self.textbuffer_pacmanlog
+        if len(lines) > 0:
+            # DOCS : https://askubuntu.com/questions/435629/how-to-get-text-buffer-from-file-and-loading-into-textview-using-python-and-gtk
+            end_iter = buffer.get_end_iter()
+            for line in lines:
+                if len(line) > 0:
+                    buffer.insert(
+                        end_iter,
+                        line.decode("UTF-8"),
+                        len(line),
+                    )
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1628: %s" % e
+        )
+    finally:
+        # DOCS : https://stackoverflow.com/questions/49637086/python-what-is-queue-task-done-used-for
+        self.pacmanlog_queue.task_done()
+
+def search(self, term):
+    try:
+        logger.info('Searching: "%s"' % term)
+        pkg_matches = []
+        category_dict = {}
+        whitespace = False
+        if term.strip():
+            whitespace = True
+        for pkg_list in self.packages.values():
+            for pkg in pkg_list:
+                if whitespace:
+                    for te in term.split(" "):
+                        if(
+                            te.lower() in pkg.name.lower() or te.lower() in pkg.description.lower()
+                        ):
+                            if pkg not in pkg_matches:
+                                pkg_matches.append(
+                                    pkg,
+                                )
+                else:
+                    if (
+                        te.lower() in pkg.name.lower() or te.lower() in pkg.description.lower()
+                    ):
+                        pkg_matches.append(
+                            pkg,
+                        )
+        
+        category_name = None
+        packages_cat = []
+        for pkg_match in pkg_matches:
+            if category_name == pkg_match.category:
+                packages_cat.append(pkg_match)
+                category_dict[category_name] = packages_cat
+            elif category_name is None:
+                packages_cat.append(pkg_match)
+            else:
+                packages_cat = []
+                packages_cat.append(pkg_match)
+                category_dict[pkg_match.category] = packages_cat
+            category_name = pkg_match.category
+        sorted_dict = None
+        if len(category_dict) > 0:
+            sorted_dict = dict(sorted(category_dict.items()))
+            self.search_queue.put(
+                sorted_dict,
+            )
+        else:
+            self.search_queue.put(
+                None,
+            )
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1650: %s" % e 
+        )
+
+def remove_snigdhaos_repos():
+    try:
+        if verify_snigdhaos_pacman_conf() is True:
+            if os.path.exists(pacman_conf):
+                shutil.copy(
+                    pacman_conf,
+                    pacman_conf_backup,
+                )
+                logger.info(
+                    "Reading From: %s" % pacman_conf
+                )
+                lines = []
+                with open(
+                    pacman_conf, "r", encoding="UTF-8"
+                ) as r:
+                    lines = r.readlines()
+                if len(lines) > 0:
+                    index = 0
+                    for line in lines:
+                        if "%s\n" % snigdhaos_core[0] == line:
+                            index = line.index("%s\n" % snigdhaos_core[0])
+                            if index > 0:
+                                if distr != "snigdhaos":
+                                    del lines[index]
+                                    del lines[index]
+                                    del lines[index]
+                                else:
+                                    lines[index] = "#%s\n" % snigdhaos_core[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_core[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_core[2]
+                        elif (
+                            "#" in line.strip()
+                            and snigdhaos_core[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
+                        ):
+                            index = lines.index(line)
+                            del lines[index]
+                            del lines[index]
+                            del lines[index]
+                        if "%s\n" %snigdhaos_extra[0] == line:
+                            index = lines.index("%s\n" % snigdhaos_extra[0])
+                            if index > 0:
+                                if distr != "snigdhaos":
+                                    del lines[index]
+                                    del lines[index]
+                                    del lines[index]
+                                else:
+                                    lines[index] = "#%s\n" % snigdhaos_extra[0]
+                                    lines[index + 1] = "#%s\n" % snigdhaos_extra[1]
+                                    lines[index + 2] = "#%s\n" % snigdhaos_extra[2]
+                        elif (
+                            "#" in line.strip()
+                            and snigdhaos_extra[0] == line.replace("#", "").strip()
+                            and distr != "snigdhaos"
+                        ):
+                            index = lines.index(line)
+                            del lines[index]
+                            del lines[index]
+                            del lines[index]
+                    if distr != "snigdhaos":
+                        if lines[-1] == "\n":
+                            del lines[-1]
+                        if lines[-2] == "\n":
+                            del lines[-2]
+                        if lines[-3] == "\n":
+                            del lines[-3]
+                        if lines[-4] == "\n":
+                            del lines[-4]
+                    logger.info(
+                        "[Remove Snigdha OS Repos] Writing to %s" % pacman_conf
+                    )
+                    if len(lines) > 0:
+                        with open(pacman_conf, "w") as w:
+                            w.writelines(lines)
+                            w.flush() # DOCS : https://www.geeksforgeeks.org/file-flush-method-in-python/
+                        return 0
+                    else:
+                        logger.error(
+                            "Failed to process: %s" % pacman_conf
+                        )
+                else:
+                    logger.error(
+                        "Failed to read %s" % pacman_conf
+                    )
+        else:
+            logger.info(
+                "No Snigdha OS Repos inside Pacman Config!"
+            )
+            return 0
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1705: %s" % e
+        )
+        return e
+def check_if_process_running(process_name):
+    # DOCS : https://psutil.readthedocs.io/en/latest/#psutil.process_iter
+    for proc in psutil.process_iter():
+        try:
+            pinfo = proc.as_dict(attrs=["pid", "name", "create_time"])
+            if process_name == pinfo["pid"]:
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return False
+
+def terminate_pacman():
+    try:
+        process_found = False
+        for proc in psutil.process_iter():
+            try:
+                pinfo = proc.as_dict(attrs=["pid", "name", "create_time"])
+                if pinfo["name"] == "pacman":
+                    process_found = True
+                    logger.debug(
+                        "Killing Pacman Process: %s" %pinfo["name"]
+                    )
+                    proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        if process_found == True:
+            if check_pacman_lockfile():
+                os.unlink(pacman_lockfile)
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1810: %s" % e 
+        )
+
+def check_pacman_lockfile():
+    try:
+        if os.path.exists(pacman_lockfile):
+            return True
+        else:
+            return False
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1832: %s" % e
+        )
+
+def is_thread_alive(thread_name):
+    for thread in threading.enumerate():
+        if thread.name == thread_name and thread.is_alive():
+            return True
+    return False
+
+def print_running_threads():
+    threads_alive = []
+    for thread in threading.enumerate():
+        if thread.is_alive():
+            threads_alive.append(thread.name)
+    for th in threads_alive:
+        logger.debug(
+            "Thread: %s Status: Alive" % th
+        )
+
+def check_holding_queue(self):
+    while True:
+        (
+            package,
+            action,
+            widget,
+            cmd_str,
+            progress_dialog,
+        ) = self.pkg_holding_queue.get()
+        try:
+            while check_pacman_lockfile() is True:
+                time.sleep(0.2)
+            th_subprocess = Thread(
+                name = "thread_subprocess",
+                target = start_subprocess,
+                args=(
+                    self,
+                    cmd_str,
+                    progress_dialog,
+                    action,
+                    package,
+                    widget,
+                ),
+                daemon=True
+            )
+            th_subprocess.start()
+        finally:
+            self.pkg_holding_queue.task_done()
+
+def get_pacman_process():
+    try:
+        for proc in psutil.process_iter():
+            try:
+                pinfo = proc.as_dict(attrs=["pid", "name", "create_time"])
+                if pinfo["name"] == "pacman":
+                    return " ".join(proc.cmdline)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1888: %s" % e 
+        )
