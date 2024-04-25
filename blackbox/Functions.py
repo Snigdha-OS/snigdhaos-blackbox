@@ -1855,3 +1855,46 @@ def print_running_threads():
         logger.debug(
             "Thread: %s Status: Alive" % th
         )
+
+def check_holding_queue(self):
+    while True:
+        (
+            package,
+            action,
+            widget,
+            cmd_str,
+            progress_dialog,
+        ) = self.pkg_holding_queue.get()
+        try:
+            while check_pacman_lockfile() is True:
+                time.sleep(0.2)
+            th_subprocess = Thread(
+                name = "thread_subprocess",
+                target = start_subprocess,
+                args=(
+                    self,
+                    cmd_str,
+                    progress_dialog,
+                    action,
+                    package,
+                    widget,
+                ),
+                daemon=True
+            )
+            th_subprocess.start()
+        finally:
+            self.pkg_holding_queue.task_done()
+
+def get_pacman_process():
+    try:
+        for proc in psutil.process_iter():
+            try:
+                pinfo = proc.as_dict(attrs=["pid", "name", "create_time"])
+                if pinfo["name"] == "pacman":
+                    return " ".join(proc.cmdline)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1888: %s" % e 
+        )
