@@ -85,7 +85,7 @@ def permissions(dst):
         subprocess.call(["chown", "-R", sudo_username + ":" + group, dst], shell=False)
     except Exception as e:
         logger.error(
-            "Exception occured in LOC68: %s" % e
+            "[Exception] permissions() : %s" % e
         )
 
 # NOTE: Creating Log, Export and Config Directory:
@@ -152,7 +152,7 @@ try:
     logger.addHandler(ch)
     logger.addHandler(tfh)
 except Exception as e:
-    print("[ERROR] Exception in LOC109: %s" % e)
+    print("Found Exception in LOC109: %s" % e)
 # NOTE : On app close create package file 
 def _on_close_create_package_file():
     try:
@@ -174,7 +174,7 @@ def _on_close_create_package_file():
                 for line in process.stdout:
                     f.write("%s" %line)
     except Exception as e:
-        logger.error("[ERROR] Exception in LOC158: %s" % e)
+        logger.error("[Exception] _on_close_create_package_file(): %s" % e)
         
 # NOTE: Global Functions
 def _get_position(lists, value):
@@ -208,7 +208,7 @@ def sync_package_db():
             "-Sy",
         ]
         logger.info(
-            "Synchronizing Package Database..."
+            "[INFO] Synchronizing Package Database..."
         )
         process_sync = subprocess.run(
             sync_str,
@@ -226,7 +226,7 @@ def sync_package_db():
                 return out
     except Exception as e:
         logger.error(
-            "[ERROR] Exception in LOC206: %s" % e
+            "[Exception] sync_package_db() : %s" % e
         )
 
 def sync_file_db():
@@ -236,7 +236,7 @@ def sync_file_db():
             "-Fy",
         ]
         logger.info(
-            "Synchronizing File Database..."
+            "[INFO] Synchronizing File Database..."
         )
         process_sync = subprocess.run(
             sync_str,
@@ -255,7 +255,7 @@ def sync_file_db():
                 return out
     except Exception as e:
         logger.error(
-            "[ERROR] Exception in LOC234: %s" % e
+            "[Exception] sync_file_db() : %s" % e
         )
 
 # NOTE: Installation & Uninstallation Process
@@ -1898,3 +1898,16 @@ def get_pacman_process():
         logger.error(
             "Found Exception in LOC1888: %s" % e 
         )
+
+def cache_btn():
+    # fraction = 1 / len(packages)
+    packages.sort()
+    number = 1
+    for pkg in packages:
+        logger.debug(str(number) + "/" + str(len(packages)) + ": Caching " + pkg)
+        cache(pkg, path_dir_cache)
+        number = number + 1
+        # progressbar.timeout_id = GLib.timeout_add(50, progressbar.update, fraction)
+
+    logger.debug("Caching applications finished")
+
