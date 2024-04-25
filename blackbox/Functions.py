@@ -1625,3 +1625,80 @@ def verify_snigdhaos_pacman_conf():
     except Exception as e:
         logger.error("Exception in LOC1604: %s" % e)
 
+def update_textview_pacmanlog(self):
+    lines = self.pacmanlog_queue.get()
+    try:
+        buffer = self.textbuffer_pacmanlog
+        if len(lines) > 0:
+            # DOCS : https://askubuntu.com/questions/435629/how-to-get-text-buffer-from-file-and-loading-into-textview-using-python-and-gtk
+            end_iter = buffer.get_end_iter()
+            for line in lines:
+                if len(line) > 0:
+                    buffer.insert(
+                        end_iter,
+                        line.decode("UTF-8"),
+                        len(line),
+                    )
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1628: %s" % e
+        )
+    finally:
+        # DOCS : https://stackoverflow.com/questions/49637086/python-what-is-queue-task-done-used-for
+        self.pacmanlog_queue.task_done()
+
+def search(self, term):
+    try:
+        logger.info('Searching: "%s"' % term)
+        pkg_matches = []
+        category_dict = {}
+        whitespace = False
+        if term.strip():
+            whitespace = True
+        for pkg_list in self.packages.values():
+            for pkg in pkg_list:
+                if whitespace:
+                    for te in term.split(" "):
+                        if(
+                            te.lower() in pkg.name.lower() or te.lower() in pkg.description.lower()
+                        ):
+                            if pkg not in pkg_matches:
+                                pkg_matches.append(
+                                    pkg,
+                                )
+                else:
+                    if (
+                        te.lower() in pkg.name.lower() or te.lower() in pkg.description.lower()
+                    ):
+                        pkg_matches.append(
+                            pkg,
+                        )
+        
+        category_name = None
+        packages_cat = []
+        for pkg_match in pkg_matches:
+            if category_name == pkg_match.category:
+                packages_cat.append(pkg_match)
+                category_dict[category_name] = packages_cat
+            elif category_name is None:
+                packages_cat.append(pkg_match)
+            else:
+                packages_cat = []
+                packages_cat.append(pkg_match)
+                category_dict[pkg_match.category] = packages_cat
+            category_name = pkg_match.category
+        sorted_dict = None
+        if len(category_dict) > 0:
+            sorted_dict = dict(sorted(category_dict.items()))
+            self.search_queue.put(
+                sorted_dict,
+            )
+        else:
+            self.search_queue.put(
+                None,
+            )
+    except Exception as e:
+        logger.error(
+            "Found Exception in LOC1650: %s" % e 
+        )
+        
