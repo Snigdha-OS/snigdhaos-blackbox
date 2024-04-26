@@ -623,3 +623,60 @@ class Main(Gtk.Window): # Basic OOPS Concept
                 message_dialog.hide()
         except Exception as e:
             fn.logger.error("Exception in on_packages_import_clicked(): %s" % e)
+    
+    def toggle_popover(self):
+        if self.popover.get_visible():
+            self.popover.hide()
+        else:
+            self.popover.show_all()
+
+    def on_settings_clicked(self, widget):
+        self.toggle_popover()
+    
+    def snigdhaos_keyring_toggle(self, widget, data):
+        # toggle is currently off, add keyring
+        if widget.get_state() == False and widget.get_active() == True:
+            fn.logger.info("Installing Snigdha OS keyring")
+            install_keyring = fn.install_arco_keyring()
+
+            if install_keyring == 0:
+                fn.logger.info("Installation of Snigdha OS keyring = OK")
+                rc = fn.add_arco_repos()
+                if rc == 0:
+                    fn.logger.info("Snigdha OS repos added into %s" % fn.pacman_conf)
+                    widget.set_active(True)
+                else:
+                    message_dialog = MessageDialog(
+                        "Error",
+                        "Failed to update pacman conf",
+                        "Errors occurred during update of the pacman config file",
+                        rc,
+                        "error",
+                        True,
+                    )
+                    message_dialog.show_all()
+                    message_dialog.run()
+                    message_dialog.hide()
+                    widget.set_active(False)
+                    widget.set_state(False)
+                    return True
+
+            else:
+                message_dialog = MessageDialog(
+                    "Error",
+                    "Failed to install Snigdha OS keyring",
+                    "Errors occurred during install of the Snigdha OS keyring",
+                    "Command run = %s\n\n Error = %s"
+                    % (install_keyring["cmd_str"], install_keyring["output"]),
+                    "error",
+                    True,
+                )
+                message_dialog.show_all()
+                message_dialog.run()
+                message_dialog.hide()
+                widget.set_active(False)
+                widget.set_state(False)
+                return True
+        # toggle is currently on
+    
+    
