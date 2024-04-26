@@ -299,4 +299,207 @@ class Main(Gtk.Window): # Basic OOPS Concept
         self.searchentry.set_placeholder_text("Search...")
         self.search_activated = False
 
-    
+    def on_close(self, widget, data):
+        settings = Settings(self.display_versions, self.display_package_progress)
+        settings.write_config_file()
+        if os.path.exists(fn.blackbox_lockfile):
+            os.unlink(fn.blackbox_lockfile)
+        if os.path.exists(fn.blackbox_pidfile):
+            os.unlink(fn.blackbox_pidfile)
+        fn.terminate_pacman()
+        Gtk.main_quit()
+        print("")
+        print("Thanks for using BlackBox")
+        print("Report issues to make it even better")
+        print("")
+        print("")
+        print("")
+
+    def app_toggle(self, widget, active, package):
+        if widget.get_state() == False and widget.get_active() == True:
+            if len(package.name) > 0:
+                inst_str = [
+                    "pacman",
+                    "-S",
+                    package.name,
+                    "--needed",
+                    "--noconfirm",
+                ]
+                if self.display_package_progress is True:
+                    if fn.check_pacman_lockfile():
+                        widget.set_state(False)
+                        widget.set_active(False)
+                        proc = fn.get_pacman_process()
+                        message_dialog = MessageDialog(
+                            "Warning",
+                            "Blackbox cannot proceed pacman lockfile found",
+                            "Pacman cannot lock the db, a lockfile is found inside %s"
+                            % fn.pacman_lockfile,
+                            "Pacman is running: %s" % proc,
+                            "warning",
+                            False,
+                        )
+                        message_dialog.show_all()
+                        message_dialog.run()
+                        message_dialog.hide()
+                        return True
+                    else:
+                        package_metadata = fn.get_package_information(package.name)
+                        if (
+                            type(package_metadata) is str
+                            and package_metadata.strip()
+                            == "error: package '%s' was not found" % package.name
+                        ):
+                            self.package_found = False
+                            fn.logger.warning(
+                                "The package %s was not found in any configured Pacman repositories"
+                                % package.name
+                            )
+                            fn.logger.warning("Package install cannot continue")
+                            message_dialog = MessageDialog(
+                                "Error",
+                                "Pacman repository error: package '%s' was not found"
+                                % package.name,
+                                "Blackbox cannot process the request",
+                                "Are the correct pacman mirrorlists configured ?",
+                                "error",
+                                False,
+                            )
+                            message_dialog.show_all()
+                            message_dialog.run()
+                            message_dialog.hide()
+                            widget.set_state(False)
+                            widget.set_active(False)
+                            return True
+                        else:
+                            widget.set_state(True)
+                            widget.set_active(True)
+                            progress_dialog = ProgressDialog(
+                                "install",
+                                package,
+                                " ".join(inst_str),
+                                package_metadata,
+                            )
+                            progress_dialog.show_all()
+                            self.pkg_queue.put(
+                                (
+                                    package,
+                                    "install",
+                                    widget,
+                                    inst_str,
+                                    progress_dialog,
+                                ),
+                            )
+                            th = fn.threading.Thread(
+                                name="thread_pkginst",
+                                target=fn.install,
+                                args=(self,),
+                                daemon=True,
+                            )
+                            th.start()
+                            fn.logger.debug("Package-install thread started")
+                else:
+                    progress_dialog = None
+                    widget.set_sensitive(False)
+                widget.set_active(True)
+                widget.set_state(True)
+                fn.logger.info("Package to install : %s" % package.name)
+                # another pacman transaction is running, add items to the holding queue
+                if (
+                    fn.check_pacman_lockfile() is True
+                    and self.display_package_progress is False
+                ):
+                    self.pkg_holding_queue.put(
+                        (
+                            package,
+                            "install",
+                            widget,
+                            inst_str,
+                            progress_dialog,
+                        ),
+                    )
+                    if fn.is_thread_alive("thread_check_holding_queue") is False:
+                        th = fn.threading.Thread(
+                            target=fn.check_holding_queue,
+                            name="thread_check_holding_queue",
+                            daemon=True,
+                            args=(self,),
+                        )
+                        th.start()
+                        fn.logger.debug("Check-holding-queue thread started")
+                elif self.display_package_progress is False:
+                    self.pkg_queue.put(
+                        (
+                            package,
+                            "install",
+                            widget,
+                            inst_str,
+                            progress_dialog,
+                        ),
+                    )
+                    th = fn.threading.Thread(
+                        name="thread_pkginst",
+                        target=fn.install,
+                        args=(self,),
+                        daemon=True,
+                    )
+                    th.start()
+                    fn.logger.debug("Package-install thread started")
+        # switch widget is currently toggled on
+        if widget.get_state() == True and widget.get_active() == False:
+            # Uninstall the package
+            if len(package.name) > 0:
+                uninst_str = ["pacman", "-Rs", package.name, "--noconfirm"]
+                fn.logger.info("Package to remove : %s" % package.name)
+                if fn.check_pacman_lockfile():
+                    widget.set_state(True)
+                    widget.set_active(True)
+                    fn.logger.info("Pacman lockfile found, uninstall aborted")
+                    GLib.idle_add(
+                        self.show_lockfile_message_dialog,
+                        priority=GLib.PRIORITY_DEFAULT,
+                    )
+                    return True
+                if self.display_package_progress is True:
+                    package_metadata = fn.get_package_information(package.name)
+
+                    progress_dialog = ProgressDialog(
+                        "uninstall",
+                        package,
+                        " ".join(uninst_str),
+                        package_metadata,
+                    )
+                    progress_dialog.show_all()
+                else:
+                    progress_dialog = None
+                widget.set_active(False)
+                widget.set_state(False)
+                self.pkg_queue.put(
+                    (
+                        package,
+                        "uninstall",
+                        widget,
+                        uninst_str,
+                        progress_dialog,
+                    ),
+                )
+                th = fn.threading.Thread(
+                    name="thread_pkgrem",
+                    target=fn.uninstall,
+                    args=(self,),
+                    daemon=True,
+                )
+                th.start()
+                fn.logger.debug("Package-uninstall thread started")
+
+        # fn.print_running_threads()
+
+        # return True to prevent the default handler from running
+        return True
+
+        # App_Frame_GUI.GUI(self, Gtk, vboxStack1, fn, category, package_file)
+        # widget.get_parent().get_parent().get_parent().get_parent().get_parent().get_parent().get_parent().queue_redraw()
+        # self.gui.hide()
+        # self.gui.queue_redraw()
+        # self.gui.show_all()
+        
