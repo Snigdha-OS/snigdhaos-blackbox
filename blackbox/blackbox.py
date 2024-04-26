@@ -209,3 +209,4 @@ class Main(Gtk.Window): # Basic OOPS Concept
             )
             self.search_activated = False
 
+    
