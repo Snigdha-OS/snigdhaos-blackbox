@@ -5,10 +5,8 @@ import Functions as fn
 import string
 from string import Template
 
-# NOTE: Base Directory
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
-# NOTE: Deafult Config File
 default_file = "%s/defaults/blackbox.yaml"
 
 class Settings(object):
@@ -18,7 +16,7 @@ class Settings(object):
     
     def write_cofig_file(self):
         try:
-            content = [] # NOTE: Passing an empty array, set default will be called
+            content = []
             with open(fn.config_file, "r", encoding="UTF-8") as f:
                 contents = f.readlines()
             if len(contents) > 0:
