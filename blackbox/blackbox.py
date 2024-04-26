@@ -212,4 +212,76 @@ class Main(Gtk.Window): # Basic OOPS Concept
             )
             self.search_activated = False
 
+        if searchentry.get_text_length() == 0:
+            self.search_activated = False
+
+        search_term = searchentry.get_text()
+        if not search_term.isspace():
+            try:
+                if len(search_term.rstrip().lstrip()) > 0:
+                    th_search = fn.threading.Thread(
+                        name="thread_search",
+                        target=fn.search,
+                        args=(
+                            self,
+                            search_term.rstrip().lstrip(),
+                        ),
+                    )
+                    fn.logger.info("Starting search")
+                    th_search.start()
+                    # get the search_results from the queue
+                    results = self.search_queue.get()
+                    if results is not None:
+                        fn.logger.info("Search complete")
+                        if len(results) > 0:
+                            total = 0
+                            for val in results.values():
+                                total += len(val)
+                            fn.logger.info("Search found %s results" % total)
+                            # make sure the gui search only displays the pkgs inside the results
+                            GUI.setup_gui_search(
+                                self,
+                                Gtk,
+                                Gdk,
+                                GdkPixbuf,
+                                base_dir,
+                                os,
+                                Pango,
+                                results,
+                                search_term,
+                                None,
+                            )
+                            self.search_activated = True
+                    else:
+                        fn.logger.info("Search found %s results" % 0)
+                        self.searchentry.grab_focus()
+                        message_dialog = MessageDialog(
+                            "Info",
+                            "Search returned 0 results",
+                            "Failed to find search term inside the package name or description.",
+                            "Try to search again using another term",
+                            "info",
+                            False,
+                        )
+                        message_dialog.show_all()
+                        message_dialog.run()
+                        message_dialog.hide()
+                elif self.search_activated == True:
+                    GUI.setup_gui(
+                        self,
+                        Gtk,
+                        Gdk,
+                        GdkPixbuf,
+                        base_dir,
+                        os,
+                        Pango,
+                        None,
+                    )
+                    self.search_activated = False
+            except Exception as err:
+                fn.logger.error("Exception in on_search_activated(): %s" % err)
+            finally:
+                if self.search_activated == True:
+                    self.search_queue.task_done()
+
     
