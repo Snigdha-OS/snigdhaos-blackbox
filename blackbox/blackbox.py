@@ -27,6 +27,7 @@ from gi.repository import Gtk,Gdk,GdkPixbuf, Pango, GLib
 
 import Functions as fn
 from Settings import Settings
+from requests.packages import package
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
