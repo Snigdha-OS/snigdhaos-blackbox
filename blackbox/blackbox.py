@@ -283,5 +283,22 @@ class Main(Gtk.Window): # Basic OOPS Concept
             finally:
                 if self.search_activated == True:
                     self.search_queue.task_done()
+    
+    def on_search_cleared(self, searchentry, icon_pos, event):
+        if self.search_activated:
+            GUI.setup_gui(
+                self,
+                Gtk,
+                Gdk,
+                GdkPixbuf,
+                base_dir,
+                os,
+                Pango,
+                None,
+            )
+
+        self.searchentry.set_placeholder_text("Search...")
+
+        self.search_activated = False
 
     
