@@ -502,4 +502,19 @@ class Main(Gtk.Window): # Basic OOPS Concept
         # self.gui.hide()
         # self.gui.queue_redraw()
         # self.gui.show_all()
-        
+    
+    def show_lockfile_message_dialog(self):
+        proc = fn.get_pacman_process()
+        message_dialog = MessageDialog(
+            "Warning",
+            "Blackbox cannot proceed pacman lockfile found",
+            "Pacman cannot lock the db, a lockfile is found inside %s"
+            % fn.pacman_lockfile,
+            "Process running = %s" % proc,
+            "warning",
+            False,
+        )
+        message_dialog.show_all()
+        message_dialog.run()
+        message_dialog.hide()
+        message_dialog.destroy()
