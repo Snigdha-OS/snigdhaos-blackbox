@@ -637,11 +637,11 @@ class Main(Gtk.Window): # Basic OOPS Concept
         # toggle is currently off, add keyring
         if widget.get_state() == False and widget.get_active() == True:
             fn.logger.info("Installing Snigdha OS keyring")
-            install_keyring = fn.install_arco_keyring()
+            install_keyring = fn.install_snigdhaos_keyring()
 
             if install_keyring == 0:
                 fn.logger.info("Installation of Snigdha OS keyring = OK")
-                rc = fn.add_arco_repos()
+                rc = fn.add_snigdhaos_repos()
                 if rc == 0:
                     fn.logger.info("Snigdha OS repos added into %s" % fn.pacman_conf)
                     widget.set_active(True)
@@ -678,5 +678,47 @@ class Main(Gtk.Window): # Basic OOPS Concept
                 widget.set_state(False)
                 return True
         # toggle is currently on
-    
-    
+        if widget.get_state() == True and widget.get_active() == False:
+            remove_keyring = fn.remove_snigdhaos_keyring()
+
+            if remove_keyring == 0:
+                fn.logger.info("Removing Snigdha OS keyring OK")
+
+                rc = fn.remove_snigdhaos_repos()
+                if rc == 0:
+                    fn.logger.info("Snigdha OS repos removed from %s" % fn.pacman_conf)
+                    widget.set_active(False)
+                else:
+                    message_dialog = MessageDialog(
+                        "Error",
+                        "Failed to update pacman conf",
+                        "Errors occurred during update of the pacman config file",
+                        rc,
+                        "error",
+                        True,
+                    )
+
+                    message_dialog.show_all()
+                    message_dialog.run()
+                    message_dialog.hide()
+                    widget.set_active(True)
+                    widget.set_state(True)
+                    return True
+            else:
+                fn.logger.error("Failed to remove Snigdha OS keyring")
+                message_dialog = MessageDialog(
+                    "Error",
+                    "Failed to remove Snigdha OS keyring",
+                    "Errors occurred during removal of the Snigdha OS keyring",
+                    "Command run = %s\n\n Error = %s"
+                    % (remove_keyring["cmd_str"], remove_keyring["output"]),
+                    "error",
+                    True,
+                )
+                message_dialog.show_all()
+                message_dialog.run()
+                message_dialog.hide()
+                widget.set_active(False)
+                widget.set_state(False)
+                return True
+            
