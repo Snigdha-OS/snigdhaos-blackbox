@@ -296,9 +296,7 @@ class Main(Gtk.Window): # Basic OOPS Concept
                 Pango,
                 None,
             )
-
         self.searchentry.set_placeholder_text("Search...")
-
         self.search_activated = False
 
     
