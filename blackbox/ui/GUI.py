@@ -6,6 +6,10 @@ from multiprocessing import cpu_count
 from queue import Queue
 from threading import Thread
 
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Pango
+
 base_dir = fn.os.path.abspath(fn.os.path.join(fn.os.path.dirname(__file__), ".."))
 
 class GUI_Worker(Thread):
