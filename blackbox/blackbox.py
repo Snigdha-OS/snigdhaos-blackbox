@@ -7,6 +7,8 @@ from queue import Queue
 import sys
 import time
 from time import sleep
+import signal
+
 # UI modules
 from ui.GUI import GUI
 from ui.SplashScreen import SplashScreen
