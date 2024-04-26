@@ -4,6 +4,9 @@ import os
 import subprocess
 import queue
 from queue import Queue
+import sys
+import time
+from time import sleep
 # UI modules
 from ui.GUI import GUI
 from ui.SplashScreen import SplashScreen
@@ -20,7 +23,7 @@ from ui.PackagesImportDialog import PackagesImportDialog
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+from gi.repository import Gtk,Gdk,GdkPixbuf, Pango
 
 import Functions as fn
 
@@ -45,6 +48,94 @@ class Main(Gtk.Window): # Basic OOPS Concept
             self.connect("key-press-event", self.key_press_event)
             self.timeout_id = None
             self.display_version = False # Bool
-
             self.search_activated = False
-            
+            self.display_package_progress = False
+            print("******************************************************")
+            print(" Report error:")
+            print("******************************************************")
+            print("")
+            print("******************************************************")
+            if os.path.exists(fn.blackbox_lockfile):
+                running = fn.check_if_process_running("blackbox")
+                if running is True:
+                    fn.logger.error(
+                        "BlackBox LockFile (%s) Found!🫠" % fn.blackbox_lockfile
+                    )
+                    fn.logger.error(
+                        "Another BlackBox instance Running already?"
+                    )
+                    sys.exit(1)
+            else:
+                splash_screen = SplashScreen()
+                while Gtk.events_pending(): # DOCS: https://docs.gtk.org/gtk3/func.events_pending.html
+                    Gtk.main_iteration()
+                sleep(1.5)
+                splash_screen.destroy()
+                if fn.check_pacman_lockfile():
+                    message_dialog = MessageDialog(
+                        "Error",
+                        "Blackbox failed to initiate, Pacman Lockfile Found!",
+                        "Pacman unable to lock the database!" % fn. pacman_lockfile,
+                        "Is another process running?",
+                        "error",
+                        False,
+                    )
+                    message_dialog.show_all()
+                    message_dialog.run()
+                    message_dialog.hide()
+                    sys.exit(1)
+                fn.logger.info(
+                    "pkgver = pkgversion"
+                )
+                fn.logger.info(
+                    "pkgrel = pkgrelease"
+                )
+                print("*************************************************")
+                fn.logger.info("Distro = " + fn.distr)
+                print("*************************************************")
+                if os.path.isdir(fn.home + "/.config/gtk-3.0"):
+                    try:
+                        if not os.path.islink("/root/.config/gtk-3.0"):
+                            if os.path.exists("/root/.config/gtk-3.0"):
+                                fn.shutil.rmtree("/root/.config/gtk-3.0")
+                            fn.shutil.copytree(
+                                fn.home + "/.config/gtk-3.0", "/root/.config/gtk-3.0"
+                            )
+                    except Exception as e:
+                        fn.logger.warning(
+                            "GTK Config: %s" % e
+                        )
+                # if os.path.isdir
+                fn.logger.info(
+                    "Storing package metadate started."
+                )
+                self.packages = fn.store_packages()
+                fn.logger.info(
+                    "Storing packages metadat completed."
+                )
+                fn.logger.info(
+                    "categories: %s" % len(self.packages.keys())
+                )
+                total_packages = 0
+                for category in self.packages:
+                    total_packages += len(self.packages[category])
+                fn.logger.info(
+                    "Total Packages: %s" % total_packages
+                )
+                fn.logger.info(
+                    "Initiating GUI"
+                )
+                GUI.setup_gui(
+                    self,
+                    Gtk,
+                    Gdk,
+                    GdkPixbuf,
+                    base_dir,
+                    os,
+                    Pango,
+                    fn.settings_config,
+                )
+                fn.get_current_installed()
+                installed_lst_file = "%s/cache/installed.lst" % base_dir
+                
+
