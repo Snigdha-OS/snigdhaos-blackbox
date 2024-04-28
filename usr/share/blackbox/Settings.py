@@ -17,7 +17,7 @@ class Settings(object):
     def write_config_file(self):
         try:
             content = []
-            with open(fn.config_file, "r", encoding="UTF-8") as f:
+            with open(fn.config_file, "r", encoding="utf-8") as f:
                 contents = f.readlines()
             if len(contents) > 0:
                 self.read(contents)
@@ -66,7 +66,7 @@ class Settings(object):
                                 )
             
             if len(contents) > 0:
-                with open(fn.config_file, "w", encoding="UTF-8") as f:
+                with open(fn.config_file, "w", encoding="utf-8") as f:
                     f.writelines(contents)
                 fn.permissions(fn.config_dir)
         
@@ -77,7 +77,7 @@ class Settings(object):
         try:
             if os.path.exists(fn.config_file):
                 contents = []
-                with open(fn.config_file, "r", encoding="UTF-8") as f:
+                with open(fn.config_file, "r", encoding="utf-8") as f:
                     contents = f.readlines()
                 if len(contents) == 0:
                     fn.shutil.copy(default_file, fn.config_file)
@@ -88,7 +88,7 @@ class Settings(object):
                 # NOTE: String Replaces the Template File
                 fn.shutil.copy(default_file, fn.config_file)
                 fn.permissions(fn.config_dir)
-                with open(fn.config_file, "r", encoding="UTF-8") as f:
+                with open(fn.config_file, "r", encoding="utf-8") as f:
                     contents = f.readlines()
                 return self.read(contents)
         except Exception as e:
