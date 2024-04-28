@@ -51,7 +51,7 @@ class Main(Gtk.Window):
             # let's give a focus on search entry * set "ctrl + f"
             self.connect("key-press-event", self.key_press_event)
             self.timeout_id = None
-            self.display_version = False # Bool
+            self.display_versions = False # Bool
             self.search_activated = False
             self.display_package_progress = False
             print("******************************************************")

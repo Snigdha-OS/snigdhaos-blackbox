@@ -19,11 +19,11 @@ from Settings import Settings
 from ui.MessageDialog import MessageDialog
 from distro import id # DOCS : https://github.com/python-distro/distro
 
-import Functions as fn
+# import Functions as fn
 
 import gi # DOCS : https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
 from gi.repository import GLib, Gtk
-gi.require_version("Gtk" "3.0")
+gi.require_version("Gtk", "3.0")
 
 # NOTE: Base Directory
 base_dir = os.path.dirname(os.path.realpath(__file__))
@@ -489,11 +489,11 @@ def refresh_ui(
                     switch.set_sensitive(True)
                     switch.set_state(False)
                     switch.set_active(False)
-                    proc = fn.get_pacman_process()
+                    proc = get_pacman_process()
                     message_dialog = MessageDialog(
                         "Warning",
                         "Unable to proceed, pacman lock found!",
-                        "Pacman is unable to lock the database inside: %s" % fn.pacman_lockfile,
+                        "Pacman is unable to lock the database inside: %s" % pacman_lockfile,
                         "Pacman is processing: %s" % proc,
                         "warning",
                         False,
