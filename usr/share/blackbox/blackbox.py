@@ -55,9 +55,9 @@ class Main(Gtk.Window):
             self.search_activated = False
             self.display_package_progress = False
             print("******************************************************")
-            print(" Report error:")
+            print(" Report error")
             print("******************************************************")
-            print("")
+            print("https://github.com/snigdha-os/snigdhaos-blackbox")
             print("******************************************************")
             if os.path.exists(fn.blackbox_lockfile):
                 running = fn.check_if_process_running("blackbox")
@@ -79,7 +79,7 @@ class Main(Gtk.Window):
                     message_dialog = MessageDialog(
                         "Error",
                         "Blackbox failed to initiate, Pacman Lockfile Found!",
-                        "Pacman unable to lock the database!" % fn. pacman_lockfile,
+                        "Pacman unable to lock the database!" % fn.pacman_lockfile,
                         "Is another process running?",
                         "error",
                         False,
@@ -89,13 +89,13 @@ class Main(Gtk.Window):
                     message_dialog.hide()
                     sys.exit(1)
                 fn.logger.info(
-                    "pkgver = pkgversion"
+                    "pkgver : pkgversion"
                 )
                 fn.logger.info(
-                    "pkgrel = pkgrelease"
+                    "pkgrel : pkgrelease"
                 )
                 print("*************************************************")
-                fn.logger.info("Distro = " + fn.distr)
+                fn.logger.info("Distro : " + fn.distr)
                 print("*************************************************")
                 if os.path.isdir(fn.home + "/.config/gtk-3.0"):
                     try:

@@ -119,7 +119,7 @@ try:
     # NOTE: Rotate the fucking event log!
     tfh = TimedRotatingFileHandler(
         event_log_file,
-        encoding="UTF-8",
+        encoding="utf-8",
         delay=False,
         when="W4",
     )
@@ -221,7 +221,7 @@ def sync_package_db():
             return None
         else:
             if process_sync.stdout:
-                out = str(process_sync.stdout.decode("UTF-8"))
+                out = str(process_sync.stdout.decode("utf-8"))
                 logger.error(out)
                 return out
     except Exception as e:
@@ -250,7 +250,7 @@ def sync_file_db():
             return None
         else:
             if process_sync.stdout:
-                out = str(process_sync.stdout.decode("UTF-8"))
+                out = str(process_sync.stdout.decode("utf-8"))
                 logger.error(out)
                 return out
     except Exception as e:
@@ -683,7 +683,7 @@ def check_pacman_localdb(package_name):
             timeout=process_timeout,
         )
         if process_pkg_installed.returncode == 0:
-            for line in process_pkg_installed.stdout.decode("UTF-8").splitlines():
+            for line in process_pkg_installed.stdout.decode("utf-8").splitlines():
                 if line.startswith("Name        :"):
                     if line.replace(" ", "").split("Name:")[1].strip() == package_name:
                         return True
@@ -854,7 +854,7 @@ def store_packages():
                     "An error occurred during sort of packages in stored_packages()"
                 )
             else:
-                with open(cache, "w", encoding="UTF-8") as f:
+                with open(cache, "w", encoding="utf-8") as f:
                     for key in category_dict.keys():
                         pkg_list = category_dict[key]
                         for pkg in pkg_list:
@@ -886,7 +886,7 @@ def get_all_package_info():
                 package_version = "Unknown"
                 package_description = "Unknown"
                 package_repository = "Unknown"
-                for line in out.decode("UTF-8").splitlines():
+                for line in out.decode("utf-8").splitlines():
                     package_dict = {}
                     if "Name            :" in line.strip():
                         package_name = line.replace(" ", "").split("Name:")[1].strip()
@@ -957,7 +957,7 @@ def cache(package, path_dir_cache):
         out, err = process.communicate()
 
         if process.returncode == 0:
-            output = out.decode("UTF-8")
+            output = out.decode("utf-8")
             if len(output) > 0:
                 split = output.splitlines()
                 desc = str(split[3])
@@ -1073,7 +1073,7 @@ def get_package_files(package_name):
         )
         if process.returncode == 0:
             package_files = []
-            for line in process.stdout.decode("UTF-8").splitlines():
+            for line in process.stdout.decode("utf-8").splitlines():
                 package_files.append(line.split(" ")[1], None)
             return package_files
         else:
@@ -1636,7 +1636,7 @@ def update_textview_pacmanlog(self):
                 if len(line) > 0:
                     buffer.insert(
                         end_iter,
-                        line.decode("UTF-8"),
+                        line.decode("utf-8"),
                         len(line),
                     )
     except Exception as e:
@@ -1715,7 +1715,7 @@ def remove_snigdhaos_repos():
                 )
                 lines = []
                 with open(
-                    pacman_conf, "r", encoding="UTF-8"
+                    pacman_conf, "r", encoding="utf-8"
                 ) as r:
                     lines = r.readlines()
                 if len(lines) > 0:
