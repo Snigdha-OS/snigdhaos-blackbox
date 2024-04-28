@@ -859,5 +859,20 @@ class Main(Gtk.Window):
 
         return True
     
-    
+    def version_toggle(self, widget, data):
+        if widget.get_active() == True:
+            fn.logger.debug("Showing package versions")
+
+            self.display_versions = True
+            GLib.idle_add(
+                self.refresh_main_gui,
+                priority=GLib.PRIORITY_DEFAULT,
+            )
+        else:
+            fn.logger.debug("Hiding package versions")
+            self.display_versions = False
+            GLib.idle_add(
+                self.refresh_main_gui,
+                priority=GLib.PRIORITY_DEFAULT,
+            )
             
