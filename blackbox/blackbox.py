@@ -965,5 +965,94 @@ class Main(Gtk.Window):
         except Exception as e:
             fn.logger.error("Exception in on_pacman_log_clicked() : %s" % e)
     
-    
+    def package_progress_toggle(self, widget, data):
+        if widget.get_active() is True:
+            self.display_package_progress = True
+        if widget.get_active() is False:
+            self.display_package_progress = False
             
+def signal_handler(sig, frame):
+    fn.logger.info("Blackbox is closing.")
+    if os.path.exists("/tmp/blackbox.lock"):
+        os.unlink("/tmp/blackbox.lock")
+
+    if os.path.exists("/tmp/blackbox.pid"):
+        os.unlink("/tmp/blackbox.pid")
+    Gtk.main_quit(0)
+    
+if __name__ == "__main__":
+    try:
+        signal.signal(signal.SIGINT, signal_handler)
+
+        if not os.path.isfile("/tmp/blackbox.lock"):
+            with open("/tmp/blackbox.pid", "w") as f:
+                f.write(str(os.getpid()))
+
+            style_provider = Gtk.CssProvider()
+            style_provider.load_from_path(base_dir + "/blackbox.css")
+
+            Gtk.StyleContext.add_provider_for_screen(
+                Gdk.Screen.get_default(),
+                style_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+            )
+            w = Main()
+            w.show_all()
+
+            fn.logger.info("App Started")
+
+            Gtk.main()
+        else:
+            fn.logger.info("Blackbox lock file found")
+
+            md = Gtk.MessageDialog(
+                parent=Main(),
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.YES_NO,
+                text="Blackbox Lock File Found",
+            )
+            md.format_secondary_markup(
+                "A Blackbox lock file has been found. This indicates there is already an instance of <b>Blackbox</b> running.\n\
+                Click 'Yes' to remove the lock file and try running again"
+            )  # noqa
+
+            result = md.run()
+            md.destroy()
+
+            if result in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
+                pid = ""
+                if os.path.exists(fn.blackbox_pidfile):
+                    with open("/tmp/blackbox.pid", "r") as f:
+                        line = f.read()
+                        pid = line.rstrip().lstrip()
+
+                    if fn.check_if_process_running(int(pid)):
+                        # needs to be fixed - todo
+
+                        # md2 = Gtk.MessageDialog(
+                        #     parent=Main,
+                        #     flags=0,
+                        #     message_type=Gtk.MessageType.INFO,
+                        #     buttons=Gtk.ButtonsType.OK,
+                        #     title="Application Running!",
+                        #     text="You first need to close the existing application",
+                        # )
+                        # md2.format_secondary_markup(
+                        #     "You first need to close the existing application"
+                        # )
+                        # md2.run()
+                        fn.logger.info(
+                            "You first need to close the existing application"
+                        )
+                    else:
+                        os.unlink("/tmp/blackbox.lock")
+                        sys.exit(1)
+                else:
+                    # in the rare event that the lock file is present, but the pid isn't
+                    os.unlink("/tmp/blackbox.lock")
+                    sys.exit(1)
+            else:
+                sys.exit(1)
+    except Exception as e:
+        fn.logger.error("Exception in __main__: %s" % e)
