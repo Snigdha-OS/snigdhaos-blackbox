@@ -33,7 +33,7 @@ from requests.packages import package
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
-class Main(Gtk.Window): # Basic OOPS Concept
+class Main(Gtk.Window): 
     queue = Queue()
     pkg_queue = Queue()
     search_queue = Queue()
@@ -721,4 +721,143 @@ class Main(Gtk.Window): # Basic OOPS Concept
                 widget.set_active(False)
                 widget.set_state(False)
                 return True
+    
+    def snigdhaos_mirrorlist_toggle(self, widget, data):
+        # self.toggle_popover()
+        # toggle is currently off
+
+        if widget.get_state() == False and widget.get_active() == True:
+            widget.set_active(True)
+            widget.set_state(True)
+
+            # before installing the mirrorlist make sure the pacman.conf file does not have any references to /etc/pacman.d/arcolinux-mirrorlist
+            # otherwise the mirrorlist package will not install
+            rc_remove = fn.remove_snigdhaos_repos()
+            if rc_remove == 0:
+                install_mirrorlist = fn.install_snigdhaos_mirrorlist()
+
+                if install_mirrorlist == 0:
+                    fn.logger.info("Installation of Snigdha OS mirrorlist = OK")
+
+                    rc_add = fn.add_snigdhaos_repos()
+                    if rc_add == 0:
+                        fn.logger.info("Snigdha OS repos added into %s" % fn.pacman_conf)
+                        self.pacman_db_sync()
+
+                    else:
+                        message_dialog = MessageDialog(
+                            "Error",
+                            "Failed to update pacman conf",
+                            "Errors occurred during update of the pacman config file",
+                            rc_add,
+                            "error",
+                            True,
+                        )
+
+                        message_dialog.show_all()
+                        message_dialog.run()
+                        message_dialog.hide()
+
+                        widget.set_active(False)
+                        widget.set_state(False)
+
+                        return True
+
+                else:
+                    fn.logger.error("Failed to install Snigdha OS mirrorlist")
+
+                    message_dialog = MessageDialog(
+                        "Error",
+                        "Failed to install Snigdha OS mirrorlist",
+                        "Errors occurred during install of the Snigdha OS mirrorlist",
+                        "Command run = %s\n\n Error = %s"
+                        % (install_mirrorlist["cmd_str"], install_mirrorlist["output"]),
+                        "error",
+                        True,
+                    )
+                    message_dialog.show_all()
+                    message_dialog.run()
+                    message_dialog.hide()
+
+                    widget.set_active(False)
+                    widget.set_state(False)
+
+                    return True
+            else:
+                message_dialog = MessageDialog(
+                    "Error",
+                    "Failed to update pacman conf",
+                    "Errors occurred during update of the pacman config file",
+                    rc,
+                    "error",
+                    True,
+                )
+
+                message_dialog.show_all()
+                message_dialog.run()
+                message_dialog.hide()
+
+                widget.set_active(False)
+                widget.set_state(False)
+
+                return True
+        # toggle is currently on
+        if widget.get_state() == True and widget.get_active() == False:
+            widget.set_active(False)
+            widget.set_state(False)
+
+            fn.logger.info("Removing Snigdha OS mirrorlist")
+
+            remove_mirrorlist = fn.remove_snigdhaos_mirrorlist()
+
+            if remove_mirrorlist == 0:
+                fn.logger.info("Removing Snigdha OS mirrorlist OK")
+
+                rc = fn.remove_snigdhaos_repos()
+                if rc == 0:
+                    fn.logger.info("Snigdha OS repos removed from %s" % fn.pacman_conf)
+                    widget.set_active(False)
+                else:
+                    message_dialog = MessageDialog(
+                        "Error",
+                        "Failed to update pacman conf",
+                        "Errors occurred during update of the pacman config file",
+                        rc,
+                        "error",
+                        True,
+                    )
+
+                    message_dialog.show_all()
+                    message_dialog.run()
+                    message_dialog.hide()
+
+                    widget.set_active(True)
+                    widget.set_state(True)
+
+                    return True
+            else:
+                fn.logger.error("Failed to remove Snigdha OS mirrorlist")
+
+                message_dialog = MessageDialog(
+                    "Error",
+                    "Failed to remove Snigdha OS mirrorlist",
+                    "Errors occurred during removal of the Snigdha OS mirrorlist",
+                    "Command run = %s\n\n Error = %s"
+                    % (remove_mirrorlist["cmd_str"], remove_mirrorlist["output"]),
+                    "error",
+                    True,
+                )
+
+                message_dialog.show_all()
+                message_dialog.run()
+                message_dialog.hide()
+
+                widget.set_active(True)
+                widget.set_state(True)
+
+                return True
+
+        return True
+    
+    
             
