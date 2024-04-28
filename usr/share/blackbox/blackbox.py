@@ -111,11 +111,11 @@ class Main(Gtk.Window):
                         )
                 # if os.path.isdir
                 fn.logger.info(
-                    "Storing package metadate started."
+                    "Storing package metadate started.",
                 )
                 self.packages = fn.store_packages()
                 fn.logger.info(
-                    "Storing packages metadat completed."
+                    "Storing packages metadat completed.",
                 )
                 fn.logger.info(
                     "categories: %s" % len(self.packages.keys())
