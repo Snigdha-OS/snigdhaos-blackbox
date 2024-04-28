@@ -875,4 +875,95 @@ class Main(Gtk.Window):
                 self.refresh_main_gui,
                 priority=GLib.PRIORITY_DEFAULT,
             )
+    
+    def refresh_main_gui(self):
+        self.remove(self.vbox)
+        GUI.setup_gui(self, Gtk, Gdk, GdkPixbuf, base_dir, os, Pango, None)
+        self.show_all()
+    
+    def on_pacman_log_clicked(self, widget):
+        try:
+            self.toggle_popover()
+
+            thread_addlog = "thread_addPacmanLogQueue"
+            self.thread_add_pacmanlog_alive = fn.is_thread_alive(thread_addlog)
+
+            if self.thread_add_pacmanlog_alive == False:
+                fn.logger.info("Starting thread to monitor Pacman Log file")
+
+                th_add_pacmanlog_queue = fn.threading.Thread(
+                    name=thread_addlog,
+                    target=fn.add_pacmanlog_queue,
+                    args=(self,),
+                    daemon=True,
+                )
+                th_add_pacmanlog_queue.start()
+
+            if self.thread_add_pacmanlog_alive is True:
+                # need to recreate the textview, can't use existing reference as it throws a seg fault
+
+                self.textview_pacmanlog = Gtk.TextView()
+                self.textview_pacmanlog.set_property("editable", False)
+                self.textview_pacmanlog.set_property("monospace", True)
+                self.textview_pacmanlog.set_border_width(10)
+                self.textview_pacmanlog.set_vexpand(True)
+                self.textview_pacmanlog.set_hexpand(True)
+
+                # use the reference to the text buffer initialized before the logtimer thread started
+                self.textview_pacmanlog.set_buffer(self.textbuffer_pacmanlog)
+
+                window_pacmanlog = PacmanLogWindow(
+                    self.textview_pacmanlog,
+                    self.modelbtn_pacmanlog,
+                )
+                window_pacmanlog.show_all()
+
+                self.start_logtimer = window_pacmanlog.start_logtimer
+
+            else:
+                # keep a handle on the textbuffer, this is needed again later, if the pacman log file dialog is closed
+                # since the textbuffer will already hold textdata at that point
+
+                # textview is used inside another thread to update as the pacmanlog file is read into memory
+                self.textbuffer_pacmanlog = Gtk.TextBuffer()
+
+                self.textview_pacmanlog = Gtk.TextView()
+                self.textview_pacmanlog.set_property("editable", False)
+                self.textview_pacmanlog.set_property("monospace", True)
+                self.textview_pacmanlog.set_border_width(10)
+                self.textview_pacmanlog.set_vexpand(True)
+                self.textview_pacmanlog.set_hexpand(True)
+
+                self.textview_pacmanlog.set_buffer(self.textbuffer_pacmanlog)
+
+                window_pacmanlog = PacmanLogWindow(
+                    self.textview_pacmanlog,
+                    self.modelbtn_pacmanlog,
+                )
+                window_pacmanlog.show_all()
+
+            thread_logtimer = "thread_startLogTimer"
+            thread_logtimer_alive = False
+
+            thread_logtimer_alive = fn.is_thread_alive(thread_logtimer)
+
+            # a flag to indicate that the textview will need updating, used inside fn.start_log_timer
+            self.start_logtimer = True
+
+            if thread_logtimer_alive == False:
+                th_logtimer = fn.threading.Thread(
+                    name=thread_logtimer,
+                    target=fn.start_log_timer,
+                    args=(self, window_pacmanlog),
+                    daemon=True,
+                )
+                th_logtimer.start()
+
+            self.thread_add_pacmanlog_alive = True
+            self.modelbtn_pacmanlog.set_sensitive(False)
+
+        except Exception as e:
+            fn.logger.error("Exception in on_pacman_log_clicked() : %s" % e)
+    
+    
             
