@@ -49,7 +49,7 @@ class Main(Gtk.Window):
             self.set_icon_from_file(os.path.join(base_dir, "images/blackbox.png"))
             self.set_default_size(1280, 720) # Basic Con
             # let's give a focus on search entry * set "ctrl + f"
-            self.connect("key-press-event", self.key_press_event)
+            self.connect("key-press-event", self.on_keypress_event)
             self.timeout_id = None
             self.display_versions = False # Bool
             self.search_activated = False
@@ -143,7 +143,7 @@ class Main(Gtk.Window):
                 installed_lst_file = "%s/cache/installed.lst" % base_dir
                 packages_app_start_file = "%s/%s-packages.txt" % (
                     fn.log_dir,
-                    fn.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+                    fn.datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),
                 )
                 if os.path.exists(installed_lst_file):
                     fn.logger.info(

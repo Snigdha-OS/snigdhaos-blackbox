@@ -34,7 +34,7 @@ class GUI_Worker(Thread):
                     )
 
             except Exception as e:
-                fn.logger.error("Exception in LOC11: %s" % e)
+                fn.logger.error("Exception on run(): %s" % e)
             finally:
                 if items is None:
                     fn.logger.debug("Stopping GUI Worker thread")

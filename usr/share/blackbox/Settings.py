@@ -7,14 +7,14 @@ from string import Template
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
-default_file = "%s/defaults/blackbox.yaml"
+default_file = "%s/defaults/blackbox.yaml" % base_dir
 
 class Settings(object):
     def __init__(self, display_versions, display_package_progress):
         self.display_versions = display_versions
         self.display_package_progress = display_package_progress
     
-    def write_cofig_file(self):
+    def write_config_file(self):
         try:
             content = []
             with open(fn.config_file, "r", encoding="UTF-8") as f:
