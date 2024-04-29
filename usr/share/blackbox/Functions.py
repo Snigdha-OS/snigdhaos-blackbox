@@ -1,29 +1,26 @@
 #!/bin/python
 
 import os
-from os import makedirs # DOCS : https://docs.python.org/3/library/os.html#os.makedirs
 import sys
 import psutil
 import time
 import datetime
-from datetime import datetime
-from datetime import timedelta # DOCS : https://www.freecodecamp.org/news/how-to-use-timedelta-objects-in-python/
+from datetime import datetime, timedelta
 import subprocess
 import threading
-import logging # DOCS : https://docs.python.org/3/library/logging.html
-from logging.handlers import TimedRotatingFileHandler # DOCS : https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
+import gi
+import logging
+from logging.handlers import TimedRotatingFileHandler
 import shutil
 from threading import Thread
 from Package import Package
 from Settings import Settings
 from ui.MessageDialog import MessageDialog
-from distro import id # DOCS : https://github.com/python-distro/distro
+from distro import id
+from os import makedirs
 
-# import Functions as fn
-
-import gi # DOCS : https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
-from gi.repository import GLib, Gtk
 gi.require_version("Gtk", "3.0")
+from gi.repository import GLib, Gtk
 
 # NOTE: Base Directory
 base_dir = os.path.dirname(os.path.realpath(__file__))
@@ -48,14 +45,14 @@ pacman_cache_dir = "/var/cache/pacman/pkg/"
 
 # NOTE: Snigdha OS Mirror Config
 snigdhaos_core = [
-    "[snigdhaos-core]"
-    "SigLevel = PackageRequired DatabaseNever"
-    "Include = /etc/pacman.d/snigdhaos-mirrorlist"
+    "[snigdhaos-core]",
+    "SigLevel = PackageRequired DatabaseNever",
+    "Include = /etc/pacman.d/snigdhaos-mirrorlist",
 ]
 snigdhaos_extra = [
-    "[snigdhaos-extra]"
-    "SigLevel = PackageRequired DatabaseNever"
-    "Include = /etc/pacman.d/snigdhaos-mirrorlist"
+    "[snigdhaos-extra]",
+    "SigLevel = PackageRequired DatabaseNever",
+    "Include = /etc/pacman.d/snigdhaos-mirrorlist",
 ]
 
 # NOTE: BlackBox Specific
@@ -1400,7 +1397,7 @@ def install_snigdhaos_keyring():
                 return 0
             else:
                 if len(output) == 0:
-                    output.append("Error: install of ArcoLinux keyring failed")
+                    output.append("Error: install of Snigdha OS keyring failed")
                 logger.error(" ".join(output))
                 result_err = {}
                 result_err["cmd_str"] = cmd_str
