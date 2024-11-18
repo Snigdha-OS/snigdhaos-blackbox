@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Snigdha OS Blackbox
+Comment=
+Encoding=UTF-8
+Exec=snigdhaos-blackbox
+Terminal=flase
+Type=Application
+Icon=snigdhaos-blackbox
+Categories=System;SnigdhaOS-Setup;
+NoDisplay=flase
