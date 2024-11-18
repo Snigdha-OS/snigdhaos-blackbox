@@ -103,5 +103,90 @@ void SnigdhaOSBlackBox::doApply(){
     prepareStream << prepare_commands.join('\n');
     prepareFile->close();
     QTemporaryFile* packagesFiles = new QTemporaryFile(this);
-    
+    packagesFiles->setAutoRemove(true);
+    packagesFiles->open();
+    QTextStream packagesStream(packagesFiles);
+    packagesSteam << packages.join(' ');
+    packagesFiles->close();
+    QTemporaryFile* setupFile = new QTemporaryFile(this);
+    setupFile->autoRemove(true);
+    setupFile->open();
+    QTextStream setupStream(setupFile);
+    setupStream <<setup_commands.join('\n');
+    setupFile->close();
+
+    auto process = new QProcess(this);
+    process->start("/usr/lib/snigdhaos/launch-terminal", QStringList() << QString("/usr/lib/snigdhaos/-blackbox/apply.sh \"") + prepareFile->fileName() + "\" \"" + packagesFiles->fileName() + "\" \"" + setupFile->fileName() + "\"");
+    connect(process,QOverload<int,QProcess::ExitStatus>::of(&QProcess::finished), this, [this, process, prepareFile, packagesFiles, setupFile](int exitcode, QProcess::ExitStatus status) {
+        process->deleteLater();
+        prepareFile->deleteLater();
+        packagesFiles->deleteLater();
+        setupFile->deleteLater();
+
+        if (exitcode == 0 && !packagesFiles->exists()){
+            updateState(State::SELECT);
+        }
+        else{
+            updateState(State::APPLY_RETRY);
+        }
+    });
+}
+
+void SnigdhaOSBlackBox::populateSelectWidget() {
+    if (ui->selectWidget_tabs->count() > 1){
+        return;
+    }
+
+    auto desktop = qEnvironmentVariable("XDG_SESSION_DESKTOP");
+    // I will go for gnome only!
+    ui->checkBox_GNOME->setVisible(desktop == "gnome");
+
+    bool isDesktop = false;
+    auto chassis = QFile("/sys/class/dmi/id/chassis_type");
+    if (chassis.open(QFile::ReadOnly)) {
+        QStringList list = {"3", "4", "6", "7", "23", "24"};
+        QTextStream in(&chassis);
+        isDesktop = list.contains(in.readLine());
+    }
+    ui->checkBox_Performance->setVisible(isDesktop);
+
+    populateSelectWidget("/usr/lib/snigdhaos-blackbox/eshan.txt", "Eshan");
+}
+
+void SnigdhaOSBlackBox::populateSelectWidget(QString filename, QString label){
+    QFile file(filename);
+    if (file.open(QIODevice::ReadOnly)){
+        QScrollArea* scroll = new QScrollArea(ui->selectWidget_tabs);
+        QWidget* tab = new QWidget(scroll);
+        QVBoxLayout* layout = new QVBoxLayout(tab);
+        QTextStream in(&file);
+        while(!in.atEnd()) {
+            QString def = in.readLine();
+            QString packages = in.readLine();
+            QString display = in.readLine();
+            auto checkbox = new QCheckBox(tab);
+            checkbox->setChecked(def == "true");
+            checkbox->setText(display);
+            checkbox->setProperty("packages", packages.split(" "));
+            layout->addWidget(checkbox);
+        }
+
+        scroll->setWidget(tab);
+        ui->selectWidget_tabs->addTab(scroll, label);
+        file.close();
+    }
+}
+
+void SnigdhaOSBlackBox::updateState(State state){
+    if (currentState != state){
+        currentState = state;
+        this->show();
+        this->activateWindow();
+        this->raise();
+
+        switch(state){
+            case State::WELCOME:
+                ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
+        }
+    }
 }
