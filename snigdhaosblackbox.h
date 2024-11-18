@@ -2,6 +2,8 @@
 #define SNIGDHAOSBLACKBOX_H
 
 #include <QMainWindow>
+#include <QAbstractButton>
+#include <QNetwork>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
