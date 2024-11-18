@@ -1,14 +1,12 @@
 #include "snigdhaosblackbox.h"
-// #include "./ui_snigdhaosblackbox.h"
 
 #include <QApplication>
 
-// const char* INTERNET_CHECK_URL = "https://snigdhaos.org/";
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    SnigdhaOSBlackBox w;
+    SnigdhaOSBlackBox w(nullptr, a.arguments().length() > 1 ? a.arguments()[1] : "");
     w.show();
     return a.exec();
 }
