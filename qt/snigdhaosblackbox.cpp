@@ -1,5 +1,14 @@
 #include "snigdhaosblackbox.h"
 #include "./ui_snigdhaosblackbox.h"
+#include <QCheckBox>
+#include <QDebug>
+#include <QFileInfo>
+#include <QProcess>
+#include <QScrollArea>
+#include <QTemporaryFile>
+#include <QTimer>
+#include <QNetwork/QNetworkReply>
+#include <unistd.h>
 
 const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/"
 
