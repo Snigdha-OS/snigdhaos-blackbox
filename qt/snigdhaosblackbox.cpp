@@ -40,12 +40,12 @@ void SnigdhaOSBlackBox::doInternetUpRequest(){
     // if the time is out we will try again
     connect(timer, &QTimer::timeout, this, [this, timer, network_reply, network_manager](){
         timer->stop();
-        timer->deleteLayer();
+        timer->deleteLater();
         network_reply->deleteLater();
         network_manager->deleteLater();
 
         if (network_reply->error() == network_reply->NoError){
-            updateState(state::UPDATE);
+            updateState(State::UPDATE);
         }
         else{
             doInternetUpRequest();
@@ -54,7 +54,7 @@ void SnigdhaOSBlackBox::doInternetUpRequest(){
 }
 
 void SnigdhaOSBlackBox::doUpdate(){
-    if (qEnvironmentVaribaleSet("SNIGDHAOS_BLACKBOX_SELFUPDATE")) {
+    if (qEnvironmentVaribaleIsSet("SNIGDHAOS_BLACKBOX_SELFUPDATE")) {
         updateState(State::SELECT);
         return;
     }
@@ -81,7 +81,7 @@ void SnigdhaOSBlackBox::doApply(){
     QStringList setup_commands;
     QStringList prepare_commands;
 
-    auto checkboxList = ui->selectWidget_tabs->findChildren<QcheckBox*>();
+    auto checkboxList = ui->selectWidget_tabs->findChildren<QCheckBox*>();
 
     for (auto checkbox : checkboxList){
         if (checkbox->isChecked()){
@@ -115,10 +115,10 @@ void SnigdhaOSBlackBox::doApply(){
     packagesFiles->setAutoRemove(true);
     packagesFiles->open();
     QTextStream packagesStream(packagesFiles);
-    packagesSteam << packages.join(' ');
+    packagesStream << packages.join(' ');
     packagesFiles->close();
     QTemporaryFile* setupFile = new QTemporaryFile(this);
-    setupFile->autoRemove(true);
+    setupFile->setAutoRemove(true);
     setupFile->open();
     QTextStream setupStream(setupFile);
     setupStream <<setup_commands.join('\n');
@@ -207,11 +207,11 @@ void SnigdhaOSBlackBox::updateState(State state){
             case State::UPDATE:
                 ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
                 ui->waitingWidget_text->setText("Waiting For Update To Finish...");
-                Update();
+                doUpdate();
                 break;
             case State::UPDATE_RETRY:
                 ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-                ui->textWidget_text->setCurrentWidget(ui->textWidget_updateRetry);
+                ui->textStackedWidget_text->setCurrentWidget(ui->textWidget_updateRetry);
                 ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
                 break;
             case State::QUIT:
