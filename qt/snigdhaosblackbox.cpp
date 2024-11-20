@@ -30,7 +30,7 @@ SnigdhaOSBlackBox::~SnigdhaOSBlackBox()
 }
 
 void SnigdhaOSBlackBox::doInternetUpRequest(){
-    QNetworkAccessManager* = network_manager = new QNetworkAccessManager();
+    QNetworkAccessManager* network_manager = new QNetworkAccessManager();
     auto network_reply = network_manager->head(QNetworkRequest(QString(INTERNET_CHECK_URL)));
 
     QTimer* timer = new QTimer(this);
