@@ -10,7 +10,7 @@
 #include <QNetworkReply>
 #include <unistd.h>
 
-const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/"
+const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/";
 
 SnigdhaOSBlackBox::SnigdhaOSBlackBox(QWidget *parent, Qstring state)
     : QMainWindow(parent)
