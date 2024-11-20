@@ -18,7 +18,7 @@ SnigdhaOSBlackBox::SnigdhaOSBlackBox(QWidget *parent, QString state)
 {
     this->setWindowIcon(QIcon("/usr/share/pixmaps/snigdhaos-blackbox.svg"));
     ui->setupUi(this);
-    this->setWindowFlags(this->WindowFlags() & -Qt::WindowCloseButtonHint);
+    this->setWindowFlags(this->windowFlags() & -Qt::WindowCloseButtonHint);
     executable_modify_date = QFileInfo(QCoreApplication::applicationFilePath()).lastModified();
     updateState(state);
 }
