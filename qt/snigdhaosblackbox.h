@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QAbstractButton>
-#include <QNetwork/QNetworkAccessManager>
+#include <QNetworkAccessManager>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
