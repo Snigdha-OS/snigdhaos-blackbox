@@ -38,7 +38,7 @@ void SnigdhaOSBlackBox::doInternetUpRequest(){
     timer->start(5000); //5 sec
 
     // if the time is out we will try again
-    connect(timer, QTimer::timeout, this, [this, timer, network_reply, network_manager](){
+    connect(timer, &QTimer::timeout, this, [this, timer, network_reply, network_manager](){
         timer->stop();
         timer->deleteLayer();
         network_reply->deleteLater();
