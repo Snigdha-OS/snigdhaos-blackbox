@@ -7,7 +7,7 @@
 #include <QScrollArea>
 #include <QTemporaryFile>
 #include <QTimer>
-#include <QNetwork/QNetworkReply>
+#include <QNetworkReply>
 #include <unistd.h>
 
 const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/"
