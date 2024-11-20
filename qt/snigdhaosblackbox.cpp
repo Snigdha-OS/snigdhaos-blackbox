@@ -12,7 +12,7 @@
 
 const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/";
 
-SnigdhaOSBlackBox::SnigdhaOSBlackBox(QWidget *parent, Qstring state)
+SnigdhaOSBlackBox::SnigdhaOSBlackBox(QWidget *parent, QString state)
     : QMainWindow(parent)
     , ui(new Ui::SnigdhaOSBlackBox)
 {
@@ -54,7 +54,7 @@ void SnigdhaOSBlackBox::doInternetUpRequest(){
 }
 
 void SnigdhaOSBlackBox::doUpdate(){
-    if (qEnvironmentVaribaleIsSet("SNIGDHAOS_BLACKBOX_SELFUPDATE")) {
+    if (qEnvironmentVariableIsSet("SNIGDHAOS_BLACKBOX_SELFUPDATE")) {
         updateState(State::SELECT);
         return;
     }
@@ -211,7 +211,7 @@ void SnigdhaOSBlackBox::updateState(State state){
                 break;
             case State::UPDATE_RETRY:
                 ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-                ui->textStackedWidget_text->setCurrentWidget(ui->textWidget_updateRetry);
+                ui->textStackedWidget->setCurrentWidget(ui->textWidget_updateRetry);
                 ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
                 break;
             case State::QUIT:
