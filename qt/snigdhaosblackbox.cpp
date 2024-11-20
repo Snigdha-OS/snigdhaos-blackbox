@@ -187,6 +187,119 @@ void SnigdhaOSBlackBox::updateState(State state){
         switch(state){
             case State::WELCOME:
                 ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
+                ui->textStackedWidget->setCurrentWidget(ui->textWidget_welcome);
+                ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::OK | QDialogButtonBox::Cancel);
+                break;
+            case State::INTERNET:
+                ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
+                ui->waitingWidget_text->setText("Waiting For Internet Connection...");
+                doInternetUpRequest();
+                break;
+            case State::UPDATE:
+                ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
+                ui->waitingWidget_text->setText("Waiting For Update To Finish...");
+                Update();
+                break;
+            case State::UPDATE_RETRY:
+                ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
+                ui->textWidget_text->setCurrentWidget(ui->textWidget_updateRetry);
+                ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
+                break;
+            case State::QUIT:
+                ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
+                ui->textStackedWidget->setCurrentWidget(ui->textWidget_quit);
+                ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::OK | QDialogButtonBox::Reset);
+                break;
+            case State::SELECT:
+                ui->mainStackedWidget->setCurrentWidget(ui->selectWidget);
+                populateSelectWidget();
+                break;
+            case State::APPLY:
+                ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
+                ui->waitingWidget_text->setText("Applying...");
+                doApply();
+                break;
+            case State::APPLY_RETRY:
+                ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
+                ui->textStackedWidget->setCurrentWidget(ui->textWidget_applyRetry);
+                ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
+                break;
+            case State::SUCCESS:
+                ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
+                ui->textStackedWidget->setCurrentWidget(ui->textWidget_success);
+                ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::OK);
+                break;
         }
+    }
+}
+
+void SnigdhaOSBlackBox::updateState(QString state) {
+    if (state == "POST_UPDATE"){
+        updateState(State::SELECT);
+    }
+    else if (state == "UPDATE_RETRY"){
+        updateState(State::UPDATE_RETRY);
+    }
+    else{
+        updateState(State::WELCOME);
+    }
+}
+
+void SnigdhaOSBlackBox::relaunchSelf(QString param) {
+    auto binary = QFileInfo(QCoreApplication::applicationFilePath());
+    if (executable_modify_date != binary.lastModified()) {
+        execlp(binary.absolutePath().toUtf8().constData(), binary.fileName().toUtf8().constData(), param.toUtf8().constData(), NULL);
+        exit(0);
+    }
+    else {
+        updateState(param);
+    }
+}
+
+void SnigdhaOSBlackBox::on_textWidget_buttonBox_clicked(QAbstractButton* button) {
+    switch(currentState) {
+        case State::WELCOME:
+            if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::OK) {
+                updateState(State::INTERNET);
+            }
+            break;
+        case State::UPDATE_RETRY:
+            if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Yes) {
+                updateState(State::INTERNET);
+            }
+            break;
+        case State::APPLY_RETRY:
+            if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::OK) {
+                updateState(State::APPLY);
+            }
+            else if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Reset) {
+                updateState(State::SELECT);
+            }
+            break;
+        case State::SUCCESS:
+            if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::OK) {
+                QApplication::quit();
+            }
+            break;
+        case State::QUIT:
+            if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::No || ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::OK) {
+                QApplication::quit();
+            }
+            else {
+                updateState(State::WELCOME);
+            }
+        default:;
+    }
+    if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::No || ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Cancel) {
+        updateState(State::QUIT);
+    }
+}
+
+void SnigdhaOSBlackBox::on_selectWidget_buttonBox_clicked(QAbstractButton* button) {
+    if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::OK) {
+        updateState(State::APPLY);
+    }
+    else {
+        updateState(State::QUIT);
     }
 }
