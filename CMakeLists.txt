@@ -50,7 +50,6 @@ else()
     )
 endif()
 
-
 target_link_libraries(SnigdhaOSBlackbox PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
