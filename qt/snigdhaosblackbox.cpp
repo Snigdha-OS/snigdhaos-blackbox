@@ -168,7 +168,7 @@ void SnigdhaOSBlackBox::populateSelectWidget() {
     }
     ui->checkBox_Performance->setVisible(isDesktop);
 
-    populateSelectWidget("/usr/lib/snigdhaos-blackbox/eshan.txt", "Eshan");
+    populateSelectWidget("/usr/lib/snigdhaos-blackbox/webapp.txt", "WebApp");
 }
 
 void SnigdhaOSBlackBox::populateSelectWidget(QString filename, QString label){
