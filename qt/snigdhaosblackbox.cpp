@@ -31,7 +31,35 @@ SnigdhaOSBlackBox::~SnigdhaOSBlackBox()
 }
 
 void SnigdhaOSBlackBox::doInternetUpRequest(){
-    
+    QNetworkAccessManager* network_manager = new QNetworkAccessManager();
+    aut network_reply = network_manager->head(QNetworkRequest(QString(INTERNET_CHECK_URL)));
+
+    QTimer* timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->start(5000);
+
+    //Try again fuction!
+    connect(timer, &QTimer::timeout, this, [this, timer, network_reply, network_manager]() {
+        timer->deleteLater();
+        network_reply->abort();
+        network_reply->deleteLater();
+        network_manager->deleteLater();
+        doInternetUpRequest();
+    });
+
+    connect(network_reply, &QNetworkReply::finished, this, [this, timer, network_reply, network_manager]() {
+        timer->stop();
+        timer->deleteLater();
+        network_reply->deleteLater();
+        network_manager->deleteLater();
+
+        if (network_reply->error() == network_reply->NoError) {
+            updateState(State::UPDATE);
+        }
+        else {
+            doInternetUpRequest();
+        }
+    });
 }
 
 void SnigdhaOSBlackBox::doUpdate(){
