@@ -1,5 +1,6 @@
 #include "snigdhaosblackbox.h"
 #include "./ui_snigdhaosblackbox.h"
+
 #include <QCheckBox>
 #include <QDebug>
 #include <QFileInfo>
@@ -30,27 +31,7 @@ SnigdhaOSBlackBox::~SnigdhaOSBlackBox()
 }
 
 void SnigdhaOSBlackBox::doInternetUpRequest(){
-    QNetworkAccessManager* network_manager = new QNetworkAccessManager();
-    auto network_reply = network_manager->head(QNetworkRequest(QString(INTERNET_CHECK_URL)));
-
-    QTimer* timer = new QTimer(this);
-    timer->setSingleShot(true);
-    timer->start(5000); //5 sec
-
-    // if the time is out we will try again
-    connect(timer, &QTimer::timeout, this, [this, timer, network_reply, network_manager](){
-        timer->stop();
-        timer->deleteLater();
-        network_reply->deleteLater();
-        network_manager->deleteLater();
-
-        if (network_reply->error() == network_reply->NoError){
-            updateState(State::UPDATE);
-        }
-        else{
-            doInternetUpRequest();
-        }
-    });
+    
 }
 
 void SnigdhaOSBlackBox::doUpdate(){
