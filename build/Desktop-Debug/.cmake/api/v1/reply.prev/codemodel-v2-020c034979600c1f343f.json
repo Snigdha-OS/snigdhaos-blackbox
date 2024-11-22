@@ -1,0 +1,70 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-1fe1b9b8d057703503b3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "snigdhaos-blackbox",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "snigdhaos-blackbox::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-snigdhaos-blackbox-Debug-318499fe8586e3597d20.json",
+					"name" : "snigdhaos-blackbox",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "snigdhaos-blackbox_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-snigdhaos-blackbox_autogen-Debug-8ab92c7c10721c4b6adf.json",
+					"name" : "snigdhaos-blackbox_autogen",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/whoami/snigdhaos-blackbox/build/Desktop-Debug",
+		"source" : "/home/whoami/snigdhaos-blackbox"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
