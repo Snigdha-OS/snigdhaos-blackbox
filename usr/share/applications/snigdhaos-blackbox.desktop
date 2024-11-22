@@ -1,7 +1,8 @@
 #!/usr/bin/env xdg-open
+
 [Desktop Entry]
 Name=Snigdha OS Blackbox
-Comment=
+Comment=Tools installer for Snigdha OS
 Encoding=UTF-8
 Exec=snigdhaos-blackbox
 Terminal=flase
