@@ -28,7 +28,7 @@ public:
         SUCCESS
     };
 
-    SnigdhaOSBlackBox(QWidget *parent = nullptr, QString state = "WELCOME");
+    SnigdhaOSBlackBox(QWidget* parent = nullptr, QString state = "WELCOME");
     ~SnigdhaOSBlackBox();
 
 private slots:
