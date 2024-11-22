@@ -3,15 +3,15 @@
 
 #include <QMainWindow>
 #include <QAbstractButton>
-#include <QNetworkAccessManager>
+#include <QtNetwork/QNetworkAccessManager>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class SnigdhaOSBlackBox;
+class SnigdhaOSBlackbox;
 }
 QT_END_NAMESPACE
 
-class SnigdhaOSBlackBox : public QMainWindow
+class SnigdhaOSBlackbox : public QMainWindow
 {
     Q_OBJECT
 
@@ -27,16 +27,14 @@ public:
         APPLY_RETRY,
         SUCCESS
     };
-
-    SnigdhaOSBlackBox(QWidget* parent = nullptr, QString state = "WELCOME");
-    ~SnigdhaOSBlackBox();
-
+    SnigdhaOSBlackbox(QWidget *parent = nullptr, QString state = "WELCOME");
+    ~SnigdhaOSBlackbox();
 private slots:
     void on_textWidget_buttonBox_clicked(QAbstractButton* button);
-    void on_selectWidget_buttonBox_clicked(QAbstractButton* button);
+    void on_selectWidget_buttonBox_Clicked(QAbstractButton* button);
 
 private:
-    Ui::SnigdhaOSBlackBox *ui;
+    Ui::SnigdhaOSBlackbox *ui;
     QDateTime executable_modify_date;
     State currentState;
 
