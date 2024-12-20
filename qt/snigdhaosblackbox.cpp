@@ -139,68 +139,97 @@ void SnigdhaOSBlackbox::doUpdate() {
 
 
 void SnigdhaOSBlackbox::doApply() {
+    // Declare three QStringLists to hold the packages, setup commands, and prepare commands
     QStringList packages;
     QStringList setup_commands;
     QStringList prepare_commands;
 
+    // Find all QCheckBox widgets within the selectWidget_tabs widget
     auto checkBoxList = ui->selectWidget_tabs->findChildren<QCheckBox*>();
+
+    // Iterate through each checkbox and check if it's checked
     for (auto checkbox : checkBoxList) {
         if (checkbox->isChecked()) {
-            packages += checkbox->property("packages").toStringList();
-            setup_commands += checkbox->property("setup_commands").toStringList();
-            prepare_commands += checkbox->property("prepare_commands").toStringList();
+            // If the checkbox is checked, retrieve its associated properties and add them to the lists
+            packages += checkbox->property("packages").toStringList();  // Add selected package names to 'packages'
+            setup_commands += checkbox->property("setup_commands").toStringList();  // Add setup commands to 'setup_commands'
+            prepare_commands += checkbox->property("prepare_commands").toStringList();  // Add preparation commands to 'prepare_commands'
         }
     }
 
+    // If no packages were selected, mark the state as 'SUCCESS' and exit early
     if (packages.isEmpty()) {
         updateState(State::SUCCESS);
         return;
     }
 
+    // If 'podman' is selected in packages, add a system setup command for it
     if (packages.contains("podman")) {
         setup_commands += "systemctl enable --now podman.socket";
     }
+    // If 'docker' is selected in packages, add a system setup command for it
     if (packages.contains("docker")) {
         setup_commands += "systemctl enable --now docker.socket";
     }
+
+    // Remove duplicate entries in the 'packages' list to avoid redundant installations
     packages.removeDuplicates();
 
+    // Create a temporary file to store the preparation commands and automatically delete it when no longer needed
     QTemporaryFile* prepareFile = new QTemporaryFile(this);
-    prepareFile->setAutoRemove(true);
-    prepareFile->open();
+    prepareFile->setAutoRemove(true);  // Ensure this file is removed automatically when it goes out of scope
+    prepareFile->open();  // Open the file for writing
 
+    // Create a QTextStream to write the prepare commands to the temporary file
     QTextStream prepareStream(prepareFile);
-    prepareStream << prepare_commands.join('\n');
-    prepareFile->close();
+    prepareStream << prepare_commands.join('\n');  // Join the list of prepare commands with newlines and write to the file
+    prepareFile->close();  // Close the file after writing
 
+    // Create another temporary file to store the selected packages
     QTemporaryFile* packagesFile = new QTemporaryFile(this);
     packagesFile->setAutoRemove(true);
-    packagesFile->open();
+    packagesFile->open();  // Open the file for writing
 
+    // Create a QTextStream to write the list of packages to the temporary file
     QTextStream packagesStream(packagesFile);
-    packagesStream << packages.join(' ');
-    packagesFile->close();
+    packagesStream << packages.join(' ');  // Join the package names with spaces and write to the file
+    packagesFile->close();  // Close the file after writing
 
+    // Create a third temporary file to store the setup commands
     QTemporaryFile* setupFile = new QTemporaryFile(this);
     setupFile->setAutoRemove(true);
-    setupFile->open();
+    setupFile->open();  // Open the file for writing
 
+    // Create a QTextStream to write the setup commands to the temporary file
     QTextStream setupStream(setupFile);
-    setupStream << setup_commands.join('\n');
-    setupFile->close();
+    setupStream << setup_commands.join('\n');  // Join the setup commands with newlines and write to the file
+    setupFile->close();  // Close the file after writing
 
+    // Create a QProcess to execute the shell script and pass the temporary file paths as arguments
     auto process = new QProcess(this);
-    process->start("/usr/lib/snigdhaos/launch-terminal", QStringList() << QString("/usr/lib/snigdhaos-blackbox/apply.sh \"") + prepareFile->fileName() + "\" \"" + packagesFile->fileName() + "\" \"" + setupFile->fileName() + "\"");
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this, process, prepareFile, packagesFile, setupFile](int exitcode, QProcess::ExitStatus status) {
+    process->start("/usr/lib/snigdhaos/launch-terminal", 
+                    QStringList() << QString("/usr/lib/snigdhaos-blackbox/apply.sh \"") + 
+                    prepareFile->fileName() + "\" \"" + 
+                    packagesFile->fileName() + "\" \"" + 
+                    setupFile->fileName() + "\"");
+
+    // When the process finishes, the following lambda function is triggered
+    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), 
+            this, [this, process, prepareFile, packagesFile, setupFile](int exitcode, QProcess::ExitStatus status) {
+        
+        // Clean up: delete the QProcess and the temporary files after the process finishes
         process->deleteLater();
         prepareFile->deleteLater();
         packagesFile->deleteLater();
         setupFile->deleteLater();
 
+        // If the process was successful (exit code 0) and the temporary packages file no longer exists
         if (exitcode == 0 && !packagesFile->exists()) {
+            // Mark the state as 'SELECT' to indicate the operation was successful
             updateState(State::SELECT);
         }
         else {
+            // If there was an error (non-zero exit code or file exists), mark the state as 'APPLY_RETRY'
             updateState(State::APPLY_RETRY);
         }
     });
