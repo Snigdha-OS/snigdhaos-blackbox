@@ -1,19 +1,17 @@
-#include "snigdhaosblackbox.h"
-#include "./ui_snigdhaosblackbox.h"
+#include "snigdhaosblackbox.h"  // Includes the header file for the SnigdhaOSBlackbox class to use its declarations and functionality.
+#include "./ui_snigdhaosblackbox.h"  // Includes the auto-generated header file for the UI created using Qt Designer.
 
-#include <QCheckBox>
-#include <QDebug>
-#include <QFileInfo>
-#include <QProcess>
-#include <QScrollArea>
-#include <QTemporaryFile>
-#include <QTimer>
-#include <QtNetwork/QNetworkReply>
-#include <unistd.h>
+#include <QCheckBox>  // Used to manage checkbox UI components.
+#include <QDebug>  // Provides tools for debugging, logging information, and printing messages to the console.
+#include <QFileInfo>  // Allows access to file metadata, such as checking file modification times.
+#include <QProcess>  // Used to manage and interact with external processes (such as running commands in the terminal).
+#include <QScrollArea>  // Provides a scrollable area in the UI to allow navigation through large widgets.
+#include <QTemporaryFile>  // Creates temporary files that are automatically deleted after use.
+#include <QTimer>  // Provides functionality for scheduling tasks with delays or intervals.
+#include <QtNetwork/QNetworkReply>  // Handles responses from network requests (used to check internet connectivity).
+#include <unistd.h>  // Provides POSIX functions, used here for process management (e.g., restarting the application).
 
-const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/";
-
-
+const char* INTERNET_CHECK_URL = "https://snigdha-os.github.io/";  // URL used to verify internet connectivity by sending a network request.
 
 SnigdhaOSBlackbox::SnigdhaOSBlackbox(QWidget *parent, QString state)
     : QMainWindow(parent)
