@@ -3,12 +3,10 @@
 # Author        : ESHAN ROY
 # Author URI    : https://eshanized.github.io
 
-# NOTE : Run at your own risk!
-
 # Define the conventional commit types with new emojis
 TYPES=("🚀 feat" "🐛 fix" "📝 docs" "✨ style" "🛠 refactor" "⚡️ perf" "🔬 test" "🔧 build" "🤖 ci" "🧹 chore" "⏪ revert")
 
-# Function to display an error and exit
+# Function to display an error and exit and
 error_exit() {
     echo -e "\033[1;31m[ERROR]\033[0m $1"
     exit 1
@@ -16,6 +14,13 @@ error_exit() {
 
 # Ensure the script is run in a Git repository
 git rev-parse --is-inside-work-tree > /dev/null 2>&1 || error_exit "This is not a Git repository."
+
+# Get the current branch name
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Pull the latest changes from the remote repository
+echo "Pulling latest changes from remote branch '$branch'..."
+git pull origin "$branch" || error_exit "Failed to pull changes from the remote repository. Please resolve any conflicts manually."
 
 # Prompt the user to select a commit type
 echo "Select a commit type:"
@@ -62,13 +67,6 @@ fi
 echo -e "\nCommit message:"
 echo -e "\033[1;36m$commit_msg\033[0m"
 
-# Confirm before committing
-read -p "Do you want to proceed with this commit? (y/n): " confirm
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-    echo "Commit aborted."
-    exit 0
-fi
-
 # Stage all changes
 git add .
 
@@ -80,7 +78,7 @@ else
 fi
 
 # Push the changes to the remote repository
-branch=$(git rev-parse --abbrev-ref HEAD)
+echo "Pushing changes to remote branch '$branch'..."
 if git push origin "$branch"; then
     echo -e "\033[1;32mChanges pushed to remote branch '$branch'.\033[0m"
 else
