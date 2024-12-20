@@ -36,6 +36,8 @@ SnigdhaOSBlackbox::SnigdhaOSBlackbox(QWidget *parent, QString state)
 
 SnigdhaOSBlackbox::~SnigdhaOSBlackbox()
 {
+    // Frees the memory allocated for the user interface (UI) object.
+    // The 'ui' pointer was allocated in the constructor, and it's responsible for managing the UI components of the SnigdhaOSBlackbox window.
     delete ui;
 }
 
