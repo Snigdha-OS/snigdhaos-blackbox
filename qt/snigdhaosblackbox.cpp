@@ -42,31 +42,53 @@ SnigdhaOSBlackbox::~SnigdhaOSBlackbox()
 }
 
 void SnigdhaOSBlackbox::doInternetUpRequest() {
+    // Create a new QNetworkAccessManager instance for managing the network request.
+    // The 'this' pointer ensures the manager is associated with the current object (SnigdhaOSBlackbox).
     QNetworkAccessManager* network_manager = new QNetworkAccessManager(this);
+
+    // Send a HEAD request to the specified URL to check if the internet connection is up.
+    // The HEAD request is used to check the server status without downloading the full content.
     QNetworkReply* network_reply = network_manager->head(QNetworkRequest(QString(INTERNET_CHECK_URL)));
 
+    // Create a new QTimer instance that will be used to implement a timeout for the network request.
     QTimer* timer = new QTimer(this);
+    
+    // Set the timer to single-shot mode, so it will only trigger once after the specified interval (5 seconds).
     timer->setSingleShot(true);
-    timer->start(5000); //5 sec
 
+    // Start the timer with a 5-second interval (5000 milliseconds).
+    timer->start(5000); // 5 sec
+
+    // Connect the timer's timeout signal to a lambda function.
+    // This function will execute if the timer expires (i.e., after 5 seconds), aborting the network request.
     connect(timer, &QTimer::timeout, this, [this, timer, network_reply, network_manager]() {
+        // Clean up the resources associated with the timer, network reply, and network manager.
+        // Deleting them to prevent memory leaks.
         timer->deleteLater();
-        network_reply->abort();
-        network_reply->deleteLater();
-        network_manager->deleteLater();
+        network_reply->abort();  // Abort the network request as the timeout occurred.
+        network_reply->deleteLater();  // Delete the network reply object to free resources.
+        network_manager->deleteLater();  // Delete the network manager object to free resources.
+
+        // Retry the internet check by calling this function recursively.
         doInternetUpRequest();
     });
 
+    // Connect the network reply's finished signal to a lambda function that handles the network reply.
     connect(network_reply, &QNetworkReply::finished, this, [this, timer, network_reply, network_manager]() {
+        // Stop the timer once the network reply is finished, as we no longer need to wait for the timeout.
         timer->stop();
+
+        // Clean up the resources associated with the timer, network reply, and network manager after the request finishes.
         timer->deleteLater();
         network_reply->deleteLater();
         network_manager->deleteLater();
 
-        if (network_reply->error() == network_reply->NoError){
+        // Check if there was no error with the network reply (i.e., the internet is up).
+        if (network_reply->error() == network_reply->NoError) {
+            // If there was no error, update the state to indicate that the update process can begin.
             updateState(State::UPDATE);
-        }
-        else {
+        } else {
+            // If there was an error, retry the internet check by calling this function recursively.
             doInternetUpRequest();
         }
     });
