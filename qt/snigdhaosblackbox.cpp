@@ -95,27 +95,48 @@ void SnigdhaOSBlackbox::doInternetUpRequest() {
 }
 
 void SnigdhaOSBlackbox::doUpdate() {
+    // Check if the environment variable "SNIGDHAOS_BLACKBOX_SELFUPDATE" is set. 
+    // This is typically used to determine if the application is running in an update process.
     if (qEnvironmentVariableIsSet("SNIGDHAOS_BLACKBOX_SELFUPDATE")) {
+        // If the environment variable is set, update the state to "SELECT" (presumably to indicate a state where the user can select an option).
         updateState(State::SELECT);
-        return;
+        return;  // Exit the function if the self-update process is active.
     }
 
+    // Create a new QProcess object. This will be used to run external processes (such as the terminal command to update the system).
     auto process = new QProcess(this);
+
+    // Create a temporary file that will be used during the update process.
     QTemporaryFile* file = new QTemporaryFile(this);
-    file->open();
-    file->setAutoRemove(true);
-    process->start("/usr/lib/snigdhaos/launch-terminal", QStringList() << QString("sudo pacman -Syyu 2>&1 && rm \"" + file->fileName() + "\"; read -p 'Press Enter↵ to Exit"));
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this, process, file](int exitcode, QProcess::ExitStatus status) {
+    file->open();  // Open the temporary file for writing.
+    file->setAutoRemove(true);  // Set the temporary file to be automatically removed when it is closed.
+
+    // Start a new process to launch the terminal and execute the system update command.
+    // The command runs "sudo pacman -Syyu" to update the system and then deletes the temporary file after the update is done.
+    // It also asks the user to press Enter before closing the terminal.
+    process->start("/usr/lib/snigdhaos/launch-terminal", 
+                    QStringList() << QString("sudo pacman -Syyu 2>&1 && rm \"" + file->fileName() + "\"; read -p 'Press Enter↵ to Exit'"));
+
+    // Connect the finished signal of the QProcess to a lambda function, which will be executed when the process finishes.
+    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), 
+            this, [this, process, file](int exitcode, QProcess::ExitStatus status) {
+        // Delete the QProcess and temporary file objects after the process finishes.
         process->deleteLater();
         file->deleteLater();
+
+        // Check the exit code of the process:
+        // If the exit code is 0 (successful), and the temporary file no longer exists, 
+        // it indicates that the update process was successful, so relaunch the app with the state "POST_UPDATE".
         if (exitcode == 0 && !file->exists()) {
             relaunchSelf("POST_UPDATE");
-        }
-        else {
+        } else {
+            // If the update failed (either the exit code is non-zero or the temporary file still exists),
+            // relaunch the app with the state "UPDATE_RETRY", indicating that the update should be retried.
             relaunchSelf("UPDATE_RETRY");
         }
     });
 }
+
 
 void SnigdhaOSBlackbox::doApply() {
     QStringList packages;
