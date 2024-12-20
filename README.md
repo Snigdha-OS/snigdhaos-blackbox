@@ -86,7 +86,7 @@ Follow the on-screen instructions to explore and install tools.
 ## 🤝 Developers
 
 - **Snigdha OS Team**
-  - **Lead Developer**: [Eshan Roy](https://github.com/eshanized/)
+  - **Lead Developer**: **[Eshan Roy]**(https://github.com/eshanized/)
 
 👋 Want to contribute? Check the [Contributing Section](#-contributing).
 
