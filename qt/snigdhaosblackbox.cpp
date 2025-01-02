@@ -424,12 +424,27 @@ void SnigdhaOSBlackbox::updateState(QString state) {
 }
 
 void SnigdhaOSBlackbox::relaunchSelf(QString param) {
+    // Get the current application's binary path and file information.
     auto binary = QFileInfo(QCoreApplication::applicationFilePath());
+
+    // Check if the modification time of the binary has changed since the last run.
     if (executable_modify_date != binary.lastModified()) {
-        execlp(binary.absoluteFilePath().toUtf8().constData(), binary.fileName().toUtf8().constData(), param.toUtf8().constData(), NULL);
+        // If the modification time has changed, relaunch the application with the given parameter.
+        
+        // execlp is used to execute the current binary again, passing the parameter 'param'.
+        // It replaces the current process with a new instance of the application.
+        execlp(
+            binary.absoluteFilePath().toUtf8().constData(),  // Path to the executable file.
+            binary.fileName().toUtf8().constData(),          // Name of the executable (e.g., "SnigdhaOS").
+            param.toUtf8().constData(),                      // Parameter to pass to the executable.
+            NULL                                             // Terminate the argument list.
+        );
+
+        // Exit the current instance of the application after relaunching.
         exit(0);
     }
     else {
+        // If the executable has not been modified, just update the application's state using the provided parameter.
         updateState(param);
     }
 }
