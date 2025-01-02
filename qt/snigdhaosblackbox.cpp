@@ -236,22 +236,41 @@ void SnigdhaOSBlackbox::doApply() {
 }
 
 void SnigdhaOSBlackbox::populateSelectWidget() {
+    // Check if the select widget already has more than one tab.
+    // If so, there's no need to populate it again, so exit early.
     if (ui->selectWidget_tabs->count() > 1) {
         return;
     }
 
+    // Retrieve the current desktop session environment variable.
     auto desktop = qEnvironmentVariable("XDG_DESKTOP_SESSION");
+
+    // Set the visibility of the GNOME-related checkbox based on the desktop session.
+    // The checkbox is visible only if the current session is GNOME.
     ui->checkBox_GNOME->setVisible(desktop == "gnome");
 
+    // Variable to track whether the current device is a desktop.
     bool isDesktop = false;
+
+    // Attempt to read the chassis type from the system's DMI data.
     auto chassis = QFile("/sys/class/dmi/id/chassis_type");
-    if (chassis.open(QFile::ReadOnly)) {
+    if (chassis.open(QFile::ReadOnly)) { // Open the file in read-only mode.
+        // List of chassis types that correspond to desktop systems.
         QStringList list = { "3", "4", "6", "7", "23", "24" };
+
+        // Create a text stream to read data from the file.
         QTextStream in(&chassis);
+
+        // Check if the read chassis type matches any in the list.
         isDesktop = list.contains(in.readLine());
     }
+
+    // Set the visibility of the Performance checkbox based on whether
+    // the system is identified as a desktop.
     ui->checkBox_Performance->setVisible(isDesktop);
 
+    // Populate the select widget with entries from the specified file.
+    // In this case, it's populating from "webapp.txt" with the label "WEBAPP".
     populateSelectWidget("/usr/lib/snigdhaos-blackbox/webapp.txt", "WEBAPP");
 }
 
