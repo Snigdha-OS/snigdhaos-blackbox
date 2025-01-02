@@ -275,28 +275,55 @@ void SnigdhaOSBlackbox::populateSelectWidget() {
 }
 
 void SnigdhaOSBlackbox::populateSelectWidget(QString filename, QString label) {
+    // Create a QFile object for the provided filename.
     QFile file(filename);
 
+    // Check if the file can be opened in read-only mode.
     if (file.open(QIODevice::ReadOnly)) {
+        // Create a QScrollArea to hold the new tab content.
         QScrollArea* scroll = new QScrollArea(ui->selectWidget_tabs);
+
+        // Create a QWidget as the container for the scroll area.
         QWidget* tab = new QWidget(scroll);
+
+        // Create a vertical layout for the container widget.
         QVBoxLayout* layout = new QVBoxLayout(tab);
+
+        // Create a QTextStream to read from the file.
         QTextStream in(&file);
 
+        // Loop through the file, reading three lines at a time.
+        // Each set of lines corresponds to a checkbox definition.
         while (!in.atEnd()) {
-            QString def = in.readLine();
-            QString packages = in.readLine();
-            QString display = in.readLine();
+            QString def = in.readLine();        // Line 1: Checkbox default state ("true" or "false").
+            QString packages = in.readLine();  // Line 2: Associated package names (space-separated).
+            QString display = in.readLine();   // Line 3: Display text for the checkbox.
 
+            // Create a new QCheckBox and set its parent to the container widget.
             auto checkbox = new QCheckBox(tab);
+
+            // Set the checkbox state based on the value in `def`.
             checkbox->setChecked(def == "true");
+
+            // Set the display text for the checkbox.
             checkbox->setText(display);
+
+            // Attach the package list as a custom property to the checkbox.
+            // Splits the space-separated package string into a QStringList.
             checkbox->setProperty("packages", packages.split(" "));
+
+            // Add the checkbox to the vertical layout.
             layout->addWidget(checkbox);
         }
 
+        // Set the QWidget as the main content of the QScrollArea.
         scroll->setWidget(tab);
+
+        // Add the QScrollArea as a new tab to the selectWidget_tabs,
+        // using the provided label for the tab name.
         ui->selectWidget_tabs->addTab(scroll, label);
+
+        // Close the file after reading its content.
         file.close();
     }
 }
