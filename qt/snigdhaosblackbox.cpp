@@ -450,49 +450,62 @@ void SnigdhaOSBlackbox::relaunchSelf(QString param) {
 }
 
 void SnigdhaOSBlackbox::on_textWidget_buttonBox_clicked(QAbstractButton* button) {
+    // Check the current state of the application.
     switch(currentState) {
     case State::WELCOME:
+        // If the current state is 'WELCOME' and the 'Ok' button is clicked, transition to 'INTERNET' state.
         if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Ok) {
             updateState(State::INTERNET);
         }
         break;
 
     case State::UPDATE_RETRY:
+        // If the current state is 'UPDATE_RETRY' and the 'Yes' button is clicked, transition to 'INTERNET' state.
         if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Yes) {
             updateState(State::INTERNET);
         }
         break;
 
     case State::APPLY_RETRY:
+        // If the current state is 'APPLY_RETRY' and the 'Yes' button is clicked, transition to 'APPLY' state.
         if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Yes) {
             updateState(State::APPLY);
         }
+        // If the 'Reset' button is clicked, transition to 'SELECT' state.
         else if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Reset) {
             updateState(State::SELECT);
         }
         break;
 
     case State::SUCCESS:
+        // If the current state is 'SUCCESS' and the 'Ok' button is clicked, quit the application.
         if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Ok) {
             QApplication::quit();
         }
         break;
 
     case State::QUIT:
+        // If the current state is 'QUIT' and the 'No' or 'Ok' button is clicked, quit the application.
         if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::No || ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Ok) {
             QApplication::quit();
         }
+        // If any other button is clicked, transition back to the 'WELCOME' state.
         else {
             updateState(State::WELCOME);
         }
         break;
-    default:;
 
+    default:
+        // A catch-all for any other states not explicitly handled. Currently does nothing.
+        break;
     }
+
+    // If the 'No' or 'Cancel' button is clicked at any point, transition to the 'QUIT' state.
     if (ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::No || ui->textWidget_buttonBox->standardButton(button) == QDialogButtonBox::Cancel) {
         updateState(State::QUIT);
     }
 }
+
 
 void SnigdhaOSBlackbox::on_selectWidget_buttonBox_Clicked(QAbstractButton* button) {
     if (ui->selectWidget_buttonBox->standardButton(button) == QDialogButtonBox::Ok) {
