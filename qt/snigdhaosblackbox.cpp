@@ -329,68 +329,82 @@ void SnigdhaOSBlackbox::populateSelectWidget(QString filename, QString label) {
 }
 
 void SnigdhaOSBlackbox::updateState(State state) {
+    // Only update the UI if the state has changed.
     if (currentState != state) {
-        currentState = state;
-        this->show();
-        this->activateWindow();
-        this->raise();
+        currentState = state;  // Update the current state.
 
+        // Ensure the application window is visible and in focus.
+        this->show();           // Make the window visible.
+        this->activateWindow(); // Bring the window to the front.
+        this->raise();          // Raise the window above others.
+
+        // Handle the new state.
         switch (state) {
         case State::WELCOME:
-            ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-            ui->textStackedWidget->setCurrentWidget(ui->textWidget_welcome);
-            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+            // Show the welcome screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->textWidget); // Switch to the text widget.
+            ui->textStackedWidget->setCurrentWidget(ui->textWidget_welcome); // Show the welcome message.
+            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel); // Set appropriate buttons.
             break;
 
         case State::INTERNET:
-            ui->mainStackedWidget->setCurrentWidget(ui->mainStackedWidget);
-            ui->waitingWidget_text->setText("Waiting For Internet Connection...");
-            doInternetUpRequest();
+            // Show the internet connection status screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->mainStackedWidget); // Switch to the main stack.
+            ui->waitingWidget_text->setText("Waiting For Internet Connection..."); // Display waiting message.
+            doInternetUpRequest(); // Trigger an internet connection check.
             break;
 
         case State::UPDATE:
-            ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
-            ui->waitingWidget_text->setText("Please Wait! Till We Finish The Update...");
-            doUpdate();
+            // Show the update progress screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget); // Switch to the waiting widget.
+            ui->waitingWidget_text->setText("Please Wait! Till We Finish The Update..."); // Display update message.
+            doUpdate(); // Start the update process.
             break;
 
         case State::UPDATE_RETRY:
-            ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-            ui->textStackedWidget->setCurrentWidget(ui->textWidget_updateRetry);
-            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
+            // Show the update retry screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->textWidget); // Switch to the text widget.
+            ui->textStackedWidget->setCurrentWidget(ui->textWidget_updateRetry); // Show the retry message.
+            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No); // Set retry buttons.
             break;
 
         case State::QUIT:
-            ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-            ui->textStackedWidget->setCurrentWidget(ui->textWidget_quit);
-            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Reset);
+            // Show the quit confirmation screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->textWidget); // Switch to the text widget.
+            ui->textStackedWidget->setCurrentWidget(ui->textWidget_quit); // Show the quit message.
+            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Reset); // Set quit buttons.
             break;
 
         case State::SELECT:
-            ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
-            populateSelectWidget();
+            // Show the selection screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget); // Switch to the waiting widget.
+            populateSelectWidget(); // Populate the selection UI dynamically.
             break;
 
         case State::APPLY:
-            ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget);
-            ui->waitingWidget_text->setText("We are applying the changes...");
-            doApply();
+            // Show the apply changes screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->waitingWidget); // Switch to the waiting widget.
+            ui->waitingWidget_text->setText("We are applying the changes..."); // Display applying message.
+            doApply(); // Start applying changes.
             break;
 
         case State::APPLY_RETRY:
-            ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-            ui->textStackedWidget->setCurrentWidget(ui->textWidget_applyRetry);
-            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No | QDialogButtonBox::Reset);
+            // Show the apply retry screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->textWidget); // Switch to the text widget.
+            ui->textStackedWidget->setCurrentWidget(ui->textWidget_applyRetry); // Show the retry message.
+            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No | QDialogButtonBox::Reset); // Set retry buttons.
             break;
 
         case State::SUCCESS:
-            ui->mainStackedWidget->setCurrentWidget(ui->textWidget);
-            ui->textStackedWidget->setCurrentWidget(ui->textWidget_success);
-            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Ok);
+            // Show the success screen.
+            ui->mainStackedWidget->setCurrentWidget(ui->textWidget); // Switch to the text widget.
+            ui->textStackedWidget->setCurrentWidget(ui->textWidget_success); // Show the success message.
+            ui->textWidget_buttonBox->setStandardButtons(QDialogButtonBox::Ok); // Set success button.
             break;
         }
     }
 }
+
 
 void SnigdhaOSBlackbox::updateState(QString state) {
     if (state == "POST_UPDATE"){
