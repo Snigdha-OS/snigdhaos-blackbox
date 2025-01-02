@@ -407,13 +407,18 @@ void SnigdhaOSBlackbox::updateState(State state) {
 
 
 void SnigdhaOSBlackbox::updateState(QString state) {
+    // Check if the state is "POST_UPDATE".
     if (state == "POST_UPDATE"){
+        // If the state is "POST_UPDATE", transition to the SELECT state.
         updateState(State::SELECT);
     }
+    // Check if the state is "UPDATE_RETRY".
     else if (state == "UPDATE_RETRY") {
+        // If the state is "UPDATE_RETRY", transition to the UPDATE_RETRY state.
         updateState(State::UPDATE_RETRY);
     }
     else {
+        // For any other state, default to the WELCOME state.
         updateState(State::WELCOME);
     }
 }
