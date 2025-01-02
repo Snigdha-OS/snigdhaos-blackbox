@@ -508,10 +508,14 @@ void SnigdhaOSBlackbox::on_textWidget_buttonBox_clicked(QAbstractButton* button)
 
 
 void SnigdhaOSBlackbox::on_selectWidget_buttonBox_Clicked(QAbstractButton* button) {
+    // Check if the 'Ok' button was clicked in the 'selectWidget_buttonBox'.
     if (ui->selectWidget_buttonBox->standardButton(button) == QDialogButtonBox::Ok) {
+        // If 'Ok' is clicked, transition to the 'APPLY' state.
         updateState(State::APPLY);
     }
+    // If any other button is clicked, transition to the 'QUIT' state.
     else {
+        // If not 'Ok', the application will quit.
         updateState(State::QUIT);
     }
 }
