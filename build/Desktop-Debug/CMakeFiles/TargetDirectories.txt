@@ -1,8 +1,0 @@
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/snigdhaos-blackbox.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/edit_cache.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/rebuild_cache.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/list_install_components.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/install.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/install/local.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/install/strip.dir
-/home/whoami/snigdhaos-blackbox/build/Desktop-Debug/CMakeFiles/snigdhaos-blackbox_autogen.dir
